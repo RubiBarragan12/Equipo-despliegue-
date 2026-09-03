@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Dashboard - Tattoo Studio</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#D93B3B",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#191022",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings:
+                'FILL' 0,
+                'wght' 400,
+                'GRAD' 0,
+                'opsz' 24
+        }
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display text-white/90">
+    <div class="relative flex h-auto min-h-screen w-full flex-col">
+        <main class="flex-grow pb-24">
+            <div class="flex flex-col gap-2 p-4 pb-2">
+                <div class="flex items-center h-12 justify-between">
+                    <div class="flex size-12 shrink-0 items-center">
+                        <div id="user-avatar" class="aspect-square size-10 rounded-full bg-[#D93B3B]/20 flex items-center justify-center">
+                            <span id="user-initials" class="text-[#D93B3B] font-bold text-sm leading-none">?</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-end gap-1">
+                        <button
+                            class="flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 w-12 bg-transparent text-white/90 p-0">
+                            <span class="material-symbols-outlined text-2xl">notifications</span>
+                        </button>
+                        <button id="logout-btn"
+                            class="flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 w-12 bg-transparent text-white/90 hover:text-red-400 transition-colors p-0"
+                            title="Cerrar sesión">
+                            <span class="material-symbols-outlined text-2xl">logout</span>
+                        </button>
+                    </div>
+                </div>
+                <p id="user-greeting" class="text-white/90 tracking-light text-[28px] font-bold leading-tight">Hola</p>
+            </div>
+            <p id="fecha-hoy" class="text-white/70 text-base font-normal leading-normal pb-3 pt-1 px-4"></p>
+            <h3 class="text-white/90 text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-4">Tu Estudio Hoy</h3>
+            <div class="flex flex-wrap gap-4 px-4">
+                <div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-4 border border-white/10 bg-white/5">
+                    <p class="text-white/70 text-base font-medium leading-normal">Citas Hoy</p>
+                    <p id="stat-citas-hoy" class="text-white/90 tracking-light text-2xl font-bold leading-tight">—</p>
+                </div>
+                <div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-4 border border-white/10 bg-white/5">
+                    <p class="text-white/70 text-base font-medium leading-normal">Ingresos (Día)</p>
+                    <p id="stat-ingresos-dia" class="text-white/90 tracking-light text-2xl font-bold leading-tight">—</p>
+                </div>
+                <div class="flex min-w-full flex-1 flex-col gap-2 rounded-xl p-4 border border-white/10 bg-white/5 sm:min-w-[158px]">
+                    <p class="text-white/70 text-base font-medium leading-normal">Ingresos (Semana)</p>
+                    <p id="stat-ingresos-semana" class="text-white/90 tracking-light text-2xl font-bold leading-tight">—</p>
+                </div>
+            </div>
+            <h3 class="text-white/90 text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-6">Actividad de Artistas</h3>
+            <div id="artistas-container" class="flex flex-col gap-4 px-4">
+                <p class="text-white/40 text-sm text-center py-4">Cargando...</p>
+            </div>
+            <div class="px-4 pt-6">
+                <div class="flex justify-between items-center pb-3">
+                    <h3 class="text-white/90 text-lg font-bold leading-tight tracking-[-0.015em]">Próximas Citas</h3>
+                </div>
+                <div id="proximas-citas-admin" class="flex flex-col gap-3">
+                    <div class="flex items-center justify-center py-6 text-white/40">
+                        <div class="inline-block animate-spin rounded-full h-5 w-5 border-2 border-primary border-t-transparent mr-2"></div>
+                        <span class="text-sm">Cargando...</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <nav class="fixed bottom-0 left-0 right-0 h-20 bg-background-dark border-t border-white/10 px-4">
+            <div class="flex justify-around items-center h-full">
+                <a class="flex flex-col items-center gap-1 text-primary" href="/pages/administrador/menu_admin.html">
+                    <span class="material-symbols-outlined text-2xl">dashboard</span>
+                    <span class="text-xs font-medium">Inicio</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 text-white/50 hover:text-primary transition-colors" href="/pages/cliente/seguimiento/index.html">
+                    <span class="material-symbols-outlined text-2xl">event_available</span>
+                    <span class="text-xs font-medium">Seguimiento</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 text-white/50 hover:text-primary transition-colors" href="/pages/administrador/editar_precios.html">
+                    <span class="material-symbols-outlined text-2xl">price_change</span>
+                    <span class="text-xs font-medium">Precios</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 text-white/50 hover:text-primary transition-colors" href="/pages/administrador/ajustes/menu_ajustes.html">
+                    <span class="material-symbols-outlined text-2xl">settings</span>
+                    <span class="text-xs font-medium">Ajustes</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <script>
+        // ============================================
+        // VERIFICAR SESIÓN DE ADMIN
+        // ============================================
+        
+        const user = JSON.parse(localStorage.getItem('user') || 'null');
+        
+        // Verificar que el usuario existe y es admin o dueño
+       if (!user) { 
+    window.location.href = '/';
+}
+        
+        function getIniciales(nombre = '') {
+            const p = nombre.trim().split(/\s+/).filter(Boolean);
+            if (p.length >= 2) return (p[0][0] + p[1][0]).toUpperCase();
+            return (p[0] || '?').substring(0, 2).toUpperCase();
+        }
+
+        const el = document.getElementById('user-greeting');
+        if (el) el.textContent = `Hola, ${user.nombre}`;
+        const initEl = document.getElementById('user-initials');
+        if (initEl) initEl.textContent = getIniciales(user.nombre);
+
+        const fechaEl = document.getElementById('fecha-hoy');
+        if (fechaEl) {
+            const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+            const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+            const hoy = new Date();
+            fechaEl.textContent = `${dias[hoy.getDay()]}, ${hoy.getDate()} de ${meses[hoy.getMonth()]}`;
+        }
+        console.log('✅ Admin logueado:', user.nombre, 'Rol:', user.rol);
+
+        function fmtMXN(n) { return '$' + parseFloat(n).toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 2 }); }
+        function fmtFecha(f) {
+            if (!f) return '';
+            const [y, m, d] = f.split('-').map(Number);
+            const hoy = new Date(); hoy.setHours(0,0,0,0);
+            const diff = Math.round((new Date(y, m-1, d) - hoy) / 86400000);
+            if (diff === 0) return 'Hoy';
+            if (diff === 1) return 'Mañana';
+            return `${d} ${['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][m-1]}`;
+        }
+        function escapeHtml(s) { if (!s) return ''; return s.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
+
+        const idEmpresa = user.idempresa;
+
+        async function cargarStats() {
+            if (!idEmpresa) return;
+            try {
+                const r = await fetch(`/api/stats/empresa/${idEmpresa}`);
+                const j = await r.json();
+                if (j.status !== 'ok') return;
+                const d = j.data;
+
+                document.getElementById('stat-citas-hoy').textContent = d.citasHoy;
+                document.getElementById('stat-ingresos-dia').textContent = fmtMXN(d.ingresosHoy);
+                document.getElementById('stat-ingresos-semana').textContent = fmtMXN(d.ingresosSemana);
+
+                const artEl = document.getElementById('artistas-container');
+                if (d.artistas.length === 0) {
+                    artEl.innerHTML = `<p class="text-white/40 text-sm text-center py-4">Sin actividad esta semana</p>`;
+                } else {
+                    artEl.innerHTML = d.artistas.map(a => `
+                        <div class="flex items-center gap-4">
+                            <p class="w-24 shrink-0 text-white/70 text-sm truncate">${escapeHtml(a.nombre)}</p>
+                            <div class="h-3 w-full rounded-full bg-white/10">
+                                <div class="h-3 rounded-full bg-primary transition-all" style="width: ${a.pct}%"></div>
+                            </div>
+                            <p class="w-16 text-right text-white/90 text-sm shrink-0">${a.citasSemana} cita${a.citasSemana !== 1 ? 's' : ''}</p>
+                        </div>`).join('');
+                }
+            } catch (_) {}
+        }
+
+        async function cargarProximasCitas() {
+            if (!idEmpresa) return;
+            const el = document.getElementById('proximas-citas-admin');
+            try {
+                const r = await fetch(`/api/proximas-citas?idempresa=${idEmpresa}`);
+                const j = await r.json();
+                const citas = (j.citas || []).slice(0, 4);
+                if (citas.length === 0) {
+                    el.innerHTML = `<div class="flex flex-col items-center justify-center py-8 text-white/40"><span class="material-symbols-outlined text-4xl mb-2">event_busy</span><p class="text-sm">Sin próximas citas</p></div>`;
+                    return;
+                }
+                el.innerHTML = citas.map(c => `
+                    <div class="flex items-center gap-4 rounded-xl border border-white/10 bg-white/5 p-4">
+                        <div class="flex flex-col items-center justify-center w-14 shrink-0">
+                            <span class="text-sm font-bold text-white/90">${c.hora}</span>
+                            <span class="text-xs text-white/50">${fmtFecha(c.fecha)}</span>
+                        </div>
+                        <div class="flex-grow min-w-0">
+                            <p class="font-bold text-white/90 truncate">${escapeHtml(c.cliente)}</p>
+                            <p class="text-sm text-white/50 truncate">${escapeHtml(c.zona)}</p>
+                        </div>
+                        <span class="text-xs px-2 py-1 rounded-full bg-white/10 text-white/60 shrink-0">${escapeHtml(c.estado)}</span>
+                    </div>`).join('');
+            } catch (_) {
+                el.innerHTML = `<p class="text-red-400 text-sm text-center py-4">Error al cargar</p>`;
+            }
+        }
+
+        cargarStats();
+        cargarProximasCitas();
+        
+        // ============================================
+        // BOTÓN DE CIERRE DE SESIÓN
+        // ============================================
+        
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('user');
+            localStorage.removeItem('empresa');
+            window.location.href = '/';
+        });
+    </script>
+</body>
+
+</html>

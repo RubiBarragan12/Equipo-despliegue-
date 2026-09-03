@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Tabla de Precios | Studio Services</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&amp;family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        body { background-color: #120c16; color: #eddeee; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+    <header class="bg-[#120c16]/80 backdrop-blur-xl fixed top-0 w-full flex justify-between items-center px-6 h-16 z-50">
+        <div class="flex items-center gap-4">
+            <a href="/pages/administrador/menu_admin.html" class="active:scale-95 transition-transform">
+                <span class="material-symbols-outlined text-slate-400">arrow_back</span>
+            </a>
+            <h1 class="font-headline text-2xl font-bold tracking-tight uppercase text-red-500">Tabla de Precios</h1>
+        </div>
+        <a href="/pages/administrador/editar_precios.html" class="bg-red-500 text-white px-4 py-2 rounded-lg text-sm">
+            Editar Precios
+        </a>
+    </header>
+
+    <main class="flex-grow w-full max-w-4xl mx-auto px-6 pt-24 pb-32">
+        <nav class="flex border-b border-white/10 mb-8">
+            <button data-tipo="tamanio" class="tab-btn px-4 py-3 text-sm font-bold border-b-2 border-red-500 text-red-500">Por Tamaño</button>
+            <button data-tipo="tecnica" class="tab-btn px-4 py-3 text-sm font-medium text-slate-400">Por Técnica</button>
+            <button data-tipo="servicio" class="tab-btn px-4 py-3 text-sm font-medium text-slate-400">Por Servicio</button>
+        </nav>
+
+        <div id="listaPrecios" class="space-y-4"></div>
+        <div id="loadingState" class="text-center py-10 hidden">Cargando...</div>
+    </main>
+
+    <script>
+        const API_BASE = '/api';
+        let currentTipo = 'tamanio';
+        
+        const user = JSON.parse(localStorage.getItem('user') || 'null');
+        const empresa = JSON.parse(localStorage.getItem('empresa') || 'null');
+        const idEmpresa = empresa?.idEmpresa || 1;
+
+        async function cargarPrecios() {
+            document.getElementById('loadingState').classList.remove('hidden');
+            document.getElementById('listaPrecios').innerHTML = '';
+            
+            try {
+                const response = await fetch(`${API_BASE}/precios/tipo/${currentTipo}?idempresa=${idEmpresa}`);
+                const result = await response.json();
+                if (result.status === 'ok') renderizar(result.data);
+                else mostrarError('Error al cargar datos');
+            } catch (error) {
+                mostrarError('Error de conexión');
+            } finally {
+                document.getElementById('loadingState').classList.add('hidden');
+            }
+        }
+
+        function renderizar(data) {
+            const container = document.getElementById('listaPrecios');
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div class="text-center py-10 text-slate-500">No hay elementos configurados</div>';
+                return;
+            }
+            
+            const nombres = {
+                tamanio: { label: 'cm', desc: (item) => `Rango: ${item.anchomin}-${item.anchomax} x ${item.altomin}-${item.altomax} cm` },
+                tecnica: { label: '', desc: () => '' },
+                servicio: { label: '', desc: () => '' }
+            };
+            
+            container.innerHTML = data.map(item => `
+                <div class="bg-white/5 border border-white/10 rounded-xl p-4 flex justify-between items-center">
+                    <div>
+                        <h3 class="font-bold text-lg">${escapeHtml(item.nombre)}</h3>
+                        ${nombres[currentTipo].desc(item) ? `<p class="text-sm text-slate-400">${nombres[currentTipo].desc(item)}</p>` : ''}
+                        <p class="text-red-500 font-bold text-xl mt-1">$${parseFloat(item.precio).toFixed(2)} ${nombres[currentTipo].label}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function mostrarError(mensaje) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded-lg z-50 text-sm';
+            toast.textContent = mensaje;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function escapeHtml(str) { return str?.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])) || ''; }
+
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                currentTipo = btn.getAttribute('data-tipo');
+                document.querySelectorAll('.tab-btn').forEach(b => {
+                    b.classList.remove('border-red-500', 'text-red-500', 'font-bold');
+                    b.classList.add('text-slate-400', 'font-medium');
+                });
+                btn.classList.add('border-red-500', 'text-red-500', 'font-bold');
+                btn.classList.remove('text-slate-400', 'font-medium');
+                cargarPrecios();
+            });
+        });
+
+        cargarPrecios();
+    </script>
+</body>
+</html>

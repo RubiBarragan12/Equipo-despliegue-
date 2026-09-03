@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Pago Exitoso</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#7f13ec",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#191022",
+                    },
+                    fontFamily: { "display": ["Space Grotesk", "sans-serif"] },
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        body { min-height: max(884px, 100dvh); }
+        @keyframes pop-in {
+            0% { transform: scale(0.5); opacity: 0; }
+            70% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .pop-in { animation: pop-in 0.5s ease-out forwards; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+    <div class="relative flex h-auto min-h-screen w-full flex-col items-center justify-center px-6 text-center">
+
+        <!-- Verificando -->
+        <div id="estado-verificando" class="flex flex-col items-center gap-4">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
+            <p class="text-white font-semibold text-lg">Confirmando tu pago...</p>
+            <p class="text-[#ad92c9] text-sm">Esto puede tardar unos segundos.</p>
+        </div>
+
+        <!-- Éxito anticipo -->
+        <div id="estado-anticipo" class="hidden flex-col items-center gap-4 w-full max-w-sm">
+            <div class="pop-in w-24 h-24 rounded-full bg-orange-500/20 flex items-center justify-center">
+                <span class="material-symbols-outlined text-5xl text-orange-400" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">check_circle</span>
+            </div>
+            <h1 class="text-white text-2xl font-bold mt-2">¡Anticipo pagado!</h1>
+            <p class="text-[#ad92c9] text-sm">Tu cita está confirmada. El saldo restante se paga el día del tatuaje.</p>
+
+            <div id="resumen-anticipo" class="w-full mt-2 rounded-xl bg-[#261933] border border-[#362348] p-4 text-left space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-[#ad92c9] text-sm">Artista</span>
+                    <span id="exito-artista" class="text-white text-sm font-medium">—</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-[#ad92c9] text-sm">Fecha</span>
+                    <span id="exito-fecha" class="text-white text-sm font-medium">—</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-[#ad92c9] text-sm">Hora</span>
+                    <span id="exito-hora" class="text-white text-sm font-medium">—</span>
+                </div>
+                <div class="border-t border-white/10 pt-3 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="text-[#ad92c9] text-sm">Anticipo pagado</span>
+                        <span id="exito-anticipo" class="text-orange-400 font-bold">—</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-[#ad92c9] text-sm">Saldo restante (día del tatuaje)</span>
+                        <span id="exito-restante" class="text-white text-sm font-medium">—</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full mt-2 flex flex-col gap-3">
+                <button id="btn-seguimiento"
+                    class="w-full rounded-xl bg-primary hover:bg-primary/90 py-3.5 px-4 text-base font-bold text-white transition-colors flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined">chat</span>
+                    Ir al Chat de Seguimiento
+                </button>
+                <button id="btn-mis-citas"
+                    class="w-full rounded-xl bg-transparent border border-primary/30 py-3 px-4 text-sm font-medium text-primary hover:bg-primary/10 transition-colors">
+                    Ver mis cotizaciones
+                </button>
+            </div>
+        </div>
+
+        <!-- Éxito liquidación -->
+        <div id="estado-liquidacion" class="hidden flex-col items-center gap-4 w-full max-w-sm">
+            <div class="pop-in w-24 h-24 rounded-full bg-green-500/20 flex items-center justify-center">
+                <span class="material-symbols-outlined text-5xl text-green-400" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">check_circle</span>
+            </div>
+            <h1 class="text-white text-2xl font-bold mt-2">¡Pago completo!</h1>
+            <p class="text-[#ad92c9] text-sm">Tu tatuaje está totalmente pagado. ¡Nos vemos en la cita!</p>
+
+            <div class="w-full mt-2 rounded-xl bg-[#261933] border border-[#362348] p-4 text-left space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-[#ad92c9] text-sm">Artista</span>
+                    <span id="exito-liq-artista" class="text-white text-sm font-medium">—</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-[#ad92c9] text-sm">Fecha</span>
+                    <span id="exito-liq-fecha" class="text-white text-sm font-medium">—</span>
+                </div>
+                <div class="border-t border-white/10 pt-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-[#ad92c9] text-sm">Liquidación pagada</span>
+                        <span id="exito-liq-monto" class="text-green-400 font-bold">—</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full mt-2 flex flex-col gap-3">
+                <button id="btn-seguimiento-liq"
+                    class="w-full rounded-xl bg-green-600 hover:bg-green-500 py-3.5 px-4 text-base font-bold text-white transition-colors flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined">chat</span>
+                    Ir al Chat de Seguimiento
+                </button>
+                <button id="btn-mis-citas-liq"
+                    class="w-full rounded-xl bg-transparent border border-primary/30 py-3 px-4 text-sm font-medium text-primary hover:bg-primary/10 transition-colors">
+                    Ver mis cotizaciones
+                </button>
+            </div>
+        </div>
+
+        <!-- Error -->
+        <div id="estado-error" class="hidden flex-col items-center gap-4 w-full max-w-sm">
+            <div class="w-24 h-24 rounded-full bg-red-500/20 flex items-center justify-center">
+                <span class="material-symbols-outlined text-5xl text-red-400" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">error</span>
+            </div>
+            <h1 class="text-white text-2xl font-bold mt-2">Hubo un problema</h1>
+            <p class="text-[#ad92c9] text-sm">No pudimos confirmar tu pago. Si el cargo fue realizado, contacta con nosotros.</p>
+            <button id="btn-reintentar"
+                class="w-full rounded-xl bg-primary py-3.5 px-4 text-base font-bold text-white transition-colors hover:bg-primary/90">
+                Volver e intentar de nuevo
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+
+        function mostrar(id) {
+            ['estado-verificando', 'estado-anticipo', 'estado-liquidacion', 'estado-error'].forEach(s => {
+                const el = document.getElementById(s);
+                el.classList.toggle('hidden', s !== id);
+                el.classList.toggle('flex', s === id);
+            });
+        }
+
+        function formatFecha(fechaStr) {
+            if (!fechaStr) return '—';
+            const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+            // substring(0,10) normaliza tanto "2025-05-11" como "2025-05-11T00:00:00.000Z"
+            const d = new Date(String(fechaStr).substring(0, 10) + 'T12:00:00');
+            if (isNaN(d.getTime())) return '—';
+            return `${d.getDate()} de ${meses[d.getMonth()]}, ${d.getFullYear()}`;
+        }
+
+        function limpiarStorage() {
+            localStorage.removeItem('cotizacionSeleccionada');
+            localStorage.removeItem('tipoPago');
+            localStorage.removeItem('anticipoPct');
+        }
+
+        async function irASeguimiento(idCita) {
+            try {
+                const r = await fetch(`${API_BASE}/seguimientos/por-cita/${idCita}`);
+                if (r.ok) {
+                    const j = await r.json();
+                    if (j.seguimientoId) {
+                        const user = JSON.parse(localStorage.getItem('user') || '{}');
+                        let url = `/pages/cliente/seguimiento/cliente-detalle.html?id=${j.seguimientoId}`;
+                        if (user.idcliente) url += `&idcliente=${user.idcliente}`;
+                        limpiarStorage();
+                        window.location.href = url;
+                        return;
+                    }
+                }
+            } catch (_) {}
+            limpiarStorage();
+            window.location.href = '/pages/cliente/cotizacion/mis_cotizaciones.html';
+        }
+
+        function irAMisCotizaciones() {
+            limpiarStorage();
+            window.location.href = '/pages/cliente/cotizacion/mis_cotizaciones.html';
+        }
+
+        function mostrarResultado(tipo, montoPagado, cot) {
+            const precioTotal = parseFloat(cot.preciofinal || cot.montoestimado || 0);
+            const restante    = Math.max(0, Math.round((precioTotal - montoPagado) * 100) / 100);
+
+            if (tipo === 'liquidacion') {
+                document.getElementById('exito-liq-artista').textContent = cot.tatuador_nombre || '—';
+                document.getElementById('exito-liq-fecha').textContent   = formatFecha(cot.fecha);
+                document.getElementById('exito-liq-monto').textContent   = `$${montoPagado.toFixed(2)} MXN`;
+                document.getElementById('btn-seguimiento-liq').addEventListener('click', () => irASeguimiento(cot.idcita));
+                document.getElementById('btn-mis-citas-liq').addEventListener('click', irAMisCotizaciones);
+                mostrar('estado-liquidacion');
+            } else {
+                document.getElementById('exito-artista').textContent  = cot.tatuador_nombre || '—';
+                document.getElementById('exito-fecha').textContent    = formatFecha(cot.fecha);
+                document.getElementById('exito-hora').textContent     = cot.hora ? cot.hora.substring(0, 5) + ' hrs' : '—';
+                document.getElementById('exito-anticipo').textContent = `$${montoPagado.toFixed(2)} MXN`;
+                document.getElementById('exito-restante').textContent = `$${restante.toFixed(2)} MXN`;
+                document.getElementById('btn-seguimiento').addEventListener('click', () => irASeguimiento(cot.idcita));
+                document.getElementById('btn-mis-citas').addEventListener('click', irAMisCotizaciones);
+                mostrar('estado-anticipo');
+            }
+        }
+
+        async function verificarPago() {
+            // Obtener session_id de la URL (Stripe lo inyecta en el success_url)
+            const sessionId    = new URLSearchParams(window.location.search).get('session_id');
+            const idCotizacion = localStorage.getItem('cotizacionSeleccionada');
+
+            if (!sessionId && !idCotizacion) { mostrar('estado-error'); return; }
+
+            // Ruta principal: usar session_id para verificación directa (no depende del webhook)
+            if (sessionId) {
+                let intentos = 0;
+                const poll = async () => {
+                    intentos++;
+                    try {
+                        const r    = await fetch(`${API_BASE}/pagos/verificar-session`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ sessionId })
+                        });
+                        const json = await r.json();
+
+                        if (json.status === 'pendiente') {
+                            if (intentos >= 10) { mostrar('estado-error'); return; }
+                            setTimeout(poll, 1500);
+                            return;
+                        }
+                        if (json.status !== 'ok') { mostrar('estado-error'); return; }
+
+                        // Guardar cotizacionSeleccionada para la pantalla de seguimiento
+                        if (json.cotizacion?.idcotizacion) {
+                            localStorage.setItem('cotizacionSeleccionada', json.cotizacion.idcotizacion);
+                        }
+                        mostrarResultado(json.tipo, json.montoPagado, json.cotizacion);
+
+                    } catch (_) {
+                        if (intentos >= 10) { mostrar('estado-error'); return; }
+                        setTimeout(poll, 1500);
+                    }
+                };
+                poll();
+                return;
+            }
+
+            // Fallback sin session_id: polling por estado (pagos en efectivo, etc.)
+            const tipoPago     = localStorage.getItem('tipoPago') || 'anticipo';
+            const esLiquidacion = tipoPago === 'liquidacion';
+            const estadoEsperado = esLiquidacion ? 'pagada' : 'pagado anticipo';
+            let intentos = 0;
+
+            const poll = async () => {
+                intentos++;
+                try {
+                    const r    = await fetch(`${API_BASE}/cotizaciones/${idCotizacion}`);
+                    const json = await r.json();
+                    if (json.status !== 'ok') { if (intentos >= 10) mostrar('estado-error'); else setTimeout(poll, 1500); return; }
+
+                    const estado = (json.data.estado || '').toLowerCase();
+                    if (estado === estadoEsperado || estado === 'pagada') {
+                        const precio     = parseFloat(json.data.preciofinal || json.data.montoestimado || 0);
+                        const anticipoPct = parseFloat(localStorage.getItem('anticipoPct') || '50');
+                        const montoPagado = Math.round(precio * (anticipoPct / 100) * 100) / 100;
+                        mostrarResultado(tipoPago, montoPagado, json.data);
+                    } else {
+                        if (intentos >= 10) mostrar('estado-error'); else setTimeout(poll, 1500);
+                    }
+                } catch (_) {
+                    if (intentos >= 10) mostrar('estado-error'); else setTimeout(poll, 1500);
+                }
+            };
+            poll();
+        }
+
+        document.getElementById('btn-reintentar').addEventListener('click', () => {
+            window.location.href = '/pages/cliente/cotizacion/pagar_stripe_cotizacion.html';
+        });
+
+        document.addEventListener('DOMContentLoaded', verificarPago);
+    </script>
+</body>
+</html>

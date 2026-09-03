@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Políticas - Tattoo Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: { "primary": "#D93B3B", "background-dark": "#191022" },
+                    fontFamily: { "display": ["Space Grotesk"] }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-background-dark font-display text-white/90">
+    <div class="relative flex min-h-screen w-full flex-col">
+        <header class="flex h-16 items-center px-4 sticky top-0 bg-background-dark/80 backdrop-blur-md z-20 border-b border-white/5">
+            <a class="flex items-center justify-center size-10 text-white/90 hover:text-primary transition-colors" href="../menu_ajustes.html">
+                <span class="material-symbols-outlined">arrow_back_ios_new</span>
+            </a>
+            <div class="flex-1 text-center">
+                <h1 class="text-white/90 text-lg font-bold">Políticas</h1>
+            </div>
+            <div class="size-10"></div>
+        </header>
+
+        <main class="flex-grow p-4 pb-24">
+            <a class="flex items-center gap-4 p-4 transition-colors duration-200 hover:bg-white/5 bg-white/5 rounded-xl border border-white/10 mb-6" 
+               href="./nueva_politica.html">
+                <span class="material-symbols-outlined text-primary text-2xl">add_circle</span>
+                <span class="flex-grow text-white/90 font-medium">Redactar nueva política</span>
+                <span class="material-symbols-outlined text-white/50">chevron_right</span>
+            </a>
+
+            <div id="politicas-container" class="flex flex-col gap-4">
+                <div class="text-center py-10 opacity-50">Cargando políticas...</div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:4000/api/politicas';
+
+        // Obtener y Listar Políticas
+        async function cargarPoliticas() {
+            try {
+                const response = await fetch(API_URL);
+                const result = await response.json();
+                const container = document.getElementById('politicas-container');
+
+                if (result.status === 'ok' || result.status === 'success') {
+                    if (result.data.length === 0) {
+                        container.innerHTML = `<p class="text-center text-white/30 py-10">No hay políticas creadas.</p>`;
+                        return;
+                    }
+
+                    container.innerHTML = result.data.map(p => `
+                        <div class="rounded-2xl border border-white/10 bg-white/5 p-5 flex flex-col gap-4">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-bold text-lg text-white/90">${p.titulo}</h3>
+                                    <p class="text-xs text-white/40 uppercase tracking-widest">${new Date(p.fecha_creacion).toLocaleDateString()}</p>
+                                </div>
+                                <button onclick="toggleEstado(${p.idpolitica}, ${p.es_activa})" 
+                                    class="px-3 py-1 rounded-full text-[10px] font-bold ${p.es_activa ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-white/10 text-white/40 border border-white/10'}">
+                                    ${p.es_activa ? 'ACTIVA' : 'INACTIVA'}
+                                </button>
+                            </div>
+                            <p class="text-sm text-white/60 line-clamp-2">${p.contenido}</p>
+                            
+                            <div class="flex justify-end gap-2 pt-2 border-t border-white/5">
+                                <button onclick="irAEditar(${p.idpolitica})" class="p-2 text-white/30 hover:text-blue-400 transition-colors">
+                                    <span class="material-symbols-outlined text-xl">edit</span>
+                                </button>
+                                
+                                <button onclick="eliminarPolitica(${p.idpolitica})" class="p-2 text-white/30 hover:text-primary transition-colors">
+                                    <span class="material-symbols-outlined text-xl">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById('politicas-container').innerHTML = `<p class="text-center text-red-400 py-10">Error al conectar con el servidor.</p>`;
+            }
+        }
+
+        // Función para redirigir a la edición
+        function irAEditar(id) {
+            window.location.href = `./editar_politica.html?id=${id}`;
+        }
+
+        async function toggleEstado(id, estadoActual) {
+            try {
+                await fetch(`${API_URL}/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ es_activa: !estadoActual })
+                });
+                cargarPoliticas();
+            } catch (err) { alert("Error al actualizar"); }
+        }
+
+        async function eliminarPolitica(id) {
+            if (!confirm("¿Seguro que deseas eliminar esta política?")) return;
+            try {
+                const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+                if (response.ok) cargarPoliticas();
+            } catch (err) { alert("Error al eliminar"); }
+        }
+
+        document.addEventListener('DOMContentLoaded', cargarPoliticas);
+    </script>
+</body>
+</html>

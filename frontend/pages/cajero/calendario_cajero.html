@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Calendario de Citas</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: { extend: {
+                colors: { "primary": "#D93B3B", "background-dark": "#191022", "background-light": "#f7f6f8" },
+                fontFamily: { "display": ["Space Grotesk", "sans-serif"] }
+            }}
+        }
+    </script>
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        body { min-height: max(884px, 100dvh); }
+        .dia-cita { position: relative; }
+        .dia-cita::after { content:''; position:absolute; bottom:2px; left:50%; transform:translateX(-50%); width:5px; height:5px; border-radius:50%; background:#D93B3B; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display pb-28">
+
+<header class="sticky top-0 z-10 flex h-16 items-center justify-between bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm px-4 border-b border-white/10">
+    <a href="/pages/cajero/menu_cajero.html" class="flex size-12 items-center justify-start text-gray-700 dark:text-white">
+        <span class="material-symbols-outlined">arrow_back</span>
+    </a>
+    <h1 class="text-lg font-bold text-gray-900 dark:text-white flex-1 text-center">Calendario de Citas</h1>
+    <div class="size-12"></div>
+</header>
+
+<main class="px-4 pt-4">
+    <!-- Navegación mes -->
+    <div class="flex items-center justify-between mb-4">
+        <button id="btn-prev" class="flex size-10 items-center justify-center rounded-full hover:bg-white/10 text-gray-600 dark:text-white transition-colors">
+            <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+        <h2 id="mes-titulo" class="text-base font-bold text-gray-900 dark:text-white"></h2>
+        <button id="btn-next" class="flex size-10 items-center justify-center rounded-full hover:bg-white/10 text-gray-600 dark:text-white transition-colors">
+            <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+    </div>
+
+    <!-- Cabecera días -->
+    <div class="grid grid-cols-7 mb-1">
+        <div class="text-center text-xs font-bold text-gray-400 py-1">Lu</div>
+        <div class="text-center text-xs font-bold text-gray-400 py-1">Ma</div>
+        <div class="text-center text-xs font-bold text-gray-400 py-1">Mi</div>
+        <div class="text-center text-xs font-bold text-gray-400 py-1">Ju</div>
+        <div class="text-center text-xs font-bold text-gray-400 py-1">Vi</div>
+        <div class="text-center text-xs font-bold text-gray-400 py-1">Sá</div>
+        <div class="text-center text-xs font-bold text-gray-400 py-1">Do</div>
+    </div>
+
+    <!-- Grid días -->
+    <div id="cal-grid" class="grid grid-cols-7 gap-1 mb-6"></div>
+
+    <!-- Lista de citas del día seleccionado -->
+    <div id="citas-dia" class="space-y-3"></div>
+</main>
+
+<nav class="fixed bottom-0 left-0 right-0 h-20 bg-background-dark border-t border-white/10 px-4">
+    <div class="flex justify-around items-center h-full">
+        <a class="flex flex-col items-center gap-1 text-white/50" href="/pages/cajero/menu_cajero.html">
+            <span class="material-symbols-outlined text-2xl">grid_view</span>
+            <span class="text-xs font-medium">Inicio</span>
+        </a>
+        <a class="flex flex-col items-center gap-1 text-primary" href="/pages/cajero/calendario_cajero.html">
+            <span class="material-symbols-outlined text-2xl">calendar_today</span>
+            <span class="text-xs font-medium">Calendario</span>
+        </a>
+        <a class="flex flex-col items-center gap-1 text-white/50" href="/pages/cajero/consultar_cliente_cajero.html">
+            <span class="material-symbols-outlined text-2xl">group</span>
+            <span class="text-xs font-medium">Clientes</span>
+        </a>
+    </div>
+</nav>
+
+<script>
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    if (!user) { window.location.href = '/'; }
+
+    const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    let vistaFecha = new Date();
+    let todasLasCitas = [];
+    let diaSeleccionado = null;
+
+    function escapeHtml(s) { if (!s) return ''; return s.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
+
+    function pad2(n) { return String(n).padStart(2, '0'); }
+    function toISO(d) { return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
+
+    async function cargarCitas() {
+        const idEmpresa = user.idempresa;
+        if (!idEmpresa) return;
+        try {
+            const r = await fetch(`/api/proximas-citas?idempresa=${idEmpresa}`);
+            const j = await r.json();
+            todasLasCitas = j.citas || [];
+            renderCalendario();
+        } catch (_) {}
+    }
+
+    function renderCalendario() {
+        const year = vistaFecha.getFullYear();
+        const month = vistaFecha.getMonth();
+        document.getElementById('mes-titulo').textContent = `${MESES[month]} ${year}`;
+
+        const diasConCitas = new Set(todasLasCitas.map(c => c.fecha));
+        const hoyISO = toISO(new Date());
+
+        const primerDia = new Date(year, month, 1);
+        let startDow = primerDia.getDay(); // 0=Dom
+        startDow = startDow === 0 ? 6 : startDow - 1; // 0=Lun
+
+        const diasEnMes = new Date(year, month + 1, 0).getDate();
+        const grid = document.getElementById('cal-grid');
+        grid.innerHTML = '';
+
+        // Celdas vacías al inicio
+        for (let i = 0; i < startDow; i++) {
+            grid.innerHTML += `<div></div>`;
+        }
+
+        for (let d = 1; d <= diasEnMes; d++) {
+            const isoDate = `${year}-${pad2(month+1)}-${pad2(d)}`;
+            const tieneCita = diasConCitas.has(isoDate);
+            const esHoy = isoDate === hoyISO;
+            const seleccionado = isoDate === diaSeleccionado;
+
+            grid.innerHTML += `
+                <button onclick="seleccionarDia('${isoDate}')"
+                    class="relative flex items-center justify-center h-10 w-full rounded-full text-sm font-medium transition-colors
+                        ${seleccionado ? 'bg-primary text-white' : esHoy ? 'border border-primary text-primary' : 'text-gray-700 dark:text-gray-200 hover:bg-white/10'}
+                        ${tieneCita ? 'dia-cita' : ''}">
+                    ${d}
+                </button>`;
+        }
+    }
+
+    function seleccionarDia(isoDate) {
+        diaSeleccionado = isoDate;
+        renderCalendario();
+        renderCitasDia(isoDate);
+    }
+
+    function renderCitasDia(isoDate) {
+        const el = document.getElementById('citas-dia');
+        const citasDia = todasLasCitas.filter(c => c.fecha === isoDate);
+        const [y, m, d] = isoDate.split('-').map(Number);
+        const fechaFmt = `${d} de ${MESES[m-1]}`;
+
+        if (citasDia.length === 0) {
+            el.innerHTML = `
+                <div class="flex flex-col items-center justify-center py-6 text-gray-400">
+                    <span class="material-symbols-outlined text-3xl mb-1">event_busy</span>
+                    <p class="text-sm">Sin citas el ${fechaFmt}</p>
+                </div>`;
+            return;
+        }
+
+        el.innerHTML = `<p class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-2">Citas del ${fechaFmt}</p>` +
+            citasDia.map(c => `
+                <div class="flex items-center gap-4 rounded-xl border border-white/10 bg-white dark:bg-white/5 p-4">
+                    <div class="flex flex-col items-center justify-center w-14 shrink-0">
+                        <span class="text-base font-bold text-gray-900 dark:text-white">${c.hora}</span>
+                    </div>
+                    <div class="flex-grow min-w-0">
+                        <p class="font-bold text-gray-900 dark:text-white truncate">${escapeHtml(c.cliente)}</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 truncate">${escapeHtml(c.zona)}</p>
+                    </div>
+                    <span class="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary shrink-0">${escapeHtml(c.estado)}</span>
+                </div>`).join('');
+    }
+
+    document.getElementById('btn-prev').addEventListener('click', () => {
+        vistaFecha.setMonth(vistaFecha.getMonth() - 1);
+        diaSeleccionado = null;
+        document.getElementById('citas-dia').innerHTML = '';
+        renderCalendario();
+    });
+    document.getElementById('btn-next').addEventListener('click', () => {
+        vistaFecha.setMonth(vistaFecha.getMonth() + 1);
+        diaSeleccionado = null;
+        document.getElementById('citas-dia').innerHTML = '';
+        renderCalendario();
+    });
+
+    // Seleccionar hoy por defecto
+    const hoyISO = toISO(new Date());
+    cargarCitas().then(() => {
+        seleccionarDia(hoyISO);
+    });
+</script>
+</body>
+</html>

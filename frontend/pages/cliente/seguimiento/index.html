@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>The Obsidian Gallery · Seguimiento de Clientes</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface": "#120c16", "primary": "#ba9eff", "primary-dim": "#8455ef",
+                        "surface-container": "#1e1723", "surface-container-high": "#251c2a",
+                        "on-surface": "#faedfc", "on-surface-variant": "#b3a7b6",
+                        "error": "#ff6e84", "secondary": "#c08cf7"
+                    },
+                    fontFamily: { "headline": ["Space Grotesk"], "body": ["Manrope"] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #120c16; color: #faedfc; font-family: 'Manrope', sans-serif; }
+        .glass-header { background: rgba(18, 12, 22, 0.8); backdrop-filter: blur(20px); }
+    </style>
+</head>
+<body class="min-h-screen pb-32">
+
+    <header class="fixed top-0 w-full z-50 glass-header flex items-center justify-between px-6 py-4">
+        <div class="flex items-center gap-3">
+            <a href="#" id="backButton" class="material-symbols-outlined text-primary cursor-pointer hover:scale-110 transition">arrow_back</a>
+            <h1 class="font-headline text-2xl font-bold tracking-tight text-primary" id="headerTitle">Seguimiento de Clientes</h1>
+        </div>
+        <div id="header-avatar" class="w-10 h-10 rounded-full border border-primary/20 bg-[#ba9eff]/20 flex items-center justify-center">
+            <span id="header-initials" class="text-[#ba9eff] font-bold text-sm leading-none">?</span>
+        </div>
+    </header>
+
+    <main class="pt-24 px-6 space-y-8">
+        <div class="relative flex items-center">
+            <span class="material-symbols-outlined absolute left-4 text-on-surface-variant/50">search</span>
+            <input type="text" id="searchInput" placeholder="Buscar cliente por nombre" 
+                   class="w-full bg-surface-container-high border-none rounded-2xl py-4 pl-12 pr-4 text-on-surface focus:ring-1 focus:ring-primary/40 transition-all">
+        </div>
+
+        <div class="flex gap-3 overflow-x-auto pb-2">
+            <button data-filter="all" class="filter-chip active whitespace-nowrap px-5 py-2 rounded-full bg-primary text-on-primary text-xs font-bold">TODOS</button>
+            <button data-filter="recent" class="filter-chip whitespace-nowrap px-5 py-2 rounded-full bg-surface-container-high text-on-surface-variant text-xs font-bold">RECIENTES (≤5 días)</button>
+            <button data-filter="critical" class="filter-chip whitespace-nowrap px-5 py-2 rounded-full bg-surface-container-high text-on-surface-variant text-xs font-bold">CRÍTICOS</button>
+            <button data-filter="completed" class="filter-chip whitespace-nowrap px-5 py-2 rounded-full bg-surface-container-high text-on-surface-variant text-xs font-bold">FINALIZADOS</button>
+        </div>
+
+        <div id="clientList" class="space-y-4"></div>
+        
+        <div class="pt-8 text-center opacity-20">
+            <span class="material-symbols-outlined text-6xl">ink_pen</span>
+            <p class="font-headline text-sm tracking-[0.2em] uppercase mt-4">The Obsidian Gallery</p>
+        </div>
+    </main>
+
+    <button id="addClientBtn" class="fixed bottom-24 right-6 w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-primary-dim shadow-lg flex items-center justify-center z-50 hover:scale-105 transition" style="display: none;">
+        <span class="material-symbols-outlined text-on-primary scale-110">person_add</span>
+    </button>
+
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 w-full flex justify-around bg-[#120c16]/80 backdrop-blur-xl py-2 px-4 rounded-t-2xl z-50">
+        <a id="nav-inicio" href="#" class="flex flex-col items-center text-on-surface-variant/50 px-4 py-2">
+            <span class="material-symbols-outlined">home</span>
+            <span class="text-[10px] font-bold uppercase">Inicio</span>
+        </a>
+        <a id="nav-citas" href="#" class="flex flex-col items-center text-on-surface-variant/50 px-4 py-2">
+            <span class="material-symbols-outlined">calendar_month</span>
+            <span class="text-[10px] font-bold uppercase">Mis Citas</span>
+        </a>
+        <a href="#" class="flex flex-col items-center text-primary bg-surface-container rounded-xl px-4 py-2">
+            <span class="material-symbols-outlined">chat</span>
+            <span class="text-[10px] font-bold uppercase">Seguimiento</span>
+        </a>
+    </nav>
+
+    <script>
+ // ============================================
+// OBTENER USUARIO Y ROL
+// ============================================
+        
+let currentUser = null;
+let currentEmpresa = null;
+let currentRol = null;
+let currentUserId = null;
+let currentIdEmpleado = null;
+
+try {
+    const userData = localStorage.getItem('user');
+    const empresaData = localStorage.getItem('empresa');
+    
+    if (userData) {
+        currentUser = JSON.parse(userData);
+        
+        // 🔥 CORRECCIÓN: Para tatuadores, buscar el idtatuador
+        if (currentUser.rol === 'Tatuador' || currentUser.rol === 'tatuador') {
+            currentRol = 'tatuador';
+            // Intentar obtener idtatuador de varias fuentes
+            currentUserId = currentUser.idtatuador || currentUser.id || currentUser.idempleado;
+            currentIdEmpleado = currentUser.idempleado;
+            
+            // Si el ID es el idempleado (13) en lugar del idtatuador (1), necesitamos el correcto
+            // Por ahora, usamos el idempleado como fallback
+            console.log('📌 Tatuador - ID encontrado:', currentUserId);
+            console.log('📌 ID Empleado:', currentIdEmpleado);
+        } 
+        else if (currentUser.rol === 'cliente') {
+            currentRol = 'cliente';
+            currentUserId = currentUser.idcliente;
+        }
+        else if (currentUser.rol === 'admin' || currentUser.rol === 'dueño' || currentUser.rol === 'Dueño') {
+            currentRol = 'admin';
+            currentUserId = currentUser.id || currentUser.idempleado;
+        }
+        else {
+            currentRol = currentUser.rol ? currentUser.rol.toLowerCase() : null;
+            currentUserId = currentUser.id;
+        }
+        
+        console.log('📌 Usuario:', currentUser.nombre);
+        console.log('📌 Rol original:', currentUser.rol, '→ Normalizado:', currentRol);
+        console.log('📌 ID principal:', currentUserId);
+    }
+} catch (e) {
+    console.error('Error leyendo localStorage:', e);
+}
+// Configurar UI según el rol
+const headerTitle = document.getElementById('headerTitle');
+const addBtn = document.getElementById('addClientBtn');
+
+const esTatuador = currentRol === 'tatuador' || currentRol === 'admin';
+const esCliente = currentRol === 'cliente';
+const esAdmin = currentRol === 'admin' || currentRol === 'dueño';
+
+// Si es admin pero no tiene ID, usar un ID por defecto o mostrar error
+if (esAdmin && !currentUserId) {
+    console.warn('⚠️ Admin sin ID, usando ID temporal');
+    currentUserId = 999; // ID temporal para admin
+}
+
+if (esTatuador && !esAdmin) {
+    headerTitle.textContent = 'Seguimiento de Clientes · Tatuador';
+    addBtn.style.display = 'flex';
+    console.log('✅ Modo TATUADOR - ID:', currentUserId);
+} else if (esCliente) {
+    headerTitle.textContent = 'Mis Seguimientos';
+    addBtn.style.display = 'none';
+    console.log('✅ Modo CLIENTE - ID:', currentUserId);
+} else if (esAdmin) {
+    headerTitle.textContent = 'Seguimiento · Administrador';
+    addBtn.style.display = 'none';
+    console.log('✅ Modo ADMIN - Viendo todos los seguimientos');
+}
+        
+        // Avatar con iniciales
+        function getIniciales(nombre = '') {
+            const p = nombre.trim().split(/\s+/).filter(Boolean);
+            if (p.length >= 2) return (p[0][0] + p[1][0]).toUpperCase();
+            return (p[0] || '?').substring(0, 2).toUpperCase();
+        }
+        if (currentUser) {
+            const initEl = document.getElementById('header-initials');
+            if (initEl) initEl.textContent = getIniciales(currentUser.nombre);
+        }
+
+        // Nav links dinámicos por rol
+        const navInicio = document.getElementById('nav-inicio');
+        const navCitas = document.getElementById('nav-citas');
+        if (esCliente) {
+            if (navInicio) navInicio.href = '/pages/cliente/menu_cliente.html';
+            if (navCitas) navCitas.href = '/pages/cliente/cotizacion/mis_cotizaciones.html';
+        } else if (esTatuador && !esAdmin) {
+            if (navInicio) navInicio.href = '/pages/tatuador/menu_tatuador.html';
+            if (navCitas) navCitas.href = '/pages/tatuador/horarios/editar_disponibilidad.html';
+        } else if (esAdmin) {
+            if (navInicio) navInicio.href = '/pages/administrador/menu_admin.html';
+            if (navCitas) navCitas.href = '/pages/administrador/menu_admin.html';
+        }
+
+        // ============================================
+        // BOTÓN DE REGRESO (atrás)
+        // ============================================
+        
+        const backButton = document.getElementById('backButton');
+        if (backButton) {
+            if (esAdmin) {
+                backButton.href = '/pages/administrador/menu_admin.html';
+            } else if (esCliente) {
+                backButton.href = '/pages/cliente/menu_cliente.html';
+            } else if (esTatuador && !esAdmin) {
+                backButton.href = '/pages/tatuador/menu_tatuador.html';
+            } else {
+                backButton.href = '/';
+            }
+            console.log('🔙 Botón atrás apunta a:', backButton.href);
+        }
+        
+        // ============================================
+        // BOTÓN DE INICIO
+        // ============================================
+        
+        const homeLink = document.getElementById('homeLink');
+        if (homeLink) {
+            if (esAdmin) {
+                homeLink.href = '/pages/administrador/menu_administrador.html';
+            } else if (esCliente) {
+                homeLink.href = '/pages/cliente/menu_cliente.html';
+            } else if (esTatuador && !esAdmin) {
+                homeLink.href = '/pages/tatuador/menu_tatuador.html';
+            } else {
+                homeLink.href = '/';
+            }
+            console.log('🏠 Botón inicio apunta a:', homeLink.href);
+        }
+        
+        const API_BASE = '/api';
+        
+        // ============================================
+        // CARGAR CLIENTES SEGÚN ROL
+        // ============================================
+        
+        async function loadClients(filter = 'all', search = '') {
+            try {
+                let url = `${API_BASE}/clientes`;
+                const params = new URLSearchParams();
+                
+                // SI ES ADMIN, usar endpoint especial para ver TODOS
+                if (esAdmin) {
+                    url = `${API_BASE}/clientes/admin/all`;
+                    if (search) params.append('search', search);
+                    if (params.toString()) url += '?' + params.toString();
+                    
+                    console.log('📡 Admin - Fetching todos los seguimientos:', url);
+                    const response = await fetch(url);
+                    const clients = await response.json();
+                    renderAdminClientList(clients);
+                    return;
+                }
+                
+                // Si es CLIENTE, filtrar por idcliente
+                if (esCliente && currentUserId) {
+                    params.append('idcliente', currentUserId);
+                    console.log('🔍 Cliente ID:', currentUserId);
+                }
+                // Si es TATUADOR, filtrar por idtatuador
+                else if (esTatuador && currentUserId) {
+                    params.append('idtatuador', currentUserId);
+                    console.log('🔍 Tatuador ID:', currentUserId);
+                } else {
+                    console.warn('⚠️ No se pudo determinar el filtro de usuario');
+                    return;
+                }
+                
+                if (filter && filter !== 'all') params.append('filter', filter);
+                if (search) params.append('search', search);
+                
+                if (params.toString()) url += '?' + params.toString();
+                
+                console.log('📡 Fetching:', url);
+                const response = await fetch(url);
+                
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                let clients = await response.json();
+                
+                // Ordenar clientes por diasProceso (más recientes primero)
+                clients = clients.sort((a, b) => a.diasProceso - b.diasProceso);
+
+                console.log('📊 Datos recibidos:', clients.length);
+                renderClientList(clients);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('clientList').innerHTML = `
+                    <div class="text-center text-error py-10">
+                        <span class="material-symbols-outlined text-5xl mb-4">error</span>
+                        <p>Error al cargar clientes</p>
+                        <button onclick="loadClients()" class="mt-4 px-4 py-2 bg-primary rounded-lg">Reintentar</button>
+                    </div>
+                `;
+            }
+        }
+        
+        // Renderizado para ADMIN
+        function renderAdminClientList(clients) {
+            const container = document.getElementById('clientList');
+            if (!clients || clients.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-on-surface-variant/50 py-10">
+                        <span class="material-symbols-outlined text-5xl mb-4">inbox</span>
+                        <p>No hay seguimientos registrados</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = clients.map(client => `
+                <div class="client-card bg-surface-container rounded-2xl p-4 flex items-center gap-4 hover:bg-surface-container-high transition cursor-pointer" data-id="${client.id}">
+                    <div class="relative">
+                        <div class="w-14 h-14 rounded-full border-2 border-primary/20 bg-[#ba9eff]/20 flex items-center justify-center">
+                            <span class="text-[#ba9eff] font-bold text-lg leading-none">${getIniciales(client.cliente_nombre || client.nombre || '')}</span>
+                        </div>
+                        <div class="absolute bottom-0 right-0 w-3 h-3 bg-primary rounded-full border-2 border-surface-container"></div>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-headline text-lg font-bold">${escapeHtml(client.cliente_nombre)}</h3>
+                        <p class="text-xs text-on-surface-variant/80">Tatuador: ${escapeHtml(client.tatuador_nombre)}</p>
+                        <p class="text-xs text-primary/60 mt-1">Estado: ${client.estado}</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="material-symbols-outlined text-primary">chevron_right</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.querySelectorAll('.client-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const id = card.getAttribute('data-id');
+                    window.location.href = `/pages/cliente/seguimiento/cliente-detalle.html?id=${id}&admin=true`;
+                });
+            });
+        }
+        
+        // Renderizado para CLIENTE y TATUADOR
+        function renderClientList(clients) {
+            const container = document.getElementById('clientList');
+            if (!clients || clients.length === 0) {
+                let emptyMessage = 'No hay seguimientos activos';
+                if (esCliente) {
+                    emptyMessage = 'No tienes seguimientos activos. Agenda una cita para comenzar.';
+                } else if (esTatuador && !esAdmin) {
+                    emptyMessage = 'No hay clientes con seguimiento activo asignados a ti.';
+                }
+                container.innerHTML = `
+                    <div class="text-center text-on-surface-variant/50 py-10">
+                        <span class="material-symbols-outlined text-5xl mb-4">inbox</span>
+                        <p>${emptyMessage}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = clients.map(client => `
+                <div class="client-card bg-surface-container rounded-2xl p-4 flex items-center gap-4 hover:bg-surface-container-high transition cursor-pointer" data-id="${client.id}">
+                    <div class="relative">
+                        <div class="w-14 h-14 rounded-full border-2 border-primary/20 bg-[#ba9eff]/20 flex items-center justify-center">
+                            <span class="text-[#ba9eff] font-bold text-lg leading-none">${getIniciales(client.nombre || '')}</span>
+                        </div>
+                        <div class="absolute bottom-0 right-0 w-3 h-3 bg-primary rounded-full border-2 border-surface-container"></div>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-headline text-lg font-bold">${escapeHtml(client.nombre)}</h3>
+                        <p class="text-xs text-on-surface-variant/80">${escapeHtml(client.tattoo)}</p>
+                        ${esCliente && client.nombreTatuador ? `
+                            <p class="text-xs text-primary/60 mt-1 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-xs">brush</span>
+                                Tatuador: ${escapeHtml(client.nombreTatuador)}
+                            </p>
+                        ` : ''}
+                        ${esTatuador && !esAdmin ? `
+                            <p class="text-xs text-primary/60 mt-1 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-xs">person</span>
+                                Cliente: ${escapeHtml(client.nombre)}
+                            </p>
+                        ` : ''}
+                    </div>
+                    <div class="text-right">
+                        <div class="px-3 py-1 rounded-lg ${client.estado === 'Irritación Leve' ? 'bg-error/20' : 'bg-primary/20'}">
+                            <span class="font-bold text-sm ${client.estado === 'Irritación Leve' ? 'text-error' : 'text-primary'}">Día ${client.diasProceso}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.querySelectorAll('.client-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const id = card.getAttribute('data-id');
+                    if (esCliente) {
+                        window.location.href = `/pages/cliente/seguimiento/cliente-detalle.html?id=${id}&idcliente=${currentUserId}`;
+                    } else {
+                        window.location.href = `/pages/cliente/seguimiento/cliente-detalle.html?id=${id}&idtatuador=${currentUserId}`;
+                    }
+                });
+            });
+        }
+        
+        // ============================================
+        // FILTROS Y BÚSQUEDA
+        // ============================================
+        
+        let currentFilter = 'all';
+        document.querySelectorAll('.filter-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                currentFilter = chip.getAttribute('data-filter');
+                document.querySelectorAll('.filter-chip').forEach(c => {
+                    c.classList.remove('bg-primary', 'text-on-primary');
+                    c.classList.add('bg-surface-container-high', 'text-on-surface-variant');
+                });
+                chip.classList.add('bg-primary', 'text-on-primary');
+                chip.classList.remove('bg-surface-container-high', 'text-on-surface-variant');
+                
+                const searchTerm = document.getElementById('searchInput').value;
+                loadClients(currentFilter, searchTerm);
+            });
+        });
+        
+        let searchTimeout;
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                loadClients(currentFilter, e.target.value);
+            }, 300);
+        });
+        
+        // ============================================
+        // BOTÓN AGREGAR (solo tatuadores)
+        // ============================================
+        
+        if (esTatuador && !esAdmin) {
+            document.getElementById('addClientBtn').addEventListener('click', async () => {
+                const nombre = prompt('Nombre del cliente:');
+                if (nombre) {
+                    const tattoo = prompt('Tipo de tatuaje:', 'Nuevo diseño');
+                    const nuevoCliente = {
+                        nombre: nombre,
+                        tattoo: tattoo || 'Nuevo diseño',
+                        estado: 'Curación Normal',
+                        diasProceso: 1,
+                        idtatuador: currentUserId,
+                    };
+                    try {
+                        await fetch(`${API_BASE}/clientes`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(nuevoCliente)
+                        });
+                        loadClients(currentFilter, document.getElementById('searchInput').value);
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Error al agregar cliente');
+                    }
+                }
+            });
+        }
+        
+        // ============================================
+        // FUNCIÓN AUXILIAR
+        // ============================================
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+        
+        // ============================================
+        // INICIALIZAR
+        // ============================================
+        
+        if (!currentUser) {
+            document.getElementById('clientList').innerHTML = `
+                <div class="text-center text-error py-10">
+                    <p>No hay sesión iniciada</p>
+                    <button onclick="window.location.href='/'" class="mt-4 px-4 py-2 bg-primary rounded-lg">Ir a login</button>
+                </div>
+            `;
+        } else {
+            loadClients();
+        }
+    </script>
+</body>
+</html>

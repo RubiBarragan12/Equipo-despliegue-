@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Registrar Empleado - Tattoo Studio</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#D93B3B",
+                        "primary-focus": "#C02E2E",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#191022",
+                        "surface-dark": "#1E1B2A",
+                        "text-main": "#FFFFFF",
+                        "text-secondary": "#A1A1AA",
+                        "border-dark": "#3F3F46"
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
+        }
+        input[type="time"]::-webkit-calendar-picker-indicator { display: none; }
+        body { min-height: 100dvh; }
+    </style>
+</head>
+
+<body class="bg-background-dark font-display text-text-main">
+    <div class="relative flex h-auto min-h-screen w-full flex-col">
+        <header class="flex h-16 items-center px-4 pt-4">
+            <a class="flex items-center justify-center size-10 text-text-main transition-colors hover:text-primary"
+                href="/pages/administrador/ajustes/administrar_empleados.html">
+                <span class="material-symbols-outlined">arrow_back_ios_new</span>
+            </a>
+            <div class="flex-1 text-center">
+                <h1 class="text-text-main text-xl font-bold leading-tight tracking-[-0.015em]">Registrar Empleado</h1>
+            </div>
+            <div class="size-10"></div>
+        </header>
+
+        <main class="flex-grow px-4 pb-8">
+            <form id="form-empleado" class="flex h-full flex-col">
+                <div class="flex-grow space-y-4 pt-6">
+
+                    <!-- Tipo de Trabajador (select dinámico) -->
+                    <div>
+                        <label class="text-text-secondary mb-2 block text-sm font-medium" for="worker-type">Tipo de
+                            Trabajador</label>
+                        <select id="worker-type"
+                            class="w-full rounded-xl border border-border-dark bg-surface-dark px-4 py-3.5 text-text-main focus:border-primary focus:ring-primary">
+                            <option value="">Cargando roles...</option>
+                        </select>
+                    </div>
+
+                    <!-- Nombre -->
+                    <div>
+                        <label class="text-text-secondary mb-2 block text-sm font-medium" for="name">Nombre
+                            completo</label>
+                        <input id="name" type="text" placeholder="Ej. Alex Aguirre"
+                            class="w-full rounded-xl border border-border-dark bg-surface-dark px-4 py-3.5 text-text-main placeholder:text-text-secondary focus:border-primary focus:ring-primary" />
+                    </div>
+
+                    <!-- Teléfono -->
+                    <div>
+                        <label class="text-text-secondary mb-2 block text-sm font-medium"
+                            for="phone">Teléfono</label>
+                        <input id="phone" type="tel" placeholder="Ej. +52 55 1234 5678"
+                            class="w-full rounded-xl border border-border-dark bg-surface-dark px-4 py-3.5 text-text-main placeholder:text-text-secondary focus:border-primary focus:ring-primary" />
+                    </div>
+
+                    <!-- Correo -->
+                    <div>
+                        <label class="text-text-secondary mb-2 block text-sm font-medium" for="email">Correo
+                            Electrónico</label>
+                        <input id="email" type="email" placeholder="Ej. alex@email.com"
+                            class="w-full rounded-xl border border-border-dark bg-surface-dark px-4 py-3.5 text-text-main placeholder:text-text-secondary focus:border-primary focus:ring-primary" />
+                    </div>
+
+                    <!-- Fecha de Nacimiento -->
+                    <div>
+                        <label class="text-text-secondary mb-2 block text-sm font-medium" for="dob">Fecha de
+                            Nacimiento</label>
+                        <input id="dob" type="date"
+                            class="w-full rounded-xl border border-border-dark bg-surface-dark px-4 py-3.5 text-text-main focus:border-primary focus:ring-primary [color-scheme:dark]" />
+                    </div>
+
+                    <!-- Contraseña -->
+                    <div class="relative">
+                        <label class="text-text-secondary mb-2 block text-sm font-medium"
+                            for="password">Contraseña</label>
+                        <input id="password" type="password" placeholder="Crea una contraseña segura"
+                            class="w-full rounded-xl border border-border-dark bg-surface-dark px-4 py-3.5 pr-12 text-text-main placeholder:text-text-secondary focus:border-primary focus:ring-primary" />
+                        <button type="button" id="toggle-password"
+                            class="absolute right-3 top-[calc(50%+0.5rem)] -translate-y-1/2 flex h-8 w-8 items-center justify-center text-text-secondary">
+                            <span class="material-symbols-outlined">visibility</span>
+                        </button>
+                    </div>
+
+                    <!-- Confirmar Contraseña -->
+                    <div class="relative">
+                        <label class="text-text-secondary mb-2 block text-sm font-medium"
+                            for="confirm-password">Confirmar Contraseña</label>
+                        <input id="confirm-password" type="password" placeholder="Vuelve a escribir la contraseña"
+                            class="w-full rounded-xl border border-border-dark bg-surface-dark px-4 py-3.5 pr-12 text-text-main placeholder:text-text-secondary focus:border-primary focus:ring-primary" />
+                        <button type="button" id="toggle-confirm"
+                            class="absolute right-3 top-[calc(50%+0.5rem)] -translate-y-1/2 flex h-8 w-8 items-center justify-center text-text-secondary">
+                            <span class="material-symbols-outlined">visibility</span>
+                        </button>
+                    </div>
+
+                    <!-- ====== SECCIÓN TATUADOR (oculta por defecto) ====== -->
+                    <div id="tatuador-fields" class="hidden space-y-4">
+                        <div class="h-px bg-border-dark my-2"></div>
+                        <p class="text-primary text-sm font-bold uppercase tracking-wider">Datos de Tatuador</p>
+
+                        <!-- Comisión -->
+                        <div>
+                            <label class="text-text-secondary mb-2 block text-sm font-medium"
+                                for="commission">Porcentaje de Comisión</label>
+                            <div class="relative">
+                                <input id="commission" type="number" placeholder="Ej. 40" min="0" max="100"
+                                    class="w-full rounded-xl border border-border-dark bg-surface-dark pl-4 pr-8 py-3.5 text-text-main placeholder:text-text-secondary focus:border-primary focus:ring-primary" />
+                                <span
+                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary">%</span>
+                            </div>
+                        </div>
+
+                        <!-- Horario Laboral -->
+                        <div class="space-y-4">
+                            <label class="text-text-secondary mb-2 block text-sm font-medium">Horario Laboral</label>
+                            <div id="schedule-container" class="space-y-3"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botón -->
+                <div class="pt-8 pb-4">
+                    <button type="submit" id="btn-guardar"
+                        class="w-full rounded-xl bg-primary py-4 text-center text-base font-bold text-white shadow-lg shadow-primary/20 hover:bg-primary-focus focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-dark">
+                        Guardar Empleado
+                    </button>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <!-- Modal resultado -->
+    <div id="modal-overlay"
+        class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm">
+        <div class="mx-4 w-full max-w-sm rounded-2xl bg-surface-dark p-6 text-center">
+            <span id="modal-icon" class="material-symbols-outlined text-5xl mb-3"></span>
+            <h2 id="modal-title" class="text-xl font-bold mb-2"></h2>
+            <p id="modal-message" class="text-text-secondary text-sm mb-6"></p>
+            <button id="modal-btn"
+                class="w-full rounded-xl bg-primary py-3 font-bold text-white hover:bg-primary-focus">Aceptar</button>
+        </div>
+    </div>
+
+    <script type="module" src="/js/agregar_empleados.js"></script>
+</body>
+
+</html>

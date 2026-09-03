@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Expedientes de Clientes</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: { "primary": "#af25f4" },
+                    fontFamily: { "sans": ["Manrope", "sans-serif"] },
+                },
+            },
+        }
+    </script>
+    <style>
+        body { font-family: 'Manrope', sans-serif; background: #1c1022; min-height: 100dvh; }
+        #tablaExportar { display: none; }
+    </style>
+</head>
+<body class="text-slate-100 flex flex-col min-h-screen">
+
+<table id="tablaExportar">
+    <thead><tr><th>Nombre</th><th>Primera Cita</th><th>Última Cita</th><th>Total Citas</th><th>Total Gastado</th></tr></thead>
+    <tbody id="tbodyExportar"></tbody>
+</table>
+
+<header class="sticky top-0 z-50 bg-[#1c1022]/90 backdrop-blur-md border-b border-white/10 flex items-center px-4 h-14 gap-3">
+    <button onclick="window.history.back()" class="size-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors">
+        <span class="material-symbols-outlined text-primary">arrow_back</span>
+    </button>
+    <h1 class="text-base font-extrabold uppercase tracking-tight flex-1">Expedientes</h1>
+    <span id="badgeTotal" class="text-xs font-bold bg-primary/20 text-primary px-2.5 py-1 rounded-full">0</span>
+</header>
+
+<main class="flex-1 max-w-lg mx-auto w-full px-4 py-5 space-y-4">
+
+    <!-- Buscador -->
+    <div class="relative">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+        <input id="inputBusqueda" type="text" placeholder="Buscar por nombre o correo..."
+            class="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm font-medium focus:ring-2 focus:ring-primary/50 outline-none placeholder:text-slate-500"
+            oninput="filtrarLocal()" />
+    </div>
+
+    <!-- Lista de expedientes -->
+    <section class="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+        <div id="listaExpedientes" class="divide-y divide-white/10 min-h-[120px]">
+            <div class="flex items-center justify-center py-10">
+                <span class="material-symbols-outlined animate-spin text-primary text-2xl">progress_activity</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Exportar general -->
+    <section class="grid grid-cols-2 gap-3">
+        <button onclick="exportarTodoPDF()" class="py-3 border border-primary/30 bg-primary/5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-primary/15 transition-colors text-primary">
+            <span class="material-symbols-outlined text-lg">picture_as_pdf</span> PDF General
+        </button>
+        <button onclick="exportarTodoExcel()" class="py-3 border border-emerald-500/30 bg-emerald-500/5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-emerald-500/15 transition-colors text-emerald-400">
+            <span class="material-symbols-outlined text-lg">table_chart</span> Excel General
+        </button>
+    </section>
+</main>
+
+<div id="errorBanner" class="hidden fixed bottom-5 left-4 right-4 max-w-lg mx-auto bg-red-500/20 border border-red-500/40 text-red-300 rounded-xl px-4 py-3 text-sm font-medium flex items-center gap-2">
+    <span class="material-symbols-outlined text-base">error</span>
+    <span id="errorMsg">Error al cargar datos</span>
+</div>
+
+<script>
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    if (!user) window.location.href = '/';
+    const idEmpresa = user?.empresa?.idEmpresa || user?.idempresa;
+    if (!idEmpresa) { alert('No se encontró empresa asociada al usuario.'); history.back(); }
+
+    let todosLosClientes = [];
+
+    function fmt(n) {
+        return '$' + n.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    }
+    function fmtFecha(iso) {
+        if (!iso) return '—';
+        const d = new Date(iso + 'T12:00:00');
+        return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+    function getIniciales(nombre) {
+        const p = nombre.trim().split(/\s+/);
+        if (p.length >= 2) return (p[0][0] + p[1][0]).toUpperCase();
+        return (p[0] || '?').substring(0, 2).toUpperCase();
+    }
+
+    function renderLista(clientes) {
+        const lista = document.getElementById('listaExpedientes');
+        if (!clientes.length) {
+            lista.innerHTML = `<div class="px-4 py-10 text-center text-slate-500 text-sm">No se encontraron expedientes</div>`;
+            return;
+        }
+
+        lista.innerHTML = clientes.map((c) => `
+            <div class="px-4 py-3">
+                <div class="flex items-center gap-3">
+                    <div class="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs font-bold shrink-0">
+                        ${getIniciales(c.nombre)}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-bold text-sm truncate">${c.nombre}</p>
+                        <p class="text-[10px] text-slate-400 truncate">${c.correo || c.telefono || 'Sin contacto'}</p>
+                    </div>
+                    <div class="flex gap-1.5">
+                        <button onclick="exportarIndividualPDF(${c.id})" class="size-8 flex items-center justify-center rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors" title="Exportar PDF">
+                            <span class="material-symbols-outlined text-primary text-base">picture_as_pdf</span>
+                        </button>
+                        <button onclick="exportarIndividualExcel(${c.id})" class="size-8 flex items-center justify-center rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 transition-colors" title="Exportar Excel">
+                            <span class="material-symbols-outlined text-emerald-400 text-base">description</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex gap-4 mt-2 ml-13 pl-[52px]">
+                    <div class="flex items-center gap-1 text-[10px] text-slate-400">
+                        <span class="material-symbols-outlined text-[11px]">event</span>
+                        <span>${c.totalCitas} cita${c.totalCitas !== 1 ? 's' : ''}</span>
+                    </div>
+                    <div class="flex items-center gap-1 text-[10px] text-slate-400">
+                        <span class="material-symbols-outlined text-[11px]">calendar_today</span>
+                        <span>Desde ${fmtFecha(c.primeraCita)}</span>
+                    </div>
+                    <div class="flex items-center gap-1 text-[10px] text-primary font-bold">
+                        <span class="material-symbols-outlined text-[11px]">payments</span>
+                        <span>${fmt(c.totalGastado)}</span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        // Poblar tabla oculta para exportación
+        const tbody = document.getElementById('tbodyExportar');
+        tbody.innerHTML = clientes.map(c => `
+            <tr>
+                <td>${c.nombre}</td>
+                <td>${fmtFecha(c.primeraCita)}</td>
+                <td>${fmtFecha(c.ultimaCita)}</td>
+                <td>${c.totalCitas}</td>
+                <td>${fmt(c.totalGastado)}</td>
+            </tr>
+        `).join('');
+    }
+
+    function filtrarLocal() {
+        const q = document.getElementById('inputBusqueda').value.trim().toLowerCase();
+        const filtrado = q
+            ? todosLosClientes.filter(c =>
+                c.nombre.toLowerCase().includes(q) ||
+                (c.correo || '').toLowerCase().includes(q))
+            : todosLosClientes;
+        renderLista(filtrado);
+        document.getElementById('badgeTotal').textContent = filtrado.length;
+    }
+
+    async function cargarExpedientes() {
+        document.getElementById('errorBanner').classList.add('hidden');
+        try {
+            const res  = await fetch(`/api/reportes/expedientes/${idEmpresa}`);
+            const json = await res.json();
+            if (json.status !== 'ok') throw new Error(json.message);
+
+            todosLosClientes = json.data;
+            document.getElementById('badgeTotal').textContent = todosLosClientes.length;
+            renderLista(todosLosClientes);
+        } catch (err) {
+            document.getElementById('errorMsg').textContent = 'Error al cargar datos: ' + err.message;
+            document.getElementById('errorBanner').classList.remove('hidden');
+            document.getElementById('listaExpedientes').innerHTML =
+                `<div class="px-4 py-10 text-center text-slate-500 text-sm">No se pudo cargar la información</div>`;
+        }
+    }
+
+    function getClienteById(id) {
+        return todosLosClientes.find(c => c.id === id);
+    }
+
+    async function fetchDetalle(id) {
+        const res = await fetch(`/api/reportes/expediente-detalle/${id}/${idEmpresa}`);
+        const json = await res.json();
+        if (json.status !== 'ok') throw new Error(json.message);
+        return json.data;
+    }
+
+    async function exportarIndividualPDF(id) {
+        const c = getClienteById(id);
+        if (!c) return;
+        try {
+            const detalle = await fetchDetalle(id);
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Encabezado
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(16);
+            doc.text('Expediente de Cliente', 14, 18);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+
+            // Datos del cliente
+            doc.autoTable({
+                startY: 24,
+                body: [
+                    ['Nombre', detalle.cliente.nombre],
+                    ['Correo', detalle.cliente.correo || '—'],
+                    ['Teléfono', detalle.cliente.telefono || '—'],
+                    ['Total citas', c.totalCitas],
+                    ['Total gastado', fmt(c.totalGastado)],
+                    ['Primera cita', fmtFecha(c.primeraCita)],
+                    ['Última cita', fmtFecha(c.ultimaCita)],
+                ],
+                theme: 'plain',
+                columnStyles: { 0: { fontStyle: 'bold', cellWidth: 40, textColor: [100, 100, 100] } },
+            });
+
+            // Historial de citas
+            if (detalle.citas.length > 0) {
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(11);
+                doc.text('Historial de Citas', 14, doc.lastAutoTable.finalY + 10);
+
+                doc.autoTable({
+                    startY: doc.lastAutoTable.finalY + 14,
+                    head: [['Fecha', 'Hora', 'Tatuador', 'Zona / Tamaño', 'Técnica', 'Estado', 'Precio', 'Pagado']],
+                    body: detalle.citas.map(ci => [
+                        fmtFecha(ci.fecha),
+                        ci.hora,
+                        ci.tatuador,
+                        `${ci.zona}${ci.tamanio !== '—' ? ' / ' + ci.tamanio : ''}`,
+                        ci.tecnica,
+                        ci.estado,
+                        fmt(ci.precio),
+                        fmt(ci.pagado),
+                    ]),
+                    theme: 'grid',
+                    headStyles: { fillColor: [175, 37, 244], fontSize: 7 },
+                    bodyStyles: { fontSize: 7 },
+                    styles: { cellPadding: 2 },
+                });
+            }
+
+            doc.save(`Expediente_${c.nombre.replace(/\s+/g, '_')}.pdf`);
+        } catch (err) {
+            alert('Error al generar PDF: ' + err.message);
+        }
+    }
+
+    async function exportarIndividualExcel(id) {
+        const c = getClienteById(id);
+        if (!c) return;
+        try {
+            const detalle = await fetchDetalle(id);
+            const datos = [
+                ['EXPEDIENTE DE CLIENTE'],
+                [],
+                ['Nombre', detalle.cliente.nombre],
+                ['Correo', detalle.cliente.correo || '—'],
+                ['Teléfono', detalle.cliente.telefono || '—'],
+                ['Total Citas', c.totalCitas],
+                ['Total Gastado', c.totalGastado],
+                ['Primera Cita', fmtFecha(c.primeraCita)],
+                ['Última Cita', fmtFecha(c.ultimaCita)],
+                [],
+                ['HISTORIAL DE CITAS'],
+                ['Fecha', 'Hora', 'Tatuador', 'Zona', 'Tamaño', 'Técnica', 'Estado Cita', 'Estado Pago', 'Precio', 'Pagado'],
+                ...detalle.citas.map(ci => [
+                    fmtFecha(ci.fecha), ci.hora, ci.tatuador,
+                    ci.zona, ci.tamanio, ci.tecnica,
+                    ci.estado, ci.estadoPago,
+                    ci.precio, ci.pagado,
+                ]),
+            ];
+            const ws = XLSX.utils.aoa_to_sheet(datos);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Expediente');
+            XLSX.writeFile(wb, `Expediente_${c.nombre.replace(/\s+/g, '_')}.xlsx`);
+        } catch (err) {
+            alert('Error al generar Excel: ' + err.message);
+        }
+    }
+
+    function exportarTodoPDF() {
+        if (!todosLosClientes.length) return;
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(16);
+        doc.text('Listado General de Expedientes', 14, 18);
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Total: ${todosLosClientes.length} clientes  |  Generado: ${new Date().toLocaleDateString('es-MX')}`, 14, 25);
+        doc.autoTable({
+            startY: 30,
+            head: [['Nombre', 'Correo / Teléfono', 'Primera Cita', 'Última Cita', 'Citas', 'Total Gastado']],
+            body: todosLosClientes.map(c => [
+                c.nombre,
+                c.correo || c.telefono || '—',
+                fmtFecha(c.primeraCita),
+                fmtFecha(c.ultimaCita),
+                c.totalCitas,
+                fmt(c.totalGastado),
+            ]),
+            theme: 'grid',
+            headStyles: { fillColor: [175, 37, 244], fontSize: 8 },
+            bodyStyles: { fontSize: 8 },
+            styles: { cellPadding: 2 },
+        });
+        doc.save('Expedientes_General.pdf');
+    }
+
+    function exportarTodoExcel() {
+        if (!todosLosClientes.length) return;
+        const datos = [
+            ['LISTADO GENERAL DE EXPEDIENTES'],
+            [`Total: ${todosLosClientes.length} clientes`],
+            [],
+            ['Nombre', 'Correo', 'Teléfono', 'Primera Cita', 'Última Cita', 'Total Citas', 'Total Gastado'],
+            ...todosLosClientes.map(c => [
+                c.nombre, c.correo, c.telefono,
+                fmtFecha(c.primeraCita), fmtFecha(c.ultimaCita),
+                c.totalCitas, c.totalGastado
+            ]),
+        ];
+        const ws = XLSX.utils.aoa_to_sheet(datos);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Expedientes');
+        XLSX.writeFile(wb, 'Expedientes_General.xlsx');
+    }
+
+    cargarExpedientes();
+</script>
+</body>
+</html>

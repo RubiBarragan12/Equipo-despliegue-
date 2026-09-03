@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Perfil de Cliente</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#7f13ec",
+            "background-dark": "#191022",
+          },
+          fontFamily: { "display": ["Space Grotesk", "sans-serif"] },
+        },
+      },
+    }
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    body { min-height: max(884px, 100dvh); }
+
+    /* Campos de solo lectura: sin bordes de foco, cursor de texto normal */
+    .campo-lectura {
+      pointer-events: none;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+  </style>
+</head>
+
+<body class="bg-background-dark font-display text-white">
+  <div class="relative flex h-auto min-h-screen w-full flex-col">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-10 flex items-center justify-between bg-background-dark/80 backdrop-blur-sm px-4 py-3 h-16">
+      <button id="btn-atras"
+        class="flex size-11 shrink-0 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors">
+        <span class="material-symbols-outlined text-white">arrow_back_ios_new</span>
+      </button>
+      <h1 class="text-lg font-bold text-white">Perfil del Cliente</h1>
+      <!-- Badge de solo lectura -->
+      <div class="flex items-center gap-1 rounded-full bg-white/5 px-3 py-1.5">
+        <span class="material-symbols-outlined text-sm text-white/40" style="font-size:16px">lock</span>
+        <span class="text-xs text-white/40 font-medium">Solo lectura</span>
+      </div>
+    </header>
+
+    <!-- Estado: cargando -->
+    <div id="estado-cargando" class="flex flex-col items-center justify-center gap-3 pt-24 text-white/40">
+      <span class="material-symbols-outlined animate-spin text-4xl">progress_activity</span>
+      <p class="text-sm">Cargando perfil...</p>
+    </div>
+
+    <!-- Estado: error -->
+    <div id="estado-error" class="hidden flex-col items-center justify-center gap-3 pt-24 text-white/40">
+      <span class="material-symbols-outlined text-4xl text-red-400">person_off</span>
+      <p class="text-sm text-red-400">No se pudo cargar el perfil</p>
+      <button id="btn-reintentar"
+        class="mt-2 rounded-lg border border-white/10 px-4 py-2 text-sm text-white/60 hover:bg-white/5">
+        Reintentar
+      </button>
+    </div>
+
+    <!-- Contenido principal -->
+    <main id="contenido" class="hidden flex-col flex-1 px-4 pb-10">
+
+      <!-- Avatar + nombre -->
+      <section class="flex flex-col items-center gap-3 pt-6 pb-8">
+        <!-- Avatar con iniciales -->
+        <div id="avatar"
+          class="flex size-24 shrink-0 items-center justify-center rounded-full bg-primary/20 text-primary text-3xl font-bold border-2 border-primary/30">
+          --
+        </div>
+        <div class="flex flex-col items-center gap-1">
+          <p id="nombre-completo" class="text-2xl font-bold text-white text-center">—</p>
+          <span class="text-xs text-primary bg-primary/10 px-3 py-1 rounded-full font-medium">Cliente</span>
+        </div>
+      </section>
+
+      <!-- Separador -->
+      <div class="w-full border-t border-white/10 mb-6"></div>
+
+      <!-- Campos de información -->
+      <section class="space-y-5">
+
+        <!-- Nombre -->
+        <div class="flex flex-col gap-1">
+          <label class="flex items-center gap-2 text-xs font-medium text-white/40 uppercase tracking-widest">
+            <span class="material-symbols-outlined" style="font-size:16px">badge</span>
+            Nombre
+          </label>
+          <div class="campo-lectura flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+            <p id="campo-nombre" class="text-white/90 text-base">—</p>
+          </div>
+        </div>
+
+        <!-- Apellido Paterno -->
+        <div class="flex flex-col gap-1">
+          <label class="flex items-center gap-2 text-xs font-medium text-white/40 uppercase tracking-widest">
+            <span class="material-symbols-outlined" style="font-size:16px">badge</span>
+            Apellido Paterno
+          </label>
+          <div class="campo-lectura flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+            <p id="campo-apellido-paterno" class="text-white/90 text-base">—</p>
+          </div>
+        </div>
+
+        <!-- Apellido Materno -->
+        <div class="flex flex-col gap-1">
+          <label class="flex items-center gap-2 text-xs font-medium text-white/40 uppercase tracking-widest">
+            <span class="material-symbols-outlined" style="font-size:16px">badge</span>
+            Apellido Materno
+          </label>
+          <div class="campo-lectura flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+            <p id="campo-apellido-materno" class="text-white/90 text-base">—</p>
+          </div>
+        </div>
+
+        <!-- Correo -->
+        <div class="flex flex-col gap-1">
+          <label class="flex items-center gap-2 text-xs font-medium text-white/40 uppercase tracking-widest">
+            <span class="material-symbols-outlined" style="font-size:16px">mail</span>
+            Correo Electrónico
+          </label>
+          <div class="campo-lectura flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+            <p id="campo-correo" class="text-white/90 text-base">—</p>
+          </div>
+        </div>
+
+        <!-- Teléfono -->
+        <div class="flex flex-col gap-1">
+          <label class="flex items-center gap-2 text-xs font-medium text-white/40 uppercase tracking-widest">
+            <span class="material-symbols-outlined" style="font-size:16px">phone</span>
+            Teléfono
+          </label>
+          <div class="campo-lectura flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+            <p id="campo-telefono" class="text-white/90 text-base">—</p>
+          </div>
+        </div>
+
+      </section>
+    </main>
+
+  </div>
+
+  <script>
+    // ─── Parámetros de URL ────────────────────────────────────────────────────
+    const params     = new URLSearchParams(window.location.search);
+    const clienteId  = params.get('id');
+
+    // ─── Referencias DOM ──────────────────────────────────────────────────────
+    const estadoCargando = document.getElementById('estado-cargando');
+    const estadoError    = document.getElementById('estado-error');
+    const contenido      = document.getElementById('contenido');
+    const btnAtras       = document.getElementById('btn-atras');
+    const btnReintentar  = document.getElementById('btn-reintentar');
+
+    // ─── Botón atrás ─────────────────────────────────────────────────────────
+    btnAtras.addEventListener('click', () => {
+      if (history.length > 1) {
+        history.back();
+      } else {
+        window.location.href = '../pages/rol_general/lista_rol_general.html';
+      }
+    });
+
+    // ─── Mostrar / ocultar estados ────────────────────────────────────────────
+    function mostrarEstado(estado) {
+      estadoCargando.classList.add('hidden');    estadoCargando.classList.remove('flex');
+      estadoError.classList.add('hidden');       estadoError.classList.remove('flex');
+      contenido.classList.add('hidden');         contenido.classList.remove('flex');
+
+      if (estado === 'cargando') estadoCargando.classList.replace('hidden', 'flex');
+      if (estado === 'error')    estadoError.classList.replace('hidden', 'flex');
+      if (estado === 'datos')    contenido.classList.replace('hidden', 'flex');
+    }
+
+    // ─── Rellenar campos ──────────────────────────────────────────────────────
+    function rellenarPerfil(c) {
+      const nombreCompleto = `${c.nombre} ${c.apellido_paterno} ${c.apellido_materno ?? ''}`.trim();
+      const iniciales = `${c.nombre?.[0] ?? ''}${c.apellido_paterno?.[0] ?? ''}`.toUpperCase();
+
+      document.getElementById('avatar').textContent            = iniciales;
+      document.getElementById('nombre-completo').textContent   = nombreCompleto;
+      document.getElementById('campo-nombre').textContent      = c.nombre           || '—';
+      document.getElementById('campo-apellido-paterno').textContent = c.apellido_paterno || '—';
+      document.getElementById('campo-apellido-materno').textContent = c.apellido_materno || '—';
+      document.getElementById('campo-correo').textContent      = c.correo           || '—';
+      document.getElementById('campo-telefono').textContent    = c.telefono         || '—';
+    }
+
+    // ─── Cargar cliente ───────────────────────────────────────────────────────
+    async function cargarPerfil() {
+      if (!clienteId) {
+        mostrarEstado('error');
+        return;
+      }
+
+      mostrarEstado('cargando');
+
+      try {
+        const res = await fetch('/api/lista-clientes');
+        if (!res.ok) throw new Error('Error al obtener clientes');
+
+        const data = await res.json();
+        const cliente = (data.clientes ?? []).find(c => String(c.id) === String(clienteId));
+
+        if (!cliente) throw new Error('Cliente no encontrado');
+
+        rellenarPerfil(cliente);
+        mostrarEstado('datos');
+
+      } catch (err) {
+        console.error('Error al cargar perfil:', err);
+        mostrarEstado('error');
+      }
+    }
+
+    // ─── Reintentar ───────────────────────────────────────────────────────────
+    btnReintentar.addEventListener('click', cargarPerfil);
+
+    // ─── Iniciar ──────────────────────────────────────────────────────────────
+    cargarPerfil();
+  </script>
+</body>
+</html>

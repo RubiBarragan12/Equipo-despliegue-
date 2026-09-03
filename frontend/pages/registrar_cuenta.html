@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Iniciar Sesión - Tattoo Studio</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/index.css" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#7f13ec",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#191022",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <link rel="stylesheet" href="../styles/global.css" />
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display">
+    <div class="relative flex min-h-screen w-full flex-col items-center justify-center overflow-x-hidden p-4">
+        <div class="absolute inset-0 z-0">
+            <div class="absolute inset-0 bg-background-light dark:bg-background-dark opacity-80"></div>
+            <div class="w-full h-full bg-center bg-no-repeat bg-cover"
+                data-alt="Abstract artistic background with tattoo-inspired ink patterns"
+                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAPbI01y_tzm0DFB6atlQkwbbmqtkQe2TAGkFummcC5tSAV0t83nhoiTzs5CXsNGl3DWX3UHl9gIsoLpG-quPG2vWK0W4B-yF1FJhpIAxa3njYXR3w-PMcm0e2p3eSRIxkjoOUyeSWboZFHeet77s041788nWfJDlks1oZQMa4zkN6c8jMBkFCHGoop0toyqCeVWfHiA-A5h4dkre6ZKUYpNilGsvsaWT18LT99gG0gNFLOapcVM1G9GfMtV4MvsgloZiX7PoebG60"); opacity: 0.1;'>
+            </div>
+        </div>
+        <div id="loginForm" class="relative z-10 flex w-full max-w-sm flex-col items-center">
+            <div class="mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-primary/20">
+                <span class="material-symbols-outlined text-primary text-5xl">draw</span>
+            </div>
+            <h1 class="text-3xl font-bold leading-tight tracking-tight text-slate-900 dark:text-white text-center pb-8">
+                Registrar Cuenta
+            </h1>
+            <form id="register-form" class="w-full space-y-6">
+                <div class="w-full">
+                    <label class="flex flex-col">
+                        <p class="text-sm font-medium pb-2 text-slate-700 dark:text-white">Nombre</p>
+                        <div class="relative flex w-full flex-1 items-stretch">
+                            <span
+                                class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none">person</span>
+                            <input
+                                id="name"
+                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900/50 text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 h-14 placeholder:text-slate-400 dark:placeholder:text-slate-500 pl-12 pr-4 text-base font-normal leading-normal"
+                                placeholder="Tu Nombre" value="" required />
+                        </div>
+                        <p id="error-name" class="error-message mt-2 text-sm text-red-600 dark:text-red-400 hidden">El nombre debe tener al menos 2 caracteres</p>
+                    </label>
+                </div>
+                <div class="w-full">
+                    <label class="flex flex-col">
+                        <p class="text-sm font-medium pb-2 text-slate-700 dark:text-white">Correo Electrónico</p>
+                        <div class="relative flex w-full flex-1 items-stretch">
+                            <span
+                                class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none">mail</span>
+                            <input
+                                id="email"
+                                type="email"
+                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900/50 text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 h-14 placeholder:text-slate-400 dark:placeholder:text-slate-500 pl-12 pr-4 text-base font-normal leading-normal"
+                                placeholder="tu@email.com" value="" required />
+                        </div>
+                        <p id="error-email" class="error-message mt-2 text-sm text-red-600 dark:text-red-400 hidden">Por favor ingresa un correo válido (usuario@email.com)</p>
+                    </label>
+                </div>
+                <div class="w-full">
+                    <label class="flex flex-col">
+                        <p class="text-sm font-medium pb-2 text-slate-700 dark:text-white">Apellido Paterno</p>
+                        <div class="relative flex w-full flex-1 items-stretch">
+                            <span
+                                class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none">person</span>
+                            <input
+                                id="paterno"
+                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900/50 text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 h-14 placeholder:text-slate-400 dark:placeholder:text-slate-500 pl-12 pr-4 text-base font-normal leading-normal"
+                                placeholder="Tu Apellido Paterno" value="" required />
+                        </div>
+                        <p id="error-paterno" class="error-message mt-2 text-sm text-red-600 dark:text-red-400 hidden">Este campo es requerido</p>
+                    </label>
+                </div>
+                <div class="w-full">
+                    <label class="flex flex-col">
+                        <p class="text-sm font-medium pb-2 text-slate-700 dark:text-white">Apellido Materno</p>
+                        <div class="relative flex w-full flex-1 items-stretch">
+                            <span
+                                class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none">person</span>
+                            <input
+                                id="materno"
+                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900/50 text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 h-14 placeholder:text-slate-400 dark:placeholder:text-slate-500 pl-12 pr-4 text-base font-normal leading-normal"
+                                placeholder="Tu Apellido Materno" value="" required />
+                        </div>
+                        <p id="error-materno" class="error-message mt-2 text-sm text-red-600 dark:text-red-400 hidden">Este campo es requerido</p>
+                    </label>
+                </div>
+                <div class="w-full">
+                    <label class="flex flex-col">
+                        <p class="text-sm font-medium pb-2 text-slate-700 dark:text-white">Teléfono</p>
+                        <div class="relative flex w-full flex-1 items-stretch">
+                            <span
+                                class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none">phone</span>
+                            <input
+                                id="telefono"
+                                type="tel"
+                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900/50 text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 h-14 placeholder:text-slate-400 dark:placeholder:text-slate-500 pl-12 pr-4 text-base font-normal leading-normal"
+                                placeholder="844 000 0000" value="" required />
+                        </div>
+                        <p id="error-telefono" class="error-message mt-2 text-sm text-red-600 dark:text-red-400 hidden">Debe contener solo números y mínimo 10 dígitos</p>
+                    </label>
+                </div>
+                <div class="w-full">
+                    <label class="flex flex-col">
+                        <p class="text-sm font-medium pb-2 text-slate-700 dark:text-white">Contraseña</p>
+                        <div class="relative flex w-full flex-1 items-stretch">
+                            <span
+                                class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none">lock</span>
+                            <input
+                                id="password"
+                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900/50 text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 h-14 placeholder:text-slate-400 dark:placeholder:text-slate-500 pl-12 pr-12 text-base font-normal leading-normal transition-colors duration-200"
+                                placeholder="Introduce tu contraseña" type="password" value="" required />
+                            <button id="togglePassword"
+                                type="button"
+                                class="absolute right-0 top-0 h-full px-4 text-slate-400 flex items-center justify-center dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300"
+                                data-icon="Eye" data-size="24px" data-weight="regular">
+                                <span class="material-symbols-outlined">visibility_off</span>
+                            </button>
+                        </div>
+                        <!-- Requisitos de contraseña -->
+                        <div id="password-requirements" class="mt-4 space-y-2">
+                            <div class="flex items-center gap-2 text-sm transition-colors duration-200" data-requirement="length">
+                                <span class="material-symbols-outlined text-xs">check_circle</span>
+                                <span>Entre 8 y 12 caracteres</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm transition-colors duration-200" data-requirement="uppercase">
+                                <span class="material-symbols-outlined text-xs">check_circle</span>
+                                <span>Contiene una mayúscula (A-Z)</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm transition-colors duration-200" data-requirement="lowercase">
+                                <span class="material-symbols-outlined text-xs">check_circle</span>
+                                <span>Contiene una minúscula (a-z)</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm transition-colors duration-200" data-requirement="number">
+                                <span class="material-symbols-outlined text-xs">check_circle</span>
+                                <span>Contiene un número (0-9)</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm transition-colors duration-200" data-requirement="special">
+                                <span class="material-symbols-outlined text-xs">check_circle</span>
+                                <span>Contiene un carácter especial (!@#$%^&*...)</span>
+                            </div>
+                        </div>
+                        <p id="error-password" class="error-message mt-2 text-sm text-red-600 dark:text-red-400 hidden">La contraseña no cumple todos los requisitos</p>
+                    </label>
+                </div>
+                <div class="w-full">
+                    <label class="flex flex-col">
+                        <p class="text-sm font-medium pb-2 text-slate-700 dark:text-white">Confirma tu Contraseña</p>
+                        <div class="relative flex w-full flex-1 items-stretch">
+                            <span
+                                class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none">lock</span>
+                            <input
+                                id="confirm-password"
+                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900/50 text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 h-14 placeholder:text-slate-400 dark:placeholder:text-slate-500 pl-12 pr-12 text-base font-normal leading-normal"
+                                placeholder="Confirma tu contraseña" type="password" value="" required />
+                            <button id="toggleConfirmPassword"
+                                type="button"
+                                class="absolute right-0 top-0 h-full px-4 text-slate-400 flex items-center justify-center dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300"
+                                data-icon="Eye" data-size="24px" data-weight="regular">
+                                <span class="material-symbols-outlined">visibility_off</span>
+                            </button>
+                        </div>
+                        <p id="error-confirm-password" class="error-message mt-2 text-sm text-red-600 dark:text-red-400 hidden">Las contraseñas no coinciden</p>
+                    </label>
+                </div>
+            </form>
+            <button
+                id="register-btn"
+                type="submit"
+                form="register-form"
+                class="flex w-full items-center justify-center rounded-lg bg-primary h-14 px-6 text-base font-bold text-white shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 dark:focus:ring-offset-background-dark transition-colors duration-200 mt-8">
+                Registrarse
+            </button>
+            <div class="flex flex-col items-center mt-6 space-y-4 w-full">
+                <a  id="recuperar-password-btn" class="text-primary text-sm font-medium leading-normal underline hover:no-underline cursor-pointer"
+                    href="/pages/recuperacion-contra/restablecer_contrasena.html">
+                    ¿Olvidaste tu contraseña?
+                </a>
+                <a  id="iniciar-sesion-btn" class="text-primary text-sm font-medium leading-normal underline hover:no-underline cursor-pointer"
+                    href="/index.html">
+                    Iniciar Sesión
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para mensajes -->
+    <div id="modal" class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-overlay absolute inset-0 bg-black/50"></div>
+        <div class="modal-content relative bg-white dark:bg-slate-900 rounded-xl shadow-2xl max-w-md w-full p-6 transform transition-all">
+            <div class="flex items-start gap-4">
+                <div id="modal-icon" class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"></div>
+                <div class="flex-1">
+                    <h3 id="modal-title" class="text-lg font-semibold text-slate-900 dark:text-white"></h3>
+                    <p id="modal-message" class="mt-2 text-sm text-slate-600 dark:text-slate-300"></p>
+                </div>
+                <button id="modal-close" type="button" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="mt-6 flex gap-3 justify-end">
+                <button id="modal-cancel-btn" type="button" class="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors hidden">
+                    Cancelar
+                </button>
+                <button id="modal-confirm-btn" type="button" class="px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors">
+                    Aceptar
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="module" src="/js/registrar_cuenta_front.js"></script>
+</html>

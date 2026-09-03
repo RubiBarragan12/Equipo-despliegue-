@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Pagar Cotización</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#7f13ec",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#191022",
+                        "stripe-blue": "#635BFF",
+                    },
+                    fontFamily: { "display": ["Space Grotesk", "sans-serif"] },
+                    borderRadius: { "DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        body { min-height: max(884px, 100dvh); }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+    <div class="relative flex h-auto min-h-screen w-full flex-col">
+        <header class="flex items-center bg-background-dark p-4 pb-2 justify-between sticky top-0 z-10">
+            <button id="btn-back" class="text-white flex size-12 items-center justify-center">
+                <span class="material-symbols-outlined">arrow_back</span>
+            </button>
+            <h1 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Pagar Cotización</h1>
+            <div class="size-12"></div>
+        </header>
+
+        <main class="flex-grow px-4 pb-40">
+            <!-- Monto -->
+            <section class="mt-4">
+                <div class="rounded-xl bg-[#261933] p-4 shadow-sm border border-[#362348]">
+                    <div class="flex justify-between items-center pb-3 border-b border-white/10">
+                        <p id="stripe-tipo-label" class="text-sm font-medium text-[#ad92c9]">Monto a pagar</p>
+                        <p id="stripe-monto" class="text-right text-2xl font-bold text-white">$0.00</p>
+                    </div>
+                    <div id="stripe-resumen" class="pt-3 text-sm text-[#ad92c9]">
+                        <p>Cargando resumen...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Info pago seguro -->
+            <section class="mt-6">
+                <div class="rounded-xl bg-[#261933] border border-[#362348] p-4 flex flex-col gap-4">
+                    <div class="flex items-start gap-3">
+                        <span class="material-symbols-outlined text-stripe-blue mt-0.5">lock</span>
+                        <div>
+                            <p class="text-white font-semibold text-sm">Pago 100% seguro con Stripe</p>
+                            <p class="text-[#ad92c9] text-xs mt-1">Serás redirigido a la página de pago de Stripe. Tus datos de tarjeta nunca pasan por nuestros servidores.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <span class="material-symbols-outlined text-[#ad92c9] mt-0.5">credit_card</span>
+                        <div>
+                            <p class="text-white font-semibold text-sm">Tarjetas aceptadas</p>
+                            <p class="text-[#ad92c9] text-xs mt-1">Visa, Mastercard, American Express y más.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <span class="material-symbols-outlined text-[#ad92c9] mt-0.5">info</span>
+                        <div>
+                            <p class="text-white font-semibold text-sm">¿Qué es un depósito?</p>
+                            <p id="stripe-info-anticipo" class="text-[#ad92c9] text-xs mt-1">El anticipo reserva tu cita. El saldo restante se paga el día del tatuaje.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="fixed bottom-0 left-0 right-0 border-t border-white/10 bg-background-dark/90 backdrop-blur-sm p-4">
+            <button id="btn-pagar"
+                class="w-full rounded-xl bg-stripe-blue py-3.5 px-4 text-lg font-bold text-white shadow-lg transition-colors hover:bg-stripe-blue/90 flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined">open_in_new</span>
+                <span id="btn-pagar-text">Continuar al pago</span>
+            </button>
+            <button id="btn-cancelar-pago"
+                class="w-full mt-2 rounded-xl bg-transparent border border-red-500/30 py-3 px-4 text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors">
+                Cancelar cotización
+            </button>
+            <div class="mt-3 flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-sm text-gray-500">lock</span>
+                <p class="text-xs text-gray-500">Procesado de forma segura por Stripe</p>
+            </div>
+        </footer>
+    </div>
+    <script src="/js/mis_cotizaciones_cliente.js"></script>
+</body>
+</html>

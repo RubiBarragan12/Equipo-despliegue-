@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>The Obsidian Gallery · Detalle Cliente</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface": "#120c16", "primary": "#ba9eff", "primary-dim": "#8455ef",
+                        "surface-container": "#1e1723", "surface-container-high": "#251c2a",
+                        "surface-container-highest": "#2c2231",
+                        "surface-bright": "#322839",
+                        "on-surface": "#faedfc", "on-surface-variant": "#b3a7b6",
+                        "secondary": "#c08cf7", "secondary-container": "#5e2c91",
+                        "error": "#ff6e84", "error-container": "#a70138",
+                        "on-primary": "#39008c", "on-primary-container": "#2b006e",
+                        "primary-container": "#ae8dff"
+                    },
+                    fontFamily: { "headline": ["Space Grotesk"], "body": ["Manrope"] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #120c16; color: #faedfc; font-family: 'Manrope', sans-serif; }
+        .glass-nav { background: rgba(18, 12, 22, 0.8); backdrop-filter: blur(20px); }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="min-h-screen pb-32">
+
+    <header class="fixed top-0 w-full z-50 glass-nav flex items-center px-6 h-16">
+        <div class="flex items-center gap-4">
+            <a href="#" id="backLink" class="material-symbols-outlined text-primary cursor-pointer hover:scale-110 transition">arrow_back</a>
+            <h1 class="font-headline font-bold tracking-tight text-xl" id="pageTitle">Seguimiento de Cliente</h1>
+        </div>
+    </header>
+
+    <main class="pt-20 px-6 max-w-2xl mx-auto space-y-8" id="mainContent">
+        <div class="text-center py-10">
+            <div class="animate-pulse">Cargando datos del cliente...</div>
+        </div>
+    </main>
+
+    <footer class="fixed bottom-0 left-0 w-full glass-nav p-4 pb-8 z-50">
+        <div class="max-w-2xl mx-auto flex items-center gap-3 bg-surface-container-high rounded-full pl-6 pr-2 py-2">
+            <input type="text" id="messageInput" placeholder="Escribe tu mensaje..." 
+                   class="flex-1 bg-transparent border-none text-on-surface focus:ring-0 placeholder:text-on-surface-variant/50 text-sm">
+            <button id="sendBtn" class="w-10 h-10 bg-primary rounded-full flex items-center justify-center hover:scale-105 transition">
+                <span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">send</span>
+            </button>
+        </div>
+    </footer>
+
+    <script>
+        // ============================================
+        // OBTENER DATOS DEL USUARIO ACTUAL
+        // ============================================
+        
+        let currentUser = null;
+        let currentRol = null;
+        let currentUserId = null;
+        let esAdminModo = false;
+        
+        try {
+            const userData = localStorage.getItem('user');
+            if (userData) {
+                currentUser = JSON.parse(userData);
+                currentUserId = currentUser.id;
+                currentRol = currentUser.rol;
+                console.log('📌 Usuario actual:', currentUser.nombre, 'Rol:', currentRol, 'ID:', currentUserId);
+            }
+        } catch (e) {
+            console.error('Error leyendo localStorage:', e);
+        }
+        
+        // ============================================
+        // OBTENER PARÁMETROS DE LA URL
+        // ============================================
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const seguimientoId = urlParams.get('id');
+        const idClienteUrl = urlParams.get('idcliente');
+        const idTatuadorUrl = urlParams.get('idtatuador');
+        const esAdminUrl = urlParams.get('admin') === 'true';
+        
+        // Detectar si es admin (modo solo lectura)
+        esAdminModo = esAdminUrl || currentRol === 'admin' || currentRol === 'dueño';
+        
+        console.log('📌 Seguimiento ID:', seguimientoId);
+        console.log('📌 ID Cliente URL:', idClienteUrl);
+        console.log('📌 ID Tatuador URL:', idTatuadorUrl);
+        console.log('📌 Modo Admin:', esAdminModo);
+        
+        const API_BASE = '/api';
+        
+        let currentSeguimiento = null;
+        let currentChat = [];
+        let currentFotos = [];
+        let currentNota = '';
+        let nombreCliente = '';
+        
+        // ============================================
+        // BOTÓN DE REGRESO (atrás)
+        // ============================================
+        
+        const backLink = document.getElementById('backLink');
+        if (backLink) {
+            backLink.href = '/pages/cliente/seguimiento/';
+            console.log('🔙 Botón atrás apunta a:', backLink.href);
+        }
+        
+        // ============================================
+        // DETERMINAR QUIÉN ES EL REMITENTE
+        // ============================================
+        
+        function getRemitente() {
+            if (currentRol === 'cliente') {
+                return 'CLIENTE';
+            }
+            return 'ARTISTA';
+        }
+        
+        // ============================================
+        // CARGAR DATOS
+        // ============================================
+        
+        async function loadAllData() {
+            if (!seguimientoId) {
+                window.location.href = '/pages/cliente/seguimiento/';
+                return;
+            }
+            
+            try {
+                let detalleUrl = `${API_BASE}/clientes/${seguimientoId}`;
+                if (idClienteUrl) {
+                    detalleUrl += `?idcliente=${idClienteUrl}`;
+                } else if (idTatuadorUrl) {
+                    detalleUrl += `?idtatuador=${idTatuadorUrl}`;
+                }
+                
+                console.log('📡 Fetching detalle:', detalleUrl);
+                const seguimientoRes = await fetch(detalleUrl);
+                
+                if (!seguimientoRes.ok) {
+                    if (seguimientoRes.status === 403) {
+                        alert('No tienes permiso para ver este seguimiento');
+                        window.location.href = '/pages/cliente/seguimiento/';
+                        return;
+                    }
+                    throw new Error('Error al cargar datos');
+                }
+                
+                currentSeguimiento = await seguimientoRes.json();
+                nombreCliente = currentSeguimiento.nombre || 'Cliente';
+                console.log('📌 Seguimiento cargado:', currentSeguimiento);
+                
+                await loadChat();
+                await loadFotos();
+                await loadNotas();
+                renderDetail();
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('mainContent').innerHTML = `
+                    <div class="text-center text-error py-10">
+                        <span class="material-symbols-outlined text-5xl mb-4">error</span>
+                        <p>Error al cargar los datos</p>
+                        <button onclick="location.href='/pages/cliente/seguimiento/'" 
+                                class="mt-4 px-6 py-2 bg-primary rounded-xl text-on-primary">
+                            Volver
+                        </button>
+                    </div>
+                `;
+            }
+        }
+        
+        async function loadChat() {
+            try {
+                let chatUrl = `${API_BASE}/clientes/${seguimientoId}/chat`;
+                const params = new URLSearchParams();
+                
+                // Si es admin, no enviar parámetros de autenticación
+                if (esAdminModo) {
+                    console.log('🔓 Modo Admin - fetching chat without auth params');
+                } else {
+                    if (idClienteUrl) {
+                        params.append('idcliente', idClienteUrl);
+                    }
+                    if (idTatuadorUrl) {
+                        params.append('idtatuador', idTatuadorUrl);
+                    }
+                }
+                
+                if (params.toString()) {
+                    chatUrl += '?' + params.toString();
+                }
+                
+                console.log('📡 Fetching chat:', chatUrl);
+                const response = await fetch(chatUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                const mensajes = Array.isArray(data) ? data : [];
+                
+                currentChat = mensajes.map(msg => {
+                    let fechaFormateada = msg.fecha || 'Ahora';
+                    
+                    if (msg.fecha_envio) {
+                        const fechaMsg = new Date(msg.fecha_envio);
+                        const ahora = new Date();
+                        const diffMs = ahora - fechaMsg;
+                        const diffMins = Math.floor(diffMs / 60000);
+                        
+                        if (diffMins < 1) {
+                            fechaFormateada = 'Ahora mismo';
+                        } else if (diffMins < 60) {
+                            fechaFormateada = `Hace ${diffMins} min`;
+                        } else {
+                            fechaFormateada = fechaMsg.toLocaleTimeString('es-MX', { 
+                                hour: '2-digit', 
+                                minute: '2-digit',
+                                hour12: true 
+                            });
+                        }
+                    } else if (msg.fecha && !msg.fecha.includes('Hace') && !msg.fecha.includes('Ahora')) {
+                        fechaFormateada = msg.fecha;
+                    }
+                    
+                    return {
+                        id: msg.id,
+                        remitente: msg.remitente,
+                        mensaje: msg.mensaje,
+                        fecha: fechaFormateada
+                    };
+                });
+                
+                console.log('📌 Chat cargado:', currentChat.length, 'mensajes');
+            } catch (error) {
+                console.error('Error cargando chat:', error);
+                currentChat = [];
+            }
+        }
+        
+        async function loadFotos() {
+            try {
+                const response = await fetch(`${API_BASE}/clientes/${seguimientoId}/fotos`);
+                currentFotos = await response.json();
+                console.log('📸 Fotos cargadas:', currentFotos.length);
+            } catch (error) {
+                console.error('Error cargando fotos:', error);
+                currentFotos = [];
+            }
+        }
+        
+        async function loadNotas() {
+            try {
+                const response = await fetch(`${API_BASE}/clientes/${seguimientoId}/notas`);
+                const data = await response.json();
+                currentNota = data.contenido || '';
+                console.log('📝 Notas cargadas');
+            } catch (error) {
+                console.error('Error cargando notas:', error);
+                currentNota = '';
+            }
+        }
+        
+        // ============================================
+        // ACCIONES (solo para no-admin)
+        // ============================================
+        
+        async function sendMessage() {
+            if (esAdminModo) {
+                console.log('🔒 Admin no puede enviar mensajes');
+                return;
+            }
+            
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
+            if (!text) return;
+            
+            const remitente = getRemitente();
+            
+            const bodyData = {
+                remitente: remitente,
+                mensaje: text
+            };
+            
+            if (remitente === 'CLIENTE' && idClienteUrl) {
+                bodyData.idcliente = parseInt(idClienteUrl);
+            } else if (remitente === 'ARTISTA' && idTatuadorUrl) {
+                bodyData.idtatuador = parseInt(idTatuadorUrl);
+            }
+            
+            console.log('📤 Enviando mensaje:', bodyData);
+            
+            try {
+                const response = await fetch(`${API_BASE}/clientes/${seguimientoId}/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(bodyData)
+                });
+                
+                const responseData = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(responseData.error || 'Error al enviar mensaje');
+                }
+                
+                const nuevoMensaje = {
+                    id: responseData.id,
+                    remitente: remitente,
+                    mensaje: text,
+                    fecha: responseData.fecha || 'Ahora'
+                };
+                
+                currentChat.push(nuevoMensaje);
+                renderChat();
+                
+                input.value = '';
+                const chatContainer = document.getElementById('chatContainer');
+                if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
+                
+            } catch (error) {
+                console.error('Error enviando mensaje:', error);
+                alert('Error al enviar mensaje: ' + error.message);
+            }
+        }
+        
+        async function updateEstado(nuevoEstado) {
+            if (esAdminModo) return;
+            
+            try {
+                let bodyData = { estado: nuevoEstado };
+                if (idTatuadorUrl) {
+                    bodyData.idtatuador = parseInt(idTatuadorUrl);
+                }
+                
+                await fetch(`${API_BASE}/clientes/${seguimientoId}/estado`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(bodyData)
+                });
+                if (currentSeguimiento) currentSeguimiento.estado = nuevoEstado;
+                renderEstadoBadge();
+            } catch (error) {
+                console.error('Error actualizando estado:', error);
+            }
+        }
+        
+        async function guardarObservacion() {
+            if (esAdminModo) return;
+            
+            const textarea = document.getElementById('notasTextarea');
+            const nuevoContenido = textarea.value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/clientes/${seguimientoId}/notas`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contenido: nuevoContenido })
+                });
+                
+                if (response.ok) {
+                    currentNota = nuevoContenido;
+                    mostrarToast('Observación guardada correctamente');
+                } else {
+                    throw new Error('Error al guardar');
+                }
+            } catch (error) {
+                console.error('Error guardando observación:', error);
+                alert('Error al guardar la observación');
+            }
+        }
+        
+        async function agregarObservacionRapida() {
+            if (esAdminModo) return;
+            
+            const observacion = prompt('Escribe tu observación rápida:');
+            if (observacion) {
+                const remitente = getRemitente();
+                let bodyData = {
+                    remitente: remitente,
+                    mensaje: `📝 OBSERVACIÓN: ${observacion}`
+                };
+                
+                if (remitente === 'CLIENTE' && idClienteUrl) {
+                    bodyData.idcliente = parseInt(idClienteUrl);
+                } else if (remitente === 'ARTISTA' && idTatuadorUrl) {
+                    bodyData.idtatuador = parseInt(idTatuadorUrl);
+                }
+                
+                await fetch(`${API_BASE}/clientes/${seguimientoId}/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(bodyData)
+                });
+                await loadChat();
+                renderChat();
+                mostrarToast('Observación agregada al chat');
+            }
+        }
+        
+        async function finalizarSeguimiento() {
+            if (esAdminModo) return;
+            
+            if (confirm('¿Estás seguro de que deseas finalizar este seguimiento?')) {
+                await updateEstado('Curación Completada');
+                mostrarToast('Seguimiento finalizado');
+            }
+        }
+        
+        function mostrarToast(mensaje) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-32 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 text-sm';
+            toast.textContent = mensaje;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+        
+        // ============================================
+        // RENDERIZADO
+        // ============================================
+        
+        function renderDetail() {
+            if (!currentSeguimiento) return;
+            
+            const nombre = currentSeguimiento.nombre || nombreCliente;
+            const nombreTatuador = currentSeguimiento.nombreTatuador || 'Tatuador';
+            const tattoo = currentSeguimiento.tattoo || 'Tatuaje';
+            const avatar = currentSeguimiento.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(nombre)}&background=ba9eff&color=fff`;
+            const estado = currentSeguimiento.estado || 'Curación Normal';
+            const diasProceso = currentSeguimiento.diasProceso || 1;
+            
+            const pageTitle = document.getElementById('pageTitle');
+            if (esAdminModo) {
+                pageTitle.textContent = `Seguimiento: ${nombre} (Admin - Solo lectura)`;
+            } else if (currentRol === 'tatuador') {
+                pageTitle.textContent = `Seguimiento: ${nombre}`;
+            } else {
+                pageTitle.textContent = 'Mi Seguimiento';
+            }
+            
+            document.getElementById('mainContent').innerHTML = `
+                <!-- Perfil del Cliente -->
+                <section class="flex flex-col items-center text-center gap-4 mt-4">
+                    <div class="relative">
+                        <div class="w-24 h-24 rounded-full p-[2px] bg-gradient-to-tr from-primary to-primary-dim">
+                            <img src="${avatar}" alt="${nombre}" class="w-full h-full object-cover rounded-full border-4 border-surface">
+                        </div>
+                        <div class="absolute bottom-0 right-0 w-4 h-4 bg-primary rounded-full border-2 border-surface"></div>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-on-surface">${escapeHtml(nombre)}</h2>
+                        <p class="text-on-surface-variant font-medium">Tatuaje: '${escapeHtml(tattoo)}'</p>
+                        
+                        ${currentRol === 'cliente' && currentSeguimiento.nombreTatuador ? `
+                            <p class="text-sm text-primary/80 mt-2 flex items-center justify-center gap-1">
+                                <span class="material-symbols-outlined text-sm">brush</span>
+                                Tatuador: ${escapeHtml(currentSeguimiento.nombreTatuador)}
+                            </p>
+                        ` : ''}
+                        
+                        ${currentRol === 'tatuador' && !esAdminModo ? `
+                            <p class="text-sm text-primary/80 mt-2 flex items-center justify-center gap-1">
+                                <span class="material-symbols-outlined text-sm">person</span>
+                                Cliente: ${escapeHtml(nombre)}
+                            </p>
+                        ` : ''}
+                        
+                        <p class="text-xs text-on-surface-variant/60 mt-1">Día ${diasProceso} del proceso</p>
+                    </div>
+                </section>
+                
+                <!-- Estado del Proceso (deshabilitado para admin) -->
+                <section class="space-y-3">
+                    <label class="text-sm font-bold text-primary uppercase tracking-widest px-1">Estado del Proceso</label>
+                    <div class="relative">
+                        <select id="estadoSelect" class="w-full bg-surface-container-high text-on-surface border-none rounded-xl py-4 px-5 appearance-none focus:ring-2 focus:ring-primary/40 transition-all cursor-pointer" ${esAdminModo ? 'disabled' : ''}>
+                            <option value="Curación Normal" ${estado === 'Curación Normal' ? 'selected' : ''}>Curación Normal</option>
+                            <option value="Irritación Leve" ${estado === 'Irritación Leve' ? 'selected' : ''}>Irritación Leve</option>
+                            <option value="Curación Completada" ${estado === 'Curación Completada' ? 'selected' : ''}>Curación Completada</option>
+                            <option value="Requiere Revisión" ${estado === 'Requiere Revisión' ? 'selected' : ''}>Requiere Revisión</option>
+                        </select>
+                        <div class="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none">
+                            <span class="material-symbols-outlined text-primary">expand_more</span>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Galería de Fotos -->
+                <section class="space-y-4">
+                    <div class="flex justify-between items-end px-1">
+                        <h3 class="text-lg font-bold text-on-surface">Progreso del Tatuaje</h3>
+                        <span class="text-xs text-on-surface-variant">${currentFotos.length} foto${currentFotos.length !== 1 ? 's' : ''}</span>
+                    </div>
+                    <div id="galeriaContainer" class="grid grid-cols-3 gap-3">
+                        ${currentFotos.length === 0 ? `
+                            <div class="col-span-3 bg-surface-container-high rounded-xl p-8 text-center text-on-surface-variant/50">
+                                <span class="material-symbols-outlined text-4xl">photo_camera</span>
+                                <p class="text-xs mt-2">Sin fotos aún</p>
+                            </div>
+                        ` : `
+                            <div class="col-span-2 aspect-square">
+                                <img src="${currentFotos[0].url}" alt="Progreso" class="w-full h-full object-cover rounded-xl">
+                            </div>
+                            <div class="flex flex-col gap-3">
+                                ${currentFotos.slice(1, 3).map(foto => `
+                                    <div class="flex-1">
+                                        <img src="${foto.url}" alt="Progreso" class="w-full h-full object-cover rounded-xl">
+                                    </div>
+                                `).join('')}
+                                ${currentFotos.length <= 1 ? `
+                                    <div class="flex-1 bg-surface-container-high rounded-xl flex items-center justify-center">
+                                        <span class="material-symbols-outlined text-primary/40">add_a_photo</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `}
+                    </div>
+                </section>
+                
+                <!-- Observaciones (readonly para admin) -->
+                <section class="space-y-3">
+                    <div class="flex justify-between items-center px-1">
+                        <label class="text-sm font-bold text-primary uppercase tracking-widest">Observaciones</label>
+                        ${!esAdminModo ? `<button id="guardarNotaBtn" class="text-xs bg-primary/20 hover:bg-primary/30 text-primary px-3 py-1 rounded-full transition">Guardar</button>` : ''}
+                    </div>
+                    <textarea id="notasTextarea" class="w-full bg-surface-container-high text-on-surface border-none rounded-xl p-5 min-h-[120px] focus:ring-2 focus:ring-primary/40 transition-all placeholder:text-on-surface-variant/50" placeholder="Añadir observaciones..." ${esAdminModo ? 'readonly' : ''}>${escapeHtml(currentNota)}</textarea>
+                </section>
+                
+                <!-- Botones de Acción (ocultos para admin) -->
+                ${!esAdminModo ? `
+                <section class="flex gap-4">
+                    <button id="finalizarBtn" class="flex-1 bg-surface-container-highest text-on-surface font-bold py-4 rounded-xl hover:bg-surface-bright transition-all active:scale-95">
+                        Finalizar Seguimiento
+                    </button>
+                    <button id="observacionRapidaBtn" class="flex-1 bg-surface-container-highest text-on-surface font-bold py-4 rounded-xl hover:bg-surface-bright transition-all active:scale-95">
+                        Observación Rápida
+                    </button>
+                </section>
+                ` : `
+                <section class="text-center py-4">
+                    <p class="text-sm text-primary/60 flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-base">visibility</span>
+                        Modo administrador - Solo lectura
+                    </p>
+                </section>
+                `}
+                
+                <!-- Chat de Seguimiento -->
+                <section class="space-y-6 pb-20">
+                    <h3 class="text-sm font-bold text-primary uppercase tracking-widest px-1">Chat de Seguimiento</h3>
+                    <div id="chatContainer" class="flex flex-col gap-6 max-h-[400px] overflow-y-auto scrollbar-hide"></div>
+                </section>
+            `;
+            
+            // Bindear eventos SOLO si no es admin
+            if (!esAdminModo) {
+                document.getElementById('estadoSelect')?.addEventListener('change', (e) => updateEstado(e.target.value));
+                document.getElementById('notasTextarea')?.addEventListener('blur', guardarObservacion);
+                document.getElementById('finalizarBtn')?.addEventListener('click', finalizarSeguimiento);
+                document.getElementById('observacionRapidaBtn')?.addEventListener('click', agregarObservacionRapida);
+                const guardarBtn = document.getElementById('guardarNotaBtn');
+                if (guardarBtn) guardarBtn.addEventListener('click', guardarObservacion);
+            }
+            
+            renderChat();
+            
+            // Ocultar footer (input de mensaje) si es admin
+            if (esAdminModo) {
+                const footer = document.querySelector('footer');
+                if (footer) {
+                    footer.style.display = 'none';
+                }
+                console.log('🔒 Modo Admin - Input de mensaje oculto');
+            }
+        }
+        
+        function renderChat() {
+            const container = document.getElementById('chatContainer');
+            if (!container) return;
+            
+            if (currentChat.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-on-surface-variant/50 py-10">
+                        <span class="material-symbols-outlined text-4xl">chat</span>
+                        <p class="text-sm mt-2">No hay mensajes aún</p>
+                        <p class="text-xs">Escribe un mensaje para iniciar la conversación</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const remitenteActual = getRemitente();
+            
+            container.innerHTML = currentChat.map(msg => {
+                const esMiMensaje = msg.remitente === remitenteActual;
+                const nombreRemitente = msg.remitente === 'CLIENTE' ? nombreCliente : 'Tatuador';
+                
+                return `
+                    <div class="flex flex-col ${esMiMensaje ? 'items-end' : 'items-start'} max-w-[85%] ${esMiMensaje ? 'ml-auto' : ''} gap-2">
+                        <div class="${esMiMensaje ? 'bg-gradient-to-tr from-secondary-container to-primary-dim text-on-surface' : 'bg-surface-container text-on-surface'} p-4 rounded-2xl ${esMiMensaje ? 'rounded-tr-none' : 'rounded-tl-none'} shadow-lg">
+                            <p class="text-sm leading-relaxed">${escapeHtml(msg.mensaje)}</p>
+                        </div>
+                        <span class="text-[10px] text-on-surface-variant ${esMiMensaje ? 'mr-1' : 'ml-1'} uppercase">
+                            ${nombreRemitente} • ${msg.fecha || 'Ahora'}
+                        </span>
+                    </div>
+                `;
+            }).join('');
+            
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        function renderEstadoBadge() {
+            const select = document.getElementById('estadoSelect');
+            if (select && currentSeguimiento) {
+                select.value = currentSeguimiento.estado;
+            }
+        }
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+        
+        // ============================================
+        // INICIALIZAR
+        // ============================================
+        
+        document.getElementById('sendBtn')?.addEventListener('click', sendMessage);
+        document.getElementById('messageInput')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+        
+        loadAllData();
+    </script>
+</body>
+</html>

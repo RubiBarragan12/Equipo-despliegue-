@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Gestión de Clientes - Tattoo Studio</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#7f13ec",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#191022",
+                    },
+                    fontFamily: { "display": ["Space Grotesk"] },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { min-height: max(884px, 100dvh); }
+    </style>
+</head>
+
+<body class="bg-background-dark font-display text-white/90">
+    <div class="relative flex h-auto min-h-screen w-full flex-col">
+
+        <!-- Header -->
+        <header class="sticky top-0 z-10 flex flex-col gap-2 bg-background-dark/80 p-4 pb-4 backdrop-blur-sm">
+            <div class="flex items-center justify-between h-12">
+                <!-- Botón atrás → menú principal -->
+                <a id="btn-atras"
+                   href="/pages/cajero/menu_cajero.html"
+                   class="flex size-12 shrink-0 items-center justify-center rounded-full bg-white/5">
+                    <span class="material-symbols-outlined">arrow_back_ios_new</span>
+                </a>
+                <h1 class="text-lg font-bold">Clientes</h1>
+                <div class="size-12 shrink-0"></div>
+            </div>
+            <div class="flex items-center gap-4">
+                <!-- Buscador en tiempo real -->
+                <div class="relative flex-grow">
+                    <input
+                        id="buscador"
+                        class="w-full rounded-lg border border-white/10 bg-white/5 py-3 pl-12 pr-4 text-base text-white/90 placeholder:text-white/50 focus:border-primary focus:ring-primary"
+                        placeholder="Nombre, teléfono, email..." type="search" />
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-2xl text-white/50">search</span>
+                </div>
+                <!-- Botón + → registrar cliente -->
+                <a id="btn-agregar"
+                   href="/pages/cajero/registrar_cliente_cajero.html"
+                   class="flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary text-white shadow-lg">
+                    <span class="material-symbols-outlined text-3xl">add</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- Lista de clientes -->
+        <main class="flex-grow px-4 pb-24">
+            <!-- Estado: cargando -->
+            <div id="estado-cargando" class="flex flex-col items-center justify-center gap-3 pt-16 text-white/40">
+                <span class="material-symbols-outlined animate-spin text-4xl">progress_activity</span>
+                <p class="text-sm">Cargando clientes...</p>
+            </div>
+
+            <!-- Estado: error de red -->
+            <div id="estado-error" class="hidden flex-col items-center justify-center gap-3 pt-16 text-white/40">
+                <span class="material-symbols-outlined text-4xl text-red-400">wifi_off</span>
+                <p class="text-sm text-red-400">No se pudo cargar la lista</p>
+                <button id="btn-reintentar"
+                    class="mt-2 rounded-lg border border-white/10 px-4 py-2 text-sm text-white/60 hover:bg-white/5">
+                    Reintentar
+                </button>
+            </div>
+
+            <!-- Estado: sin resultados de búsqueda -->
+            <div id="estado-vacio" class="hidden flex-col items-center justify-center gap-3 pt-16 text-white/40">
+                <span class="material-symbols-outlined text-4xl">person_search</span>
+                <p class="text-sm">No se encontraron clientes</p>
+            </div>
+
+            <!-- Lista real -->
+            <div id="lista-clientes" class="hidden flex flex-col gap-3 pt-4"></div>
+        </main>
+
+        <!-- Nav inferior -->
+        <nav class="fixed bottom-0 left-0 right-0 h-20 border-t border-white/10 bg-background-dark px-4">
+            <div class="flex h-full items-center justify-around">
+                <a class="flex flex-col items-center gap-1 text-white/50 px-4 py-2" href="/pages/cajero/menu_cajero.html">
+                    <span class="material-symbols-outlined text-2xl">grid_view</span>
+                    <span class="text-xs font-medium">Inicio</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 text-white/50 px-4 py-2" href="#">
+                    <span class="material-symbols-outlined text-2xl">calendar_today</span>
+                    <span class="text-xs font-medium">Calendario</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 text-primary rounded-lg bg-primary/10 px-4 py-2" href="#">
+                    <span class="material-symbols-outlined text-2xl">group</span>
+                    <span class="text-xs font-medium">Clientes</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <script>
+        // ─── Referencias al DOM ────────────────────────────────────────────────
+        const buscador        = document.getElementById('buscador');
+        const listaEl         = document.getElementById('lista-clientes');
+        const estadoCargando  = document.getElementById('estado-cargando');
+        const estadoError     = document.getElementById('estado-error');
+        const estadoVacio     = document.getElementById('estado-vacio');
+        const btnReintentar   = document.getElementById('btn-reintentar');
+
+        // ─── Estado ───────────────────────────────────────────────────────────
+        let todosLosClientes = []; // guarda la lista completa para filtrar localmente
+
+        // ─── Mostrar / ocultar estados ────────────────────────────────────────
+        function mostrarEstado(estado) {
+            estadoCargando.classList.add('hidden');    estadoCargando.classList.remove('flex');
+            estadoError.classList.add('hidden');       estadoError.classList.remove('flex');
+            estadoVacio.classList.add('hidden');       estadoVacio.classList.remove('flex');
+            listaEl.classList.add('hidden');           listaEl.classList.remove('flex');
+
+            if (estado === 'cargando') { estadoCargando.classList.replace('hidden', 'flex'); }
+            if (estado === 'error')    { estadoError.classList.replace('hidden', 'flex'); }
+            if (estado === 'vacio')    { estadoVacio.classList.replace('hidden', 'flex'); }
+            if (estado === 'lista')    { listaEl.classList.replace('hidden', 'flex'); }
+        }
+
+        // ─── Renderizar lista de clientes ─────────────────────────────────────
+        function renderizarClientes(clientes) {
+            if (clientes.length === 0) {
+                mostrarEstado('vacio');
+                return;
+            }
+
+            listaEl.innerHTML = clientes.map(c => {
+                // Mostrar correo si existe, si no el teléfono
+                const subtitulo = c.correo || c.telefono || '—';
+                const iniciales = `${c.nombre?.[0] ?? ''}${c.apellido_paterno?.[0] ?? ''}`.toUpperCase();
+
+                return `
+                <a class="flex items-center gap-4 rounded-xl border border-white/10 bg-white/5 p-4 hover:bg-white/10 transition-colors"
+                   href="#">
+                    <div class="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/20 text-primary font-bold text-sm">
+                        ${iniciales}
+                    </div>
+                    <div class="flex-grow min-w-0">
+                        <p class="font-bold text-white/90 truncate">
+                            ${c.nombre} ${c.apellido_paterno} ${c.apellido_materno ?? ''}
+                        </p>
+                        <p class="text-sm text-white/50 truncate">${subtitulo}</p>
+                    </div>
+                    <span class="material-symbols-outlined text-white/30 shrink-0">chevron_right</span>
+                </a>`;
+            }).join('');
+
+            mostrarEstado('lista');
+        }
+
+        // ─── Filtrar clientes por búsqueda ────────────────────────────────────
+        function filtrarClientes(texto) {
+            const q = texto.toLowerCase().trim();
+            if (!q) return todosLosClientes;
+            return todosLosClientes.filter(c =>
+                `${c.nombre} ${c.apellido_paterno} ${c.apellido_materno ?? ''}`.toLowerCase().includes(q) ||
+                (c.correo   ?? '').toLowerCase().includes(q) ||
+                (c.telefono ?? '').includes(q)
+            );
+        }
+
+        // ─── Fetch al backend ─────────────────────────────────────────────────
+        async function cargarClientes() {
+            mostrarEstado('cargando');
+            try {
+                const response = await fetch('/api/clientes');
+
+                const texto = await response.text();
+                let resultado;
+                try {
+                    resultado = JSON.parse(texto);
+                } catch {
+                    throw new Error(`Respuesta inesperada del servidor: ${texto.substring(0, 80)}`);
+                }
+
+                if (!response.ok) {
+                    throw new Error(resultado.message || 'Error al obtener clientes');
+                }
+
+                todosLosClientes = resultado.clientes ?? [];
+                renderizarClientes(todosLosClientes);
+
+            } catch (err) {
+                console.error('Error al cargar clientes:', err);
+                mostrarEstado('error');
+            }
+        }
+
+        // ─── Eventos ──────────────────────────────────────────────────────────
+        buscador.addEventListener('input', () => {
+            const filtrados = filtrarClientes(buscador.value);
+            renderizarClientes(filtrados);
+        });
+
+        btnReintentar.addEventListener('click', cargarClientes);
+
+        // ─── Iniciar ──────────────────────────────────────────────────────────
+        cargarClientes();
+    </script>
+</body>
+</html>

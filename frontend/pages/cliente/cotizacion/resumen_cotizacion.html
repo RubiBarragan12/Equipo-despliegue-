@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Resumen de Cita</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        body { min-height: max(884px, 100dvh); }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#7f13ec",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#191022",
+                    },
+                    fontFamily: { "display": ["Space Grotesk", "sans-serif"] },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+    <div class="relative flex h-auto min-h-screen w-full flex-col">
+        
+        <header class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between sticky top-0 z-10 border-b border-white/10">
+            <button id="btn-back" class="text-slate-800 dark:text-white flex size-12 shrink-0 items-center justify-start cursor-pointer">
+                <span class="material-symbols-outlined text-2xl">arrow_back</span>
+            </button>
+            <h1 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Resumen de tu Cita</h1>
+            <div class="flex size-12 shrink-0 items-center"></div>
+        </header>
+
+        <main class="flex-1 pb-40">
+            <section class="p-4">
+                <h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] pb-3">Detalles del Tatuaje</h2>
+                <div class="@container">
+                    <div class="flex flex-col items-stretch justify-start rounded-xl overflow-hidden bg-background-light dark:bg-black/20 ring-1 ring-inset ring-slate-200 dark:ring-white/10 @xl:flex-row @xl:items-start">
+                        <div id="resumen-imagen" class="w-full bg-center bg-no-repeat aspect-video bg-cover bg-zinc-800 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-4xl text-zinc-600">image</span>
+                        </div>
+                        <div class="flex w-full min-w-72 grow flex-col items-stretch justify-center gap-2 p-4 @xl:px-4">
+                            <p id="resumen-estilo" class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Cargando...</p>
+                            <p id="resumen-detalles" class="text-slate-600 dark:text-[#ad92c9] text-base font-normal leading-normal line-clamp-3">Cargando detalles...</p>
+                            <button id="btn-ver-referencia" class="flex min-w-[84px] max-w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary/20 dark:bg-primary/20 text-primary dark:text-white text-sm font-medium leading-normal mt-2 transition hover:bg-primary/30">
+                                <span class="truncate">Ver imagen de referencia</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="px-4"><hr class="border-slate-200 dark:border-white/10"/></div>
+
+            <section class="p-4">
+                <div class="flex flex-col gap-0.5">
+                    
+                    <div class="flex items-center gap-4 py-2 justify-between">
+                        <div class="flex items-center gap-4">
+                            <div id="resumen-artista-foto" class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-10 w-10 bg-zinc-800 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-zinc-500">person</span>
+                            </div>
+                            <p class="text-slate-600 dark:text-[#ad92c9] text-base font-normal leading-normal flex-1 truncate">Artista</p>
+                        </div>
+                        <div class="shrink-0"><p id="resumen-artista-nombre" class="text-slate-900 dark:text-white text-base font-medium leading-normal">Cargando...</p></div>
+                    </div>
+
+                    <div class="flex items-center gap-4 py-2 justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="text-slate-800 dark:text-white flex items-center justify-center rounded-lg bg-slate-200 dark:bg-[#362348] shrink-0 size-10">
+                                <span class="material-symbols-outlined text-xl">calendar_month</span>
+                            </div>
+                            <div class="flex flex-col justify-center">
+                                <p class="text-slate-600 dark:text-[#ad92c9] text-base font-normal leading-normal line-clamp-1">Fecha y Hora</p>
+                            </div>
+                        </div>
+                        <div class="shrink-0"><p id="resumen-fecha-hora" class="text-slate-900 dark:text-white text-base font-medium leading-normal text-right">--/--/----<br/>--:--</p></div>
+                    </div>
+
+                    <div class="flex items-center gap-4 py-2 justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="text-slate-800 dark:text-white flex items-center justify-center rounded-lg bg-slate-200 dark:bg-[#362348] shrink-0 size-10">
+                                <span class="material-symbols-outlined text-xl">payments</span>
+                            </div>
+                            <div class="flex flex-col justify-center">
+                                <p class="text-slate-600 dark:text-[#ad92c9] text-base font-normal leading-normal line-clamp-1">Monto Pagado</p>
+                            </div>
+                        </div>
+                        <div class="shrink-0"><p id="resumen-monto" class="text-green-500 dark:text-green-400 text-lg font-bold leading-normal text-right">$0.00</p></div>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+
+        <footer class="fixed bottom-0 left-0 right-0 p-4 bg-background-light dark:bg-background-dark/80 backdrop-blur-sm border-t border-slate-200 dark:border-white/10">
+            <div class="flex flex-col gap-3">
+                <button id="btn-resumen-seguimiento" class="flex w-full min-w-[84px] max-w-[480px] mx-auto cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-4 bg-green-600 hover:bg-green-500 text-white text-base font-bold leading-normal transition-colors gap-2">
+                    <span class="material-symbols-outlined">chat</span>
+                    <span class="truncate">Ir al Chat de Seguimiento</span>
+                </button>
+                <button id="btn-resumen-volver" class="flex w-full min-w-[84px] max-w-[480px] mx-auto cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-4 bg-transparent text-primary dark:text-primary text-base font-bold leading-normal hover:bg-primary/5 transition-colors">
+                    <span class="truncate">Volver a Mis Cotizaciones</span>
+                </button>
+            </div>
+        </footer>
+    </div>
+    
+    <script src="/js/mis_cotizaciones_cliente.js"></script>
+</body>
+</html>

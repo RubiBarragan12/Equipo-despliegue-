@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>¡Cita Confirmada!</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48; }
+        body { min-height: max(884px, 100dvh); }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: { "primary": "#7f13ec", "background-light": "#f7f6f8", "background-dark": "#191022", "success-green": "#22c55e" },
+                    fontFamily: { "display": ["Space Grotesk", "sans-serif"] },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+    <div class="relative flex h-auto min-h-screen w-full flex-col">
+        <header class="flex items-center bg-background-dark p-4 pb-2 justify-between sticky top-0 z-10">
+            <div class="w-12"></div>
+            <h1 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Confirmación</h1>
+            <div class="w-12"></div>
+        </header>
+        <main class="flex flex-col flex-1 px-4 justify-center items-center text-center">
+            <div class="flex flex-col items-center gap-6">
+                <div class="flex items-center justify-center size-24 bg-success-green/10 rounded-full">
+                    <span class="material-symbols-outlined text-6xl text-success-green">check_circle</span>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <h2 class="text-white tracking-tight text-3xl font-bold leading-tight">¡Cita confirmada!</h2>
+                    <p class="text-slate-400 text-base font-normal leading-normal">Tu pago fue recibido y tu cita ha quedado agendada.</p>
+                </div>
+            </div>
+            <div class="w-full max-w-sm bg-[#261933] rounded-xl p-6 mt-8 space-y-4 border border-[#362348]">
+                <div class="flex justify-between items-center pb-4 border-b border-[#362348]">
+                    <span class="text-[#ad92c9] text-sm">Tatuador</span>
+                    <span id="conf-tatuador" class="text-white font-semibold">...</span>
+                </div>
+                <div class="flex justify-between items-center pb-4 border-b border-[#362348]">
+                    <span class="text-[#ad92c9] text-sm">Fecha</span>
+                    <span id="conf-fecha" class="text-white font-semibold">...</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-[#ad92c9] text-sm">Hora</span>
+                    <span id="conf-hora" class="text-white font-semibold">...</span>
+                </div>
+            </div>
+        </main>
+        <footer class="sticky bottom-0 p-4 pt-2 bg-background-dark">
+            <button id="btn-menu"
+                class="w-full bg-primary text-white font-bold py-4 px-6 rounded-xl text-base text-center hover:bg-primary/90 transition-colors">
+                Regresar a Menú Principal
+            </button>
+        </footer>
+    </div>
+    <script src="/js/mis_cotizaciones_cliente.js"></script>
+</body>
+</html>

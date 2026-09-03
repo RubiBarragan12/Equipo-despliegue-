@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Configuración de Negocio - Tattoo Studio</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#D93B3B",
+                        "background-dark": "#191022",
+                    },
+                    fontFamily: { "display": ["Space Grotesk"] }
+                }
+            }
+        }
+    </script>
+    <style>
+        label {
+            @apply text-white/50 text-xs font-bold uppercase tracking-widest ml-1 mb-2 block;
+        }
+    </style>
+</head>
+
+<body class="bg-background-dark font-display text-white/90">
+    <div class="relative flex h-auto min-h-screen w-full flex-col">
+        <header class="flex h-16 items-center px-4 sticky top-0 bg-background-dark/80 backdrop-blur-md z-20 border-b border-white/5">
+            <a class="flex items-center justify-center size-10 text-white/90 hover:text-primary transition-colors"
+                href="/pages/administrador/ajustes/menu_ajustes.html">
+                <span class="material-symbols-outlined">arrow_back_ios_new</span>
+            </a>
+            <div class="flex-1 text-center">
+                <h1 class="text-white/90 text-lg font-bold tracking-tight">Negocio</h1>
+            </div>
+            <button id="btn-save-all" class="text-primary font-bold text-sm px-2 active:scale-95 transition-transform">
+                Guardar
+            </button>
+        </header>
+
+        <main class="flex-grow p-4 pb-28">
+            <section class="mb-8">
+                <h3 class="text-primary text-xs font-bold uppercase tracking-[0.3em] mb-4 px-1">Información del Dueño</h3>
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-4">
+                    <div>
+                        <label>Nombre Completo</label>
+                        <input type="text" id="owner-name" class="w-full bg-black/10 border border-white/10 rounded-xl px-4 py-3 text-white/90 focus:border-primary focus:ring-2 focus:ring-primary/30 focus:shadow-lg focus:shadow-primary/10 outline-none transition-all duration-200 placeholder:text-white/20 hover:border-white/20 hover:bg-black/20" placeholder="Tu nombre">
+                    </div>
+                    
+                    <div>
+                        <label>Teléfono Personal</label>
+                        <input type="tel" id="owner-phone" class="w-full bg-black/10 border border-white/10 rounded-xl px-4 py-3 text-white/90 focus:border-primary focus:ring-2 focus:ring-primary/30 focus:shadow-lg focus:shadow-primary/10 outline-none transition-all duration-200 placeholder:text-white/20 hover:border-white/20 hover:bg-black/20" placeholder="+00 000 000 000">
+                    </div>
+                </div>
+            </section>
+
+            <section class="mb-8">
+                <h3 class="text-primary text-xs font-bold uppercase tracking-[0.3em] mb-4 px-1">Configuración de Pagos</h3>
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-4">
+                    <div>
+                        <label>Porcentaje de Anticipo</label>
+                        <div class="flex items-center gap-4">
+                            <input type="range" id="anticipo-pct" min="10" max="100" step="5" value="50"
+                                class="flex-1 accent-primary h-2 rounded-lg cursor-pointer"
+                                oninput="document.getElementById('anticipo-pct-val').textContent = this.value + '%'">
+                            <span id="anticipo-pct-val" class="text-white font-bold text-lg w-14 text-right">50%</span>
+                        </div>
+                        <p class="text-white/30 text-xs mt-2 ml-1">El cliente paga este porcentaje al reservar su cita. El resto se cobra el día del tatuaje.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h3 class="text-primary text-xs font-bold uppercase tracking-[0.3em] mb-4 px-1">Detalles del Estudio</h3>
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-5">
+                    <div>
+                        <label>Nombre del Negocio</label>
+                        <input type="text" id="biz-name" class="w-full bg-black/10 border border-white/10 rounded-xl px-4 py-3 text-white/90 focus:border-primary focus:ring-2 focus:ring-primary/30 focus:shadow-lg focus:shadow-primary/10 outline-none transition-all duration-200 placeholder:text-white/20 hover:border-white/20 hover:bg-black/20" placeholder="Nombre comercial">
+                    </div>
+
+                    <div>
+                        <label>Teléfono Comercial</label>
+                        <input type="tel" id="biz-phone" class="w-full bg-black/10 border border-white/10 rounded-xl px-4 py-3 text-white/90 focus:border-primary focus:ring-2 focus:ring-primary/30 focus:shadow-lg focus:shadow-primary/10 outline-none transition-all duration-200 placeholder:text-white/20 hover:border-white/20 hover:bg-black/20" placeholder="Teléfono del local">
+                    </div>
+
+                    <div>
+                        <label>Dirección</label>
+                        <textarea id="biz-address" rows="2" class="w-full bg-black/10 border border-white/10 rounded-xl px-4 py-3 text-white/90 focus:border-primary focus:ring-2 focus:ring-primary/30 focus:shadow-lg focus:shadow-primary/10 outline-none transition-all duration-200 placeholder:text-white/20 hover:border-white/20 hover:bg-black/20" placeholder="Calle, número, colonia..."></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label>Ciudad</label>
+                            <input type="text" id="biz-city" class="w-full bg-black/10 border border-white/10 rounded-xl px-4 py-3 text-white/90 focus:border-primary focus:ring-2 focus:ring-primary/30 focus:shadow-lg focus:shadow-primary/10 outline-none transition-all duration-200 placeholder:text-white/20 hover:border-white/20 hover:bg-black/20" placeholder="Ej. CDMX">
+                        </div>
+                        <div>
+                            <label>Estado</label>
+                            <input type="text" id="biz-state" class="w-full bg-black/10 border border-white/10 rounded-xl px-4 py-3 text-white/90 focus:border-primary focus:ring-2 focus:ring-primary/30 focus:shadow-lg focus:shadow-primary/10 outline-none transition-all duration-200 placeholder:text-white/20 hover:border-white/20 hover:bg-black/20" placeholder="Ej. Jalisco">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label>País</label>
+                        <input type="text" id="biz-country" class="w-full bg-black/10 border border-white/10 rounded-xl px-4 py-3 text-white/90 focus:border-primary focus:ring-2 focus:ring-primary/30 focus:shadow-lg focus:shadow-primary/10 outline-none transition-all duration-200 placeholder:text-white/20 hover:border-white/20 hover:bg-black/20" placeholder="México">
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <nav class="fixed bottom-0 left-0 right-0 h-20 bg-background-dark border-t border-white/10 px-4 z-30">
+            <div class="flex justify-around items-center h-full">
+                <a class="flex flex-col items-center gap-1 text-white/50" href="/pages/administrador/menu_admin.html">
+                    <span class="material-symbols-outlined text-2xl">dashboard</span>
+                    <span class="text-xs font-medium">Inicio</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 text-white/50" href="#">
+                    <span class="material-symbols-outlined text-2xl">calendar_today</span>
+                    <span class="text-xs font-medium">Agenda</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 text-primary" href="#">
+                    <span class="material-symbols-outlined text-2xl fill-[1]">store</span>
+                    <span class="text-xs font-medium">Negocio</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 text-white/50" href="/pages/administrador/ajustes/menu_ajustes.html">
+                    <span class="material-symbols-outlined text-2xl">settings</span>
+                    <span class="text-xs font-medium">Ajustes</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <script>
+        const API_BASE = '/api'; 
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const idEmpleado = user.idempleado;
+            const idEmpresa = user.idempresa;
+
+            // 1. Cargar datos del Dueño
+            if (idEmpleado) {
+                document.getElementById('owner-name').value = user.nombre || '';
+                document.getElementById('owner-phone').value = user.telefono || '';
+            }
+
+            // 2. Cargar datos de la Empresa (si ya existe)
+            if (idEmpresa) {
+                try {
+                    const response = await fetch(`${API_BASE}/negocio/${idEmpresa}`);
+                    const result = await response.json();
+
+                    if (result.status === 'ok') {
+                        const biz = result.data;
+                        document.getElementById('biz-name').value = biz.nombre || '';
+                        document.getElementById('biz-phone').value = biz.telefono || '';
+                        document.getElementById('biz-address').value = biz.direccion || '';
+                        document.getElementById('biz-city').value = biz.ciudad || '';
+                        document.getElementById('biz-state').value = biz.estado || '';
+                        document.getElementById('biz-country').value = biz.pais || '';
+                        const pct = biz.anticipo_pct || 50;
+                        document.getElementById('anticipo-pct').value = pct;
+                        document.getElementById('anticipo-pct-val').textContent = pct + '%';
+                    }
+                } catch (error) {
+                    console.error("Error al cargar datos:", error);
+                }
+            }
+        });
+
+        // 3. Guardar datos
+        document.getElementById('btn-save-all').addEventListener('click', async () => {
+            const btn = document.getElementById('btn-save-all');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            const data = {
+                idEmpleado: user.idempleado,
+                idEmpresa: user.idempresa || null,
+                nombreDueno: document.getElementById('owner-name').value,
+                telefonoDueno: document.getElementById('owner-phone').value,
+                nombreBiz: document.getElementById('biz-name').value,
+                telefonoBiz: document.getElementById('biz-phone').value,
+                direccion: document.getElementById('biz-address').value,
+                ciudad: document.getElementById('biz-city').value,
+                estado: document.getElementById('biz-state').value,
+                pais: document.getElementById('biz-country').value
+            };
+
+            if (!data.nombreBiz || !data.nombreDueno) {
+                alert("Ingresa al menos el nombre del negocio y tu nombre.");
+                return;
+            }
+
+            try {
+                btn.textContent = "Guardando...";
+                btn.disabled = true;
+
+                const response = await fetch(`${API_BASE}/negocio/configurar`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    // Actualizar sesión para que no se duplique la empresa
+                    user.nombre = result.data.user.nombre;
+                    user.telefono = result.data.user.telefono;
+                    user.idempresa = result.data.idEmpresa;
+                    localStorage.setItem('user', JSON.stringify(user));
+
+                    // Guardar anticipo_pct si ya hay empresa
+                    const idEmpresa = result.data.idEmpresa || user.idempresa;
+                    const anticipoPct = parseFloat(document.getElementById('anticipo-pct').value);
+                    if (idEmpresa && !isNaN(anticipoPct)) {
+                        await fetch(`${API_BASE}/empresas/${idEmpresa}/anticipo-pct`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ anticipo_pct: anticipoPct })
+                        });
+                    }
+
+                    alert("¡Configuración guardada!");
+                } else {
+                    alert("Error: " + result.message);
+                }
+            } catch (error) {
+                alert("Error de conexión.");
+            } finally {
+                btn.textContent = "Guardar";
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

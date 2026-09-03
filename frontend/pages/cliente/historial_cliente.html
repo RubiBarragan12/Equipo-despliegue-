@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Mi Historial de Tatuajes</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: { extend: {
+                colors: { "primary": "#7f13ec", "background-dark": "#191022", "background-light": "#f7f6f8" },
+                fontFamily: { "display": ["Space Grotesk", "sans-serif"] }
+            }}
+        }
+    </script>
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        body { min-height: max(884px, 100dvh); }
+        .tatuaje-card { transition: transform 0.15s ease; }
+        .tatuaje-card:active { transform: scale(0.97); }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display pb-28">
+
+<header class="sticky top-0 z-10 flex h-16 items-center justify-between bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm px-4 border-b border-gray-200 dark:border-white/10">
+    <a href="/pages/cliente/menu_cliente.html" class="flex size-12 items-center justify-start text-gray-700 dark:text-white">
+        <span class="material-symbols-outlined">arrow_back</span>
+    </a>
+    <h1 class="text-lg font-bold text-gray-900 dark:text-white flex-1 text-center">Mi Historial</h1>
+    <div class="size-12"></div>
+</header>
+
+<main class="px-4 pt-4">
+
+    <!-- Estado cargando -->
+    <div id="estado-cargando" class="flex flex-col items-center justify-center py-16 gap-3">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-primary border-t-transparent"></div>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Cargando tu historial...</p>
+    </div>
+
+    <!-- Estado vacío -->
+    <div id="estado-vacio" class="hidden flex-col items-center justify-center py-16 gap-4 text-center">
+        <span class="material-symbols-outlined text-6xl text-gray-300 dark:text-gray-700">photo_library</span>
+        <p class="text-lg font-bold text-gray-700 dark:text-white">Sin tatuajes aún</p>
+        <p class="text-sm text-gray-500 dark:text-gray-400 max-w-xs">Aquí aparecerán tus tatuajes una vez que hayas agendado y completado una cita.</p>
+        <a href="/pages/cliente/agendar_cita/cita_datos.html"
+            class="mt-2 flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-primary text-white font-bold text-sm">
+            <span class="material-symbols-outlined text-base">add</span>
+            Agendar cita
+        </a>
+    </div>
+
+    <!-- Grid de tatuajes -->
+    <div id="grid-tatuajes" class="hidden">
+        <p id="contador" class="text-sm text-gray-500 dark:text-gray-400 mb-4"></p>
+        <div id="lista-tatuajes" class="grid grid-cols-2 gap-3"></div>
+    </div>
+
+</main>
+
+<!-- Modal detalle -->
+<div id="modal" class="hidden fixed inset-0 z-50 flex items-end justify-center bg-black/70 backdrop-blur-sm" onclick="cerrarModal(event)">
+    <div class="w-full max-w-lg bg-background-light dark:bg-background-dark rounded-t-2xl p-5 pb-8 space-y-4" onclick="event.stopPropagation()">
+        <div class="flex items-center justify-between">
+            <h2 id="modal-titulo" class="text-lg font-bold text-gray-900 dark:text-white">Tatuaje</h2>
+            <button onclick="document.getElementById('modal').classList.add('hidden')" class="text-gray-500 dark:text-gray-400">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <img id="modal-img" src="" alt="Tatuaje" class="w-full aspect-square object-cover rounded-xl bg-gray-200 dark:bg-gray-800"/>
+        <div id="modal-info" class="space-y-2 text-sm text-gray-600 dark:text-gray-400"></div>
+        <button id="modal-seguimiento" class="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-primary text-white font-bold">
+            <span class="material-symbols-outlined text-base">chat</span>
+            Ver seguimiento
+        </button>
+    </div>
+</div>
+
+<nav class="fixed bottom-0 z-10 w-full border-t border-gray-200 bg-background-light/90 backdrop-blur-sm dark:border-gray-700 dark:bg-background-dark/90">
+    <div class="grid h-16 grid-cols-4 items-center justify-items-center px-2">
+        <a class="flex flex-col items-center justify-center gap-1 text-gray-500 dark:text-gray-400" href="/pages/cliente/menu_cliente.html">
+            <span class="material-symbols-outlined">home</span>
+            <span class="text-xs font-medium">Inicio</span>
+        </a>
+        <a class="flex flex-col items-center justify-center gap-1 text-gray-500 dark:text-gray-400" href="/pages/cliente/calendario_cliente.html">
+            <span class="material-symbols-outlined">calendar_month</span>
+            <span class="text-xs font-medium">Mis Citas</span>
+        </a>
+        <a class="flex flex-col items-center justify-center gap-1 text-gray-500 dark:text-gray-400" href="/pages/cliente/seguimiento/index.html">
+            <span class="material-symbols-outlined">chat</span>
+            <span class="text-xs font-medium">Seguimiento</span>
+        </a>
+        <a class="flex flex-col items-center justify-center gap-1 text-primary" href="/pages/cliente/historial_cliente.html">
+            <span class="material-symbols-outlined">photo_library</span>
+            <span class="text-xs font-bold">Historial</span>
+        </a>
+    </div>
+</nav>
+
+<script>
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    if (!user || user.rol !== 'cliente') { window.location.href = '/'; }
+
+    const MESES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+    function fmtFecha(f) {
+        if (!f) return '—';
+        const s = f.substring(0, 10);
+        const [y, m, d] = s.split('-').map(Number);
+        return `${d} ${MESES[m-1]} ${y}`;
+    }
+    function escapeHtml(s) {
+        if (!s) return '';
+        return s.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
+    }
+    function mostrar(id) {
+        ['estado-cargando','estado-vacio','grid-tatuajes'].forEach(s => {
+            const el = document.getElementById(s);
+            if (s === id) { el.classList.remove('hidden'); el.classList.add(s === 'estado-vacio' ? 'flex' : 'block'); }
+            else { el.classList.add('hidden'); el.classList.remove('flex','block'); }
+        });
+    }
+
+    let datosCitas = [];
+
+    async function cargarHistorial() {
+        try {
+            const r = await fetch(`/api/cotizaciones/cliente/${user.idcliente}`);
+            const j = await r.json();
+            if (j.status !== 'ok') { mostrar('estado-vacio'); return; }
+
+            // Solo mostrar citas con anticipo pagado o totalmente pagadas
+            datosCitas = (j.data || []).filter(c => {
+                const e = (c.estado || '').toLowerCase();
+                return e === 'pagada' || e === 'pagado anticipo';
+            });
+
+            if (datosCitas.length === 0) { mostrar('estado-vacio'); return; }
+
+            const contador = document.getElementById('contador');
+            const lista = document.getElementById('lista-tatuajes');
+            if (contador) contador.textContent = `${datosCitas.length} tatuaje${datosCitas.length !== 1 ? 's' : ''}`;
+
+            lista.innerHTML = datosCitas.map((cot, i) => {
+                const foto = cot.foto_final_url || cot.foto_referecncia_url;
+                const tieneFoto = !!foto;
+                return `
+                <button class="tatuaje-card text-left rounded-xl overflow-hidden border border-gray-200 dark:border-[#362348] bg-white dark:bg-[#261933]"
+                        onclick="abrirModal(${i})">
+                    <div class="aspect-square w-full bg-gray-200 dark:bg-gray-800 relative overflow-hidden">
+                        ${tieneFoto
+                            ? `<img src="${escapeHtml(foto)}" alt="Tatuaje" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                               <div class="absolute inset-0 hidden items-center justify-center bg-gray-200 dark:bg-gray-800">
+                                   <span class="material-symbols-outlined text-4xl text-gray-400">image_not_supported</span>
+                               </div>`
+                            : `<div class="absolute inset-0 flex items-center justify-center">
+                                   <span class="material-symbols-outlined text-4xl text-gray-400">image</span>
+                               </div>`
+                        }
+                        <div class="absolute top-2 right-2">
+                            <span class="text-xs px-2 py-0.5 rounded-full font-medium
+                                ${(cot.estado||'').toLowerCase() === 'pagada' ? 'bg-green-500/90 text-white' : 'bg-orange-500/90 text-white'}">
+                                ${(cot.estado||'').toLowerCase() === 'pagada' ? 'Pagado' : 'Anticipo'}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-2">
+                        <p class="text-xs font-bold text-gray-900 dark:text-white truncate">${escapeHtml(cot.estilo || 'Tatuaje')}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">${fmtFecha(cot.fecha)}</p>
+                    </div>
+                </button>`;
+            }).join('');
+
+            mostrar('grid-tatuajes');
+        } catch (_) {
+            mostrar('estado-vacio');
+        }
+    }
+
+    function abrirModal(idx) {
+        const cot = datosCitas[idx];
+        if (!cot) return;
+
+        const foto = cot.foto_final_url || cot.foto_referecncia_url;
+        const modal = document.getElementById('modal');
+        const modalImg = document.getElementById('modal-img');
+        const modalTitulo = document.getElementById('modal-titulo');
+        const modalInfo = document.getElementById('modal-info');
+        const btnSeguimiento = document.getElementById('modal-seguimiento');
+
+        modalTitulo.textContent = cot.estilo || 'Tatuaje';
+        modalImg.src = foto || '';
+        modalImg.style.display = foto ? 'block' : 'none';
+
+        modalInfo.innerHTML = `
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-base text-primary">brush</span>
+                <span>Artista: <strong class="text-gray-900 dark:text-white">${escapeHtml(cot.tatuador_nombre || '—')}</strong></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-base text-primary">calendar_today</span>
+                <span>Fecha: <strong class="text-gray-900 dark:text-white">${fmtFecha(cot.fecha)}</strong></span>
+            </div>
+            ${cot.zonacuerpo ? `<div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-base text-primary">body_system</span>
+                <span>Zona: <strong class="text-gray-900 dark:text-white">${escapeHtml(cot.zonacuerpo)}</strong></span>
+            </div>` : ''}
+            ${cot.tamanio ? `<div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-base text-primary">straighten</span>
+                <span>Tamaño: <strong class="text-gray-900 dark:text-white">${escapeHtml(cot.tamanio)} cm</strong></span>
+            </div>` : ''}
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-base text-primary">payments</span>
+                <span>Total: <strong class="text-gray-900 dark:text-white">$${parseFloat(cot.preciofinal || cot.montoestimado || 0).toFixed(2)}</strong></span>
+            </div>
+        `;
+
+        btnSeguimiento.onclick = async () => {
+            try {
+                const r = await fetch(`/api/seguimientos/por-cita/${cot.idcita}`);
+                if (r.ok) {
+                    const j = await r.json();
+                    if (j.seguimientoId) {
+                        window.location.href = `/pages/cliente/seguimiento/cliente-detalle.html?id=${j.seguimientoId}&idcliente=${user.idcliente}`;
+                        return;
+                    }
+                }
+            } catch (_) {}
+            alert('No se encontró seguimiento para esta cita.');
+        };
+
+        modal.classList.remove('hidden');
+    }
+
+    function cerrarModal(e) {
+        if (e.target === document.getElementById('modal')) {
+            document.getElementById('modal').classList.add('hidden');
+        }
+    }
+
+    cargarHistorial();
+</script>
+</body>
+</html>

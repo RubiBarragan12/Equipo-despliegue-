@@ -1,0 +1,187 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Modal Styles */
+.modal {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal.hidden {
+    animation: fadeOut 0.3s ease-in-out;
+    animation-fill-mode: forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
+.modal-content {
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(16px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal.hidden .modal-content {
+    animation: slideDown 0.3s ease-in;
+    animation-fill-mode: forwards;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(16px);
+        opacity: 0;
+    }
+}
+
+/* Modal Icon Colors */
+.modal-icon-success {
+    background-color: #d1fae5;
+    color: #059669;
+}
+
+.modal-icon-error {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.modal-icon-warning {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.modal-icon-info {
+    background-color: #dbeafe;
+    color: #0284c7;
+}
+
+/* Password Requirements Styles */
+#password-requirements {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    pointer-events: none;
+}
+
+#password-requirements.active {
+    max-height: 500px;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#password-requirements [data-requirement] {
+    color: #64748b;
+    transition: color 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+html.dark #password-requirements [data-requirement] {
+    color: #cbd5e1;
+}
+
+#password-requirements [data-requirement].met {
+    color: #059669;
+}
+
+html.dark #password-requirements [data-requirement].met {
+    color: #10b981;
+}
+
+#password-requirements [data-requirement].unmet {
+    color: #dc2626;
+}
+
+html.dark #password-requirements [data-requirement].unmet {
+    color: #ef4444;
+}
+
+#password-requirements [data-requirement] .material-symbols-outlined {
+    font-size: 18px;
+    line-height: 18px;
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Input error state */
+#password.password-error {
+    border-color: #dc2626 !important;
+    background-color: rgba(220, 38, 38, 0.05) !important;
+    --tw-ring-color: rgba(220, 38, 38, 0.2) !important;
+}
+
+#password.password-error:focus {
+    border-color: #dc2626 !important;
+    --tw-ring-color: rgba(220, 38, 38, 0.2) !important;
+}
+
+html.dark #password.password-error {
+    border-color: #dc2626 !important;
+    background-color: rgba(220, 38, 38, 0.1) !important;
+}
+
+/* Generic input error state */
+.form-input.input-error {
+    border-color: #dc2626 !important;
+    background-color: rgba(220, 38, 38, 0.05) !important;
+}
+
+html.dark .form-input.input-error {
+    border-color: #dc2626 !important;
+    background-color: rgba(220, 38, 38, 0.1) !important;
+}
+
+/* Error Messages */
+.error-message {
+    animation: slideDown 0.2s ease-out;
+}
+
+.error-message.hidden {
+    animation: slideUp 0.2s ease-out;
+    animation-fill-mode: forwards;
+    display: none;
+}

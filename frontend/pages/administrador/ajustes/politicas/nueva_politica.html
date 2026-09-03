@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Nueva Política - Tattoo Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: { "primary": "#D93B3B", "background-dark": "#191022" },
+                    fontFamily: { "display": ["Space Grotesk"] }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-background-dark font-display text-white/90">
+    <div class="relative flex min-h-screen w-full flex-col">
+        <header class="flex h-16 items-center px-4 sticky top-0 bg-background-dark/80 backdrop-blur-md z-20 border-b border-white/5">
+            <a class="flex items-center justify-center size-10 text-white/90 hover:text-primary transition-colors" href="menu_politicas.html">
+                <span class="material-symbols-outlined">close</span>
+            </a>
+            <div class="flex-1 text-center">
+                <h1 class="text-white/90 text-lg font-bold">Nueva Política</h1>
+            </div>
+            <button id="btn-publicar" class="text-primary font-bold text-sm px-2">Publicar</button>
+        </header>
+
+        <main class="p-4 space-y-6">
+            <div class="space-y-4">
+                <div>
+                    <label class="text-white/40 text-xs font-bold uppercase tracking-widest ml-1 mb-2 block">Título de la Política</label>
+                    <input type="text" id="titulo" placeholder="Ej. Depósito y Cancelaciones" 
+                        class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+                </div>
+
+                <div>
+                    <label class="text-white/40 text-xs font-bold uppercase tracking-widest ml-1 mb-2 block">Contenido Detallado</label>
+                    <textarea id="contenido" rows="12" placeholder="Describe los términos y condiciones..." 
+                        class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all resize-none"></textarea>
+                </div>
+
+                <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
+                    <div>
+                        <p class="text-sm font-bold text-white/90">Activar inmediatamente</p>
+                        <p class="text-xs text-white/40">La política será visible para los clientes.</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="es_activa" class="sr-only peer" checked>
+                        <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:4000/api/politicas';
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+        document.getElementById('btn-publicar').addEventListener('click', async () => {
+            const btn = document.getElementById('btn-publicar');
+            const titulo = document.getElementById('titulo').value.trim();
+            const contenido = document.getElementById('contenido').value.trim();
+            const es_activa = document.getElementById('es_activa').checked;
+
+            if (!titulo || !contenido) {
+                alert("Por favor, completa el título y el contenido.");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = "Guardando...";
+
+            const payload = {
+                idempresa: user.idempresa || 1, // Tomamos el ID del usuario logueado
+                titulo,
+                contenido,
+                es_activa
+            };
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    // Regresar a la lista con éxito
+                    window.location.href = 'menu_politicas.html';
+                } else {
+                    alert("Error: " + result.message);
+                    btn.disabled = false;
+                    btn.textContent = "Publicar";
+                }
+            } catch (error) {
+                console.error("Error en POST:", error);
+                alert("No se pudo conectar con el servidor.");
+                btn.disabled = false;
+                btn.textContent = "Publicar";
+            }
+        });
+    </script>
+</body>
+</html>

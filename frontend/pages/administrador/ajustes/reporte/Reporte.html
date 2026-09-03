@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Reporte General</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght=400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#af25f4",
+                        "bg-dark": "#1c1022",
+                    },
+                    fontFamily: { "sans": ["Manrope", "sans-serif"] },
+                },
+            },
+        }
+    </script>
+    <style>
+        body { font-family: 'Manrope', sans-serif; background: #1c1022; min-height: 100dvh; }
+        .bar { transition: height 0.6s cubic-bezier(0.4,0,0.2,1); }
+        input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0; position: absolute; inset: 0; cursor: pointer; }
+        #tablaExportar { display: none; }
+    </style>
+</head>
+<body class="text-slate-100 flex flex-col min-h-screen">
+
+<table id="tablaExportar">
+    <thead><tr><th>Métrica</th><th>Valor</th></tr></thead>
+    <tbody id="tbodyExportar"></tbody>
+</table>
+
+<header class="sticky top-0 z-50 bg-[#1c1022]/90 backdrop-blur-md border-b border-white/10 flex items-center px-4 h-14 gap-3">
+    <button onclick="window.history.back()" class="size-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors">
+        <span class="material-symbols-outlined text-primary">arrow_back</span>
+    </button>
+    <h1 class="text-base font-extrabold uppercase tracking-tight flex-1">Reporte General</h1>
+</header>
+
+<main class="flex-1 max-w-lg mx-auto w-full px-4 py-6 space-y-5">
+
+    <section class="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
+        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Rango de Fechas</p>
+        <div class="grid grid-cols-2 gap-3">
+            <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold text-slate-400 uppercase">Desde</label>
+                <div class="relative">
+                    <input id="fechaDesde" type="date" class="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-sm font-medium focus:ring-2 focus:ring-primary/50 outline-none cursor-pointer" onclick="this.showPicker()"/>
+                    <span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-primary text-lg pointer-events-none">calendar_today</span>
+                </div>
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold text-slate-400 uppercase">Hasta</label>
+                <div class="relative">
+                    <input id="fechaHasta" type="date" class="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-sm font-medium focus:ring-2 focus:ring-primary/50 outline-none cursor-pointer" onclick="this.showPicker()"/>
+                    <span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-primary text-lg pointer-events-none">calendar_today</span>
+                </div>
+            </div>
+        </div>
+        <button id="btnActualizar" onclick="cargarReporte()" class="w-full py-2.5 bg-primary hover:bg-primary/80 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-primary/20">
+            <span id="iconBtn" class="material-symbols-outlined text-lg">refresh</span>
+            <span id="textBtn">Actualizar</span>
+        </button>
+    </section>
+
+    <section class="grid grid-cols-3 gap-3" id="seccionMetricas">
+        <div class="bg-white/5 border border-white/10 rounded-xl p-3 flex flex-col gap-1">
+            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Ventas</p>
+            <p id="val-ventas" class="text-base font-extrabold text-primary">—</p>
+            <div class="flex items-center gap-0.5 text-[9px] text-green-400 font-bold">
+                <span class="material-symbols-outlined text-[11px]">trending_up</span>
+                <span id="lbl-ventas">Cargando</span>
+            </div>
+        </div>
+        <div class="bg-white/5 border border-white/10 rounded-xl p-3 flex flex-col gap-1">
+            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Citas</p>
+            <p id="val-citas" class="text-base font-extrabold text-primary">—</p>
+            <div class="flex items-center gap-0.5 text-[9px] text-slate-400 font-bold">
+                <span class="material-symbols-outlined text-[11px]">event</span>
+                <span>Total</span>
+            </div>
+        </div>
+        <div class="bg-white/5 border border-white/10 rounded-xl p-3 flex flex-col gap-1">
+            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Nvos. Clientes</p>
+            <p id="val-clientes" class="text-base font-extrabold text-primary">—</p>
+            <div class="flex items-center gap-0.5 text-[9px] text-green-400 font-bold">
+                <span class="material-symbols-outlined text-[11px]">person_add</span>
+                <span>Período</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-white/5 border border-white/10 rounded-2xl p-5">
+        <h3 class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-5">Ventas por Mes</h3>
+        <div id="chartContainer" class="flex items-end gap-1.5 h-36">
+            </div>
+        <div id="chartLabels" class="flex gap-1.5 mt-2 text-center"></div>
+    </section>
+
+    <section class="grid grid-cols-2 gap-3">
+        <button onclick="exportarPDF()" class="py-3 border border-primary/30 bg-primary/5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-primary/15 transition-colors text-primary">
+            <span class="material-symbols-outlined text-lg">picture_as_pdf</span> PDF
+        </button>
+        <button onclick="exportarExcel()" class="py-3 border border-emerald-500/30 bg-emerald-500/5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-emerald-500/15 transition-colors text-emerald-400">
+            <span class="material-symbols-outlined text-lg">table_chart</span> Excel
+        </button>
+    </section>
+</main>
+
+<div id="errorBanner" class="hidden fixed bottom-5 left-4 right-4 max-w-lg mx-auto bg-red-500/20 border border-red-500/40 text-red-300 rounded-xl px-4 py-3 text-sm font-medium flex items-center gap-2">
+    <span class="material-symbols-outlined text-base">error</span>
+    <span id="errorMsg">Error al cargar datos</span>
+</div>
+
+<script>
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    if (!user) window.location.href = '/';
+    const idEmpresa = user?.empresa?.idEmpresa || user?.idempresa;
+    if (!idEmpresa) { alert('No se encontró empresa asociada al usuario.'); history.back(); }
+
+    const MESES_ABREV = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
+    let datosActuales = null;
+
+    const hoy = new Date();
+    const todayStr = hoy.toISOString().split('T')[0];
+    const inicioAnio = new Date(hoy.getFullYear(), 0, 1);
+    const desde = document.getElementById('fechaDesde');
+    const hasta = document.getElementById('fechaHasta');
+    desde.max = todayStr;
+    hasta.max = todayStr;
+    desde.value = inicioAnio.toISOString().split('T')[0];
+    hasta.value = todayStr;
+    desde.addEventListener('change', () => { if (hasta.value < desde.value) hasta.value = desde.value; });
+    hasta.addEventListener('change', () => { if (desde.value > hasta.value) desde.value = hasta.value; });
+
+    // SE CORRIGIÓ ESTA FUNCIÓN: Ahora muestra el valor real con centavos sin recortar a miles (K)
+    function fmt(n) {
+        if (n >= 1_000_000) return '$' + (n / 1_000_000).toFixed(2) + 'M';
+        return '$' + n.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function renderChart(ventasPorMes) {
+        const contenedor = document.getElementById('chartContainer');
+        const labels = document.getElementById('chartLabels');
+        const maxVal = Math.max(...ventasPorMes.map(m => m.total), 1);
+
+        contenedor.innerHTML = ventasPorMes.map((m, i) => {
+            const pct = Math.max((m.total / maxVal) * 100, 2);
+            const activo = i === hoy.getMonth() ? 'bg-primary' : 'bg-primary/30';
+            return `<div class="bar flex-1 ${activo} rounded-t" style="height:${pct}%" title="${MESES_ABREV[i]}: ${fmt(m.total)}"></div>`;
+        }).join('');
+
+        labels.innerHTML = ventasPorMes.map((m, i) => {
+            const activo = i === hoy.getMonth() ? 'text-primary font-bold' : 'text-slate-500';
+            return `<span class="flex-1 text-[8px] text-center ${activo}">${MESES_ABREV[i]}</span>`;
+        }).join('');
+    }
+
+    function actualizarTablaExportar(datos) {
+        const tbody = document.getElementById('tbodyExportar');
+        tbody.innerHTML = `
+            <tr><td>Ventas Totales</td><td>${fmt(datos.ventasTotales)}</td></tr>
+            <tr><td>Citas Totales</td><td>${datos.citasTotales}</td></tr>
+            <tr><td>Clientes Nuevos</td><td>${datos.clientesNuevos}</td></tr>
+            <tr><td colspan="2"></td></tr>
+            <tr><td>Mes</td><td>Ventas</td></tr>
+            ${datos.ventasPorMes.map(m => `<tr><td>${m.mes}</td><td>${fmt(m.total)}</td></tr>`).join('')}
+        `;
+    }
+
+    async function cargarReporte() {
+        const btn = document.getElementById('btnActualizar');
+        const icon = document.getElementById('iconBtn');
+        const text = document.getElementById('textBtn');
+        const desde = document.getElementById('fechaDesde').value;
+        const hasta = document.getElementById('fechaHasta').value;
+
+        icon.classList.add('animate-spin');
+        text.textContent = 'Cargando...';
+        btn.disabled = true;
+        document.getElementById('errorBanner').classList.add('hidden');
+
+        try {
+            const res = await fetch(`/api/reportes/general/${idEmpresa}?desde=${desde}&hasta=${hasta}`);
+            const json = await res.json();
+            if (json.status !== 'ok') throw new Error(json.message);
+
+            datosActuales = json.data;
+            document.getElementById('val-ventas').textContent = fmt(datosActuales.ventasTotales);
+            document.getElementById('val-citas').textContent = datosActuales.citasTotales.toLocaleString();
+            document.getElementById('val-clientes').textContent = datosActuales.clientesNuevos.toLocaleString();
+            document.getElementById('lbl-ventas').textContent = fmt(datosActuales.ventasTotales);
+
+            renderChart(datosActuales.ventasPorMes);
+            actualizarTablaExportar(datosActuales);
+        } catch (err) {
+            document.getElementById('errorMsg').textContent = 'Error al cargar datos: ' + err.message;
+            document.getElementById('errorBanner').classList.remove('hidden');
+        } finally {
+            icon.classList.remove('animate-spin');
+            text.textContent = 'Actualizar';
+            btn.disabled = false;
+        }
+    }
+
+    function exportarPDF() {
+        if (!datosActuales) return;
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const desde = document.getElementById('fechaDesde').value;
+        const hasta = document.getElementById('fechaHasta').value;
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(16);
+        doc.text('Reporte General', 14, 18);
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Período: ${desde} — ${hasta}`, 14, 26);
+        
+        doc.autoTable({
+            startY: 32,
+            head: [['Métrica', 'Valor']],
+            body: [
+                ['Ventas Totales', fmt(datosActuales.ventasTotales)],
+                ['Citas Totales', datosActuales.citasTotales.toLocaleString()],
+                ['Clientes Nuevos', datosActuales.clientesNuevos.toLocaleString()],
+            ],
+            theme: 'grid',
+            headStyles: { fillColor: [175, 37, 244] },
+            columnStyles: {
+                1: { halign: 'right' }
+            }
+        });
+        
+        doc.autoTable({
+            startY: doc.lastAutoTable.finalY + 8,
+            head: [['Mes', 'Ventas']],
+            body: datosActuales.ventasPorMes.map(m => [m.mes, fmt(m.total)]),
+            theme: 'striped',
+            headStyles: { fillColor: [175, 37, 244] },
+            columnStyles: {
+                1: { halign: 'right' }
+            }
+        });
+        doc.save(`Reporte_General_${desde}_${hasta}.pdf`);
+    }
+
+    function exportarExcel() {
+        if (!datosActuales) return;
+        const desde = document.getElementById('fechaDesde').value;
+        const hasta = document.getElementById('fechaHasta').value;
+        const datos = [
+            ['REPORTE GENERAL', `${desde} — ${hasta}`],
+            [],
+            ['Ventas Totales', datosActuales.ventasTotales],
+            ['Citas Totales', datosActuales.citasTotales],
+            ['Clientes Nuevos', datosActuales.clientesNuevos],
+            [],
+            ['Mes', 'Ventas'],
+            ...datosActuales.ventasPorMes.map(m => [m.mes, m.total]),
+        ];
+        const ws = XLSX.utils.aoa_to_sheet(datos);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'General');
+        XLSX.writeFile(wb, `Reporte_General_${desde}_${hasta}.xlsx`);
+    }
+
+    cargarReporte();
+</script>
+</body>
+</html>

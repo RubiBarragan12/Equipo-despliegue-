@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Registrar Nuevo Cliente</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <style type="text/tailwindcss">
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    input[type="date"]::-webkit-calendar-picker-indicator { display: none; }
+    input[type="date"] { position: relative; }
+  </style>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#7f13ec",
+            "background-light": "#f7f6f8",
+            "background-dark": "#191022",
+            "surface-light": "#ffffff",
+            "surface-dark": "#2a1a3a",
+          },
+          fontFamily: { "display": ["Space Grotesk", "sans-serif"] },
+          borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+        },
+      },
+    }
+  </script>
+  <style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display text-zinc-900 dark:text-white">
+  <div class="flex h-full min-h-screen w-full flex-col">
+    <header class="sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+      <div class="flex h-16 items-center px-4">
+        <div class="flex w-12 items-center justify-start">
+          <button onclick="history.back()" class="flex h-10 w-10 items-center justify-center rounded-full text-zinc-800 dark:text-white">
+            <span class="material-symbols-outlined text-2xl">arrow_back_ios_new</span>
+          </button>
+        </div>
+        <h1 class="flex-1 text-center text-lg font-bold leading-tight tracking-[-0.015em]">Registrar Cliente</h1>
+        <div class="w-12"></div>
+      </div>
+    </header>
+
+    <main class="flex-1 px-4 py-6">
+      <form id="register-client-form" class="flex h-full flex-col justify-between">
+        <div class="space-y-6">
+
+          <!-- Nombre -->
+          <div class="relative">
+            <label
+              class="absolute -top-2 left-3 inline-block bg-background-light dark:bg-background-dark px-1 text-xs font-medium text-zinc-600 dark:text-zinc-400"
+              for="nombre">Nombre</label>
+            <div class="relative">
+              <span
+                class="material-symbols-outlined pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">person</span>
+              <input
+                class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-transparent py-4 pl-12 pr-4 text-base placeholder:text-zinc-500 focus:border-primary focus:ring-primary"
+                id="nombre" placeholder="Ej. Juan" type="text" required />
+            </div>
+            <p id="error-nombre" class="mt-2 text-sm text-red-600 dark:text-red-400 hidden">El nombre debe tener al
+              menos 2 caracteres</p>
+          </div>
+
+          <!-- Apellido Paterno -->
+          <div class="relative">
+            <label
+              class="absolute -top-2 left-3 inline-block bg-background-light dark:bg-background-dark px-1 text-xs font-medium text-zinc-600 dark:text-zinc-400"
+              for="apellido-paterno">Apellido Paterno</label>
+            <div class="relative">
+              <span
+                class="material-symbols-outlined pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">person</span>
+              <input
+                class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-transparent py-4 pl-12 pr-4 text-base placeholder:text-zinc-500 focus:border-primary focus:ring-primary"
+                id="apellido-paterno" placeholder="Ej. Pérez" type="text" required />
+            </div>
+            <p id="error-apellido-paterno" class="mt-2 text-sm text-red-600 dark:text-red-400 hidden">Este campo es
+              requerido</p>
+          </div>
+
+          <!-- Apellido Materno -->
+          <div class="relative">
+            <label
+              class="absolute -top-2 left-3 inline-block bg-background-light dark:bg-background-dark px-1 text-xs font-medium text-zinc-600 dark:text-zinc-400"
+              for="apellido-materno">Apellido Materno</label>
+            <div class="relative">
+              <span
+                class="material-symbols-outlined pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">person</span>
+              <input
+                class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-transparent py-4 pl-12 pr-4 text-base placeholder:text-zinc-500 focus:border-primary focus:ring-primary"
+                id="apellido-materno" placeholder="Ej. García" type="text" required />
+            </div>
+            <p id="error-apellido-materno" class="mt-2 text-sm text-red-600 dark:text-red-400 hidden">Este campo es
+              requerido</p>
+          </div>
+
+          <!-- Teléfono -->
+          <div class="relative">
+            <label
+              class="absolute -top-2 left-3 inline-block bg-background-light dark:bg-background-dark px-1 text-xs font-medium text-zinc-600 dark:text-zinc-400"
+              for="telefono">Número de teléfono</label>
+            <div class="relative">
+              <span
+                class="material-symbols-outlined pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">phone</span>
+              <input
+                class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-transparent py-4 pl-12 pr-4 text-base placeholder:text-zinc-500 focus:border-primary focus:ring-primary"
+                id="telefono" placeholder="Ej. 8441234567" type="tel" required />
+            </div>
+            <p id="error-telefono" class="mt-2 text-sm text-red-600 dark:text-red-400 hidden">Debe contener solo números
+              y mínimo 10 dígitos</p>
+          </div>
+
+          <!-- Correo -->
+          <div class="relative">
+            <label
+              class="absolute -top-2 left-3 inline-block bg-background-light dark:bg-background-dark px-1 text-xs font-medium text-zinc-600 dark:text-zinc-400"
+              for="correo">Correo electrónico</label>
+            <div class="relative">
+              <span
+                class="material-symbols-outlined pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">mail</span>
+              <input
+                class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-transparent py-4 pl-12 pr-4 text-base placeholder:text-zinc-500 focus:border-primary focus:ring-primary"
+                id="correo" placeholder="ejemplo@correo.com" type="email" required />
+            </div>
+            <p id="error-correo" class="mt-2 text-sm text-red-600 dark:text-red-400 hidden">Por favor ingresa un correo
+              válido (usuario@email.com)</p>
+          </div>
+
+          <!-- Contraseña -->
+          <div class="relative">
+            <label
+              class="absolute -top-2 left-3 inline-block bg-background-light dark:bg-background-dark px-1 text-xs font-medium text-zinc-600 dark:text-zinc-400"
+              for="contrasenia">Crear Contraseña</label>
+            <div class="relative">
+              <span
+                class="material-symbols-outlined pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">lock</span>
+              <input
+                class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-transparent py-4 pl-12 pr-12 text-base placeholder:text-zinc-500 focus:border-primary focus:ring-primary"
+                id="contrasenia" placeholder="Mínimo 8 caracteres" type="password" required />
+              <button id="toggle-password" type="button"
+                class="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
+                <span class="material-symbols-outlined">visibility_off</span>
+              </button>
+            </div>
+            <p id="error-contrasenia" class="mt-2 text-sm text-red-600 dark:text-red-400 hidden">La contraseña debe
+              tener al menos 8 caracteres</p>
+          </div>
+
+          <!-- Confirmar Contraseña -->
+          <div class="relative">
+            <label
+              class="absolute -top-2 left-3 inline-block bg-background-light dark:bg-background-dark px-1 text-xs font-medium text-zinc-600 dark:text-zinc-400"
+              for="confirmar-contrasenia">Confirmar Contraseña</label>
+            <div class="relative">
+              <span
+                class="material-symbols-outlined pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">lock</span>
+              <input
+                class="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-transparent py-4 pl-12 pr-12 text-base placeholder:text-zinc-500 focus:border-primary focus:ring-primary"
+                id="confirmar-contrasenia" placeholder="Repetir contraseña" type="password" required />
+              <button id="toggle-confirm-password" type="button"
+                class="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
+                <span class="material-symbols-outlined">visibility_off</span>
+              </button>
+            </div>
+            <p id="error-confirmar-contrasenia" class="mt-2 text-sm text-red-600 dark:text-red-400 hidden">Las
+              contraseñas no coinciden</p>
+          </div>
+
+        </div>
+
+        <div class="mt-8 pb-4">
+          <button id="submit-btn"
+            class="w-full rounded-xl bg-primary py-4 text-base font-bold text-white transition-colors hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+            type="submit">
+            Guardar Cliente
+          </button>
+        </div>
+      </form>
+    </main>
+  </div>
+
+  <!-- Modal de respuesta -->
+  <div id="modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50"></div>
+    <div class="relative bg-white dark:bg-surface-dark rounded-xl shadow-2xl max-w-sm w-full p-6">
+      <div class="flex items-start gap-4">
+        <div id="modal-icon" class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"></div>
+        <div class="flex-1">
+          <h3 id="modal-title" class="text-lg font-semibold text-zinc-900 dark:text-white"></h3>
+          <p id="modal-message" class="mt-2 text-sm text-zinc-600 dark:text-zinc-300"></p>
+        </div>
+      </div>
+      <div class="mt-6 flex justify-end">
+        <button id="modal-confirm-btn" type="button"
+          class="px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors font-medium">
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ─── Referencias al DOM ────────────────────────────────────────────────────
+    const form = document.getElementById('register-client-form');
+    const inputNombre = document.getElementById('nombre');
+    const inputApellidoPat = document.getElementById('apellido-paterno');
+    const inputApellidoMat = document.getElementById('apellido-materno');
+    const inputTelefono = document.getElementById('telefono');
+    const inputCorreo = document.getElementById('correo');
+    const inputContrasenia = document.getElementById('contrasenia');
+    const inputConfirmar = document.getElementById('confirmar-contrasenia');
+    const submitBtn = document.getElementById('submit-btn');
+
+    // ─── Referencias a errores ────────────────────────────────────────────────
+    const errorNombre = document.getElementById('error-nombre');
+    const errorApellidoPat = document.getElementById('error-apellido-paterno');
+    const errorApellidoMat = document.getElementById('error-apellido-materno');
+    const errorTelefono = document.getElementById('error-telefono');
+    const errorCorreo = document.getElementById('error-correo');
+    const errorContrasenia = document.getElementById('error-contrasenia');
+    const errorConfirmar = document.getElementById('error-confirmar-contrasenia');
+
+    // ─── Modal ────────────────────────────────────────────────────────────────
+    const modal = document.getElementById('modal');
+    const modalIcon = document.getElementById('modal-icon');
+    const modalTitle = document.getElementById('modal-title');
+    const modalMessage = document.getElementById('modal-message');
+    const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+
+    function mostrarModal(tipo, titulo, mensaje) {
+      modalTitle.textContent = titulo;
+      modalMessage.textContent = mensaje;
+      const esExito = tipo === 'success';
+      modalIcon.className = `flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${esExito ? 'bg-green-100 dark:bg-green-900/40' : 'bg-red-100 dark:bg-red-900/40'}`;
+      modalIcon.innerHTML = `<span class="material-symbols-outlined ${esExito ? 'text-green-600' : 'text-red-600'}">${esExito ? 'check_circle' : 'error'}</span>`;
+      modal.classList.remove('hidden');
+    }
+
+    modalConfirmBtn.addEventListener('click', () => {
+      modal.classList.add('hidden');
+      if (modalConfirmBtn.dataset.redirect) {
+        window.location.href = modalConfirmBtn.dataset.redirect;
+        delete modalConfirmBtn.dataset.redirect;
+      }
+    });
+
+    // ─── Toggle visibilidad de contraseñas ────────────────────────────────────
+    function toggleVisibilidad(inputEl, btnEl) {
+      const icono = btnEl.querySelector('.material-symbols-outlined');
+      inputEl.type = inputEl.type === 'password' ? 'text' : 'password';
+      icono.textContent = inputEl.type === 'password' ? 'visibility_off' : 'visibility';
+    }
+
+    document.getElementById('toggle-password').addEventListener('click', e =>
+      toggleVisibilidad(inputContrasenia, e.currentTarget));
+    document.getElementById('toggle-confirm-password').addEventListener('click', e =>
+      toggleVisibilidad(inputConfirmar, e.currentTarget));
+
+    // ─── Validaciones ─────────────────────────────────────────────────────────
+    function toggleError(el, mostrar) { el.classList.toggle('hidden', !mostrar); }
+
+    function validarNombre() { const v = inputNombre.value.trim().length >= 2; toggleError(errorNombre, !v); return v; }
+    function validarApellidoPat() { const v = inputApellidoPat.value.trim().length >= 2; toggleError(errorApellidoPat, !v); return v; }
+    function validarApellidoMat() { const v = inputApellidoMat.value.trim().length >= 2; toggleError(errorApellidoMat, !v); return v; }
+    function validarTelefono() { const v = /^\d{10,}$/.test(inputTelefono.value.trim().replace(/\s/g, '')); toggleError(errorTelefono, !v); return v; }
+    function validarCorreo() { const v = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputCorreo.value.trim()); toggleError(errorCorreo, !v); return v; }
+    function validarContrasenia() { const v = inputContrasenia.value.length >= 8; toggleError(errorContrasenia, !v); return v; }
+    function validarConfirmar() { const v = inputContrasenia.value === inputConfirmar.value && inputConfirmar.value !== ''; toggleError(errorConfirmar, !v); return v; }
+
+    // Validación al salir de cada campo
+    inputNombre.addEventListener('blur', validarNombre);
+    inputApellidoPat.addEventListener('blur', validarApellidoPat);
+    inputApellidoMat.addEventListener('blur', validarApellidoMat);
+    inputTelefono.addEventListener('blur', validarTelefono);
+    inputCorreo.addEventListener('blur', validarCorreo);
+    inputContrasenia.addEventListener('blur', validarContrasenia);
+    inputConfirmar.addEventListener('blur', validarConfirmar);
+
+    // ─── Llamada al backend ───────────────────────────────────────────────────
+    async function registrarCliente(datos) {
+      const response = await fetch('/api/registrar', {   // <- endpoint del backend
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(datos),
+      });
+      const resultado = await response.json();
+      return { ok: response.ok, status: response.status, resultado };
+    }
+
+    // ─── Submit ───────────────────────────────────────────────────────────────
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const esValido = [
+        validarNombre(),
+        validarApellidoPat(),
+        validarApellidoMat(),
+        validarTelefono(),
+        validarCorreo(),
+        validarContrasenia(),
+        validarConfirmar(),
+      ].every(Boolean);
+
+      if (!esValido) return;
+
+      // Objeto con los nombres exactos que espera el backend (registrar_cuenta.js)
+      const datosCliente = {
+        nombre: inputNombre.value.trim(),
+        apellido_paterno: inputApellidoPat.value.trim(),
+        apellido_materno: inputApellidoMat.value.trim(),
+        telefono: inputTelefono.value.trim().replace(/\s/g, ''),
+        correo: inputCorreo.value.trim(),
+        contrasenia: inputContrasenia.value,
+      };
+
+      // Deshabilitar botón mientras se procesa
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Guardando...';
+
+      try {
+        const { ok, status, resultado } = await registrarCliente(datosCliente);
+
+        if (ok) {
+          // 201 – Registro exitoso
+          modalConfirmBtn.dataset.redirect = '/pages/cajero/menu_cajero.html'; 
+          mostrarModal('success', '¡Cliente registrado!',
+            `El cliente ${datosCliente.nombre} fue registrado correctamente.`);
+          form.reset();
+        } else if (status === 409) {
+          // Correo duplicado
+          mostrarModal('error', 'Correo duplicado',
+            resultado.message || 'El correo ya está registrado.');
+        } else if (status === 400) {
+          // Campos inválidos o error de Supabase Auth
+          mostrarModal('error', 'Datos inválidos',
+            resultado.message || 'Verifica los campos e intenta de nuevo.');
+        } else {
+          // Error 500 u otro inesperado
+          mostrarModal('error', 'Error del servidor',
+            resultado.message || 'Ocurrió un error. Intenta más tarde.');
+        }
+
+      } catch (err) {
+        // Error de red / sin conexión al servidor
+        mostrarModal('error', 'Sin conexión',
+          'No se pudo conectar con el servidor. Verifica tu red.');
+        console.error('Error de red:', err);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Guardar Cliente';
+      }
+    });
+  </script>
+</body>
+
+</html>

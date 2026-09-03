@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Editar Disponibilidad</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ffc107",
+                        "secondary-accent": "#8b5cf6",
+                        "background-dark": "#1a1a1a",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
+        }
+
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1;
+        }
+
+        body {
+            min-height: 100dvh;
+        }
+
+        select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+    </style>
+</head>
+
+<body class="bg-background-dark font-display text-white">
+    <div class="relative flex min-h-screen w-full flex-col pb-24">
+
+        <!-- Header -->
+        <div class="flex items-center p-4 sticky top-0 bg-background-dark z-10">
+            <a href="../menu_tatuador.html" class="flex items-center justify-center size-10 text-white">
+                <span class="material-symbols-outlined text-2xl">arrow_back</span>
+            </a>
+            <h2 class="text-lg font-bold flex-1 text-center">Editar Disponibilidad</h2>
+            <div class="size-10"></div>
+        </div>
+
+        <!-- Title -->
+        <div class="px-4 pb-2">
+            <h1 class="text-[22px] font-bold">Horario Semanal</h1>
+            <p class="text-zinc-400 text-sm mt-1">Define tus horas de trabajo para cada día.</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex mx-4 mt-2 mb-1 border-b border-zinc-700/60">
+            <button id="tab-horario"
+                class="tab-btn flex-1 pb-3 text-sm font-medium border-b-2 border-secondary-accent text-white transition-colors">
+                Horario de Trabajo
+            </button>
+            <button id="tab-bloqueos"
+                class="tab-btn flex-1 pb-3 text-sm font-medium border-b-2 border-transparent text-zinc-400 transition-colors">
+                Horas Ocupadas o Libres
+            </button>
+        </div>
+
+        <!-- Tab 1: Horario de Trabajo -->
+        <div id="panel-horario" class="px-4 pt-4 pb-4">
+            <!-- Loading -->
+            <div id="schedule-loading" class="flex flex-col items-center justify-center py-16 gap-3">
+                <span class="material-symbols-outlined text-4xl text-zinc-500 animate-spin">progress_activity</span>
+                <p class="text-zinc-500 text-sm">Cargando horario...</p>
+            </div>
+
+            <!-- Days container -->
+            <div id="schedule-days" class="space-y-4 hidden"></div>
+
+            <!-- Save button -->
+            <button id="btn-guardar"
+                class="w-full flex items-center justify-center gap-2 rounded-xl bg-secondary-accent py-3.5 text-white font-bold mt-6 hover:bg-secondary-accent/90 transition-colors hidden">
+                <span class="material-symbols-outlined text-xl">save</span>
+                Guardar Cambios
+            </button>
+        </div>
+
+        <!-- Tab 2: Horas Ocupadas o Libres -->
+        <div id="panel-bloqueos" class="px-4 pt-4 pb-4 hidden">
+            <!-- Loading -->
+            <div id="bloqueos-loading" class="flex flex-col items-center justify-center py-16 gap-3">
+                <span class="material-symbols-outlined text-4xl text-zinc-500 animate-spin">progress_activity</span>
+                <p class="text-zinc-500 text-sm">Cargando bloqueos...</p>
+            </div>
+
+            <!-- Empty state -->
+            <div id="bloqueos-empty" class="flex flex-col items-center justify-center py-16 gap-3 hidden">
+                <span class="material-symbols-outlined text-5xl text-zinc-600">event_available</span>
+                <p class="text-zinc-500 text-sm">No tienes horas bloqueadas</p>
+            </div>
+
+            <!-- Blocked hours list -->
+            <div id="blocked-list" class="space-y-4 hidden"></div>
+
+            <!-- Add blocked hour button -->
+            <a href="bloquear_horas.html" id="btn-agregar-bloqueo"
+                class="w-full flex items-center justify-center gap-2 rounded-xl bg-secondary-accent py-3.5 text-white font-bold mt-6 hover:bg-secondary-accent/90 transition-colors">
+                <span class="material-symbols-outlined text-xl">add</span>
+                Agregar Hora(s) Ocupada
+            </a>
+        </div>
+
+        <!-- Toast notification -->
+        <div id="toast"
+            class="fixed top-5 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-xl text-sm font-medium shadow-lg transition-all duration-300 -translate-y-16 opacity-0 pointer-events-none">
+        </div>
+
+        <!-- Bottom Nav -->
+        <div
+            class="fixed bottom-0 left-0 right-0 z-20 flex justify-around border-t border-zinc-800 bg-zinc-900 py-2 px-2">
+            <a class="flex flex-1 cursor-pointer flex-col items-center justify-center gap-1 p-2 text-primary"
+                href="../menu_tatuador.html">
+                <span class="material-symbols-outlined fill">home</span>
+                <span class="text-[11px] font-medium">Inicio</span>
+            </a>
+            <a class="flex flex-1 cursor-pointer flex-col items-center justify-center gap-1 p-2 text-primary"
+                href="/pages/tatuador/horarios/editar_disponibilidad.html">
+                <span class="material-symbols-outlined">calendar_month</span>
+                <span class="text-[11px] font-medium">Agenda</span>
+            </a>
+            <a class="flex flex-1 cursor-pointer flex-col items-center justify-center gap-1 p-2 text-zinc-400"
+                href="/pages/cliente/seguimiento/index.html">
+                <span class="material-symbols-outlined">chat_bubble</span>
+                <span class="text-[11px] font-medium">Seguimiento</span>
+            </a>
+        </div>
+    </div>
+
+    <script type="module" src="../../../js/editar_disponibilidad.js"></script>
+</body>
+
+</html>

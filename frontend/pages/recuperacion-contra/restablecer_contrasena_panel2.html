@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Establecer Nueva Contraseña - Tattoo Studio</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&amp;display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#7f13ec",
+            "background-light": "#f7f6f8",
+            "background-dark": "#191022",
+          },
+          fontFamily: {
+            "display": ["Space Grotesk", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+    <link rel="stylesheet" href="../styles/global.css" />
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display">
+  <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden p-4">
+    <div class="absolute inset-0 z-0">
+      <div class="absolute inset-0 bg-background-light dark:bg-background-dark opacity-80"></div>
+      <div class="w-full h-full bg-center bg-no-repeat bg-cover"
+        data-alt="Abstract artistic background with tattoo-inspired ink patterns"
+        style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAPbI01y_tzm0DFB6atlQkwbbmqtkQe2TAGkFummcC5tSAV0t83nhoiTzs5CXsNGl3DWX3UHl9gIsoLpG-quPG2vWK0W4B-yF1FJhpIAxa3njYXR3w-PMcm0e2p3eSRIxkjoOUyeSWboZFHeet77s041788nWfJDlks1oZQMa4zkN6c8jMBkFCHGoop0toyqCeVWfHiA-A5h4dkre6ZKUYpNilGsvsaWT18LT99gG0gNFLOapcVM1G9GfMtV4MvsgloZiX7PoebG60"); opacity: 0.1;'>
+      </div>
+    </div>
+    <div class="relative z-10 flex w-full max-w-sm mx-auto flex-col">
+      <header class="absolute top-4 left-0 w-full">
+        <div class="relative flex items-center justify-center h-12">
+          <button class="absolute left-0 p-2 text-slate-800 dark:text-white">
+            <span class="material-symbols-outlined">arrow_back_ios_new</span>
+          </button>
+        </div>
+      </header>
+      <main class="flex flex-col items-center justify-center flex-grow pt-20">
+        <h1 class="text-3xl font-bold leading-tight tracking-tight text-slate-900 dark:text-white text-center pb-2">
+          Establece tu Nueva Contraseña
+        </h1>
+        <p class="text-slate-600 dark:text-slate-400 text-center pb-8">
+          Tu nueva contraseña debe ser diferente a las contraseñas utilizadas anteriormente.
+        </p>
+        <div class="w-full space-y-6">
+          <div class="w-full">
+            <label class="flex flex-col">
+              <p class="text-sm font-medium pb-2 text-slate-700 dark:text-white">Nueva Contraseña</p>
+              <div class="relative flex w-full flex-1 items-stretch">
+                <span
+                  class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none">lock</span>
+                <input id="password" type="password"
+                  class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900/50 text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 h-14 placeholder:text-slate-400 dark:placeholder:text-slate-500 pl-12 pr-12 text-base font-normal leading-normal"
+                  placeholder="Introduce tu nueva contraseña" type="password" value="" />
+                <button
+                  class="absolute right-0 top-0 h-full px-4 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300">
+                  <span class="material-symbols-outlined">visibility_off</span>
+                </button>
+              </div>
+            </label>
+          </div>
+          <div class="w-full">
+            <label class="flex flex-col">
+              <p class="text-sm font-medium pb-2 text-slate-700 dark:text-white">Confirma tu Nueva Contraseña</p>
+              <div class="relative flex w-full flex-1 items-stretch">
+                <span
+                  class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none">lock</span>
+                <input id="confirmPassword" type="password"
+                  class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900/50 text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 h-14 placeholder:text-slate-400 dark:placeholder:text-slate-500 pl-12 pr-12 text-base font-normal leading-normal"
+                  placeholder="Confirma tu nueva contraseña" type="password" value="" />
+                <button
+                  class="absolute right-0 top-0 h-full px-4 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300">
+                  <span class="material-symbols-outlined">visibility_off</span>
+                </button>
+              </div>
+            </label>
+          </div>
+          <div class="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+            <div id="v-length" class="flex items-center transition-colors">
+              <span class="material-symbols-outlined text-sm mr-2">radio_button_unchecked</span> Mínimo 8 caracteres
+            </div>
+            <div id="v-case" class="flex items-center transition-colors">
+              <span class="material-symbols-outlined text-sm mr-2">radio_button_unchecked</span> Una mayúscula y una
+              minúscula
+            </div>
+            <div id="v-number" class="flex items-center transition-colors">
+              <span class="material-symbols-outlined text-sm mr-2">radio_button_unchecked</span> Al menos un número
+            </div>
+          </div>
+          <button id="updateBtn"
+            class="flex w-full items-center justify-center rounded-lg bg-primary/50 h-14 px-6 text-base font-bold text-white shadow-sm transition-colors duration-200 mt-8 pointer-events-none">
+            Guardar Nueva Contraseña
+          </button>
+      </main>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const supabase = createClient(
+      'https://oafzgtsptoppukebcjfg.supabase.co/',
+      'sb_publishable_fbe2lQ0SfsFGmcm8i8PZgA_9MPPhNE-'
+    );
+
+    const passwordInput = document.getElementById("password");
+    const confirmInput = document.getElementById("confirmPassword");
+    const btn = document.getElementById("updateBtn");
+
+    // detección de sesión de recuperación
+    let isRecoverySession = false;
+
+    supabase.auth.onAuthStateChange((event, session) => {
+      console.log("EVENT:", event);
+
+      if (event === "PASSWORD_RECOVERY") {
+        isRecoverySession = true;
+        console.log("Modo recuperación activo");
+      }
+    });
+
+    // verificar sesión al cargar 
+    window.addEventListener("load", async () => {
+      const { data } = await supabase.auth.getSession();
+
+      if (!data.session) {
+        alert("El enlace es inválido o ha expirado.");
+        window.location.href = "../../index.html";
+      }
+    });
+
+    // 1. Configuración de los ojos (Mostrar/Ocultar)
+    const toggleBtns = document.querySelectorAll('button:has(span.material-symbols-outlined)');
+    const togglePass = toggleBtns[1];
+    const toggleConfirm = toggleBtns[2];
+
+    function setupEye(button, input) {
+      if (!button) return;
+      button.addEventListener('click', (e) => {
+        e.preventDefault();
+        const isPassword = input.type === 'password';
+        input.type = isPassword ? 'text' : 'password';
+        button.querySelector('span').textContent = isPassword ? 'visibility' : 'visibility_off';
+      });
+    }
+    setupEye(togglePass, passwordInput);
+    setupEye(toggleConfirm, confirmInput);
+
+    // --- Validación visual ---
+    function updateValidationUI(id, isValid) {
+      const element = document.getElementById(id);
+      if (!element) return;
+      const icon = element.querySelector('span');
+
+      if (isValid) {
+        element.classList.add('text-green-500');
+        element.classList.remove('text-slate-600', 'dark:text-slate-400');
+        icon.textContent = 'check_circle';
+      } else {
+        element.classList.remove('text-green-500');
+        element.classList.add('text-slate-600', 'dark:text-slate-400');
+        icon.textContent = 'radio_button_unchecked';
+      }
+    }
+
+    // 2. Validación en tiempo real
+    function checkInputs() {
+      const p1 = passwordInput.value;
+      const p2 = confirmInput.value;
+
+      const hasLength = p1.length >= 8;
+      const hasCase = /[A-Z]/.test(p1) && /[a-z]/.test(p1);
+      const hasNumber = /[0-9]/.test(p1);
+
+      updateValidationUI('v-length', hasLength);
+      updateValidationUI('v-case', hasCase);
+      updateValidationUI('v-number', hasNumber);
+
+      if (hasLength && hasCase && hasNumber && p1 === p2 && p1 !== "") {
+        btn.classList.remove('pointer-events-none', 'bg-primary/50');
+        btn.classList.add('bg-primary', 'cursor-pointer');
+      } else {
+        btn.classList.add('pointer-events-none', 'bg-primary/50');
+        btn.classList.remove('bg-primary', 'cursor-pointer');
+      }
+    }
+
+    passwordInput.addEventListener('input', checkInputs);
+    confirmInput.addEventListener('input', checkInputs);
+
+    // 3. Guardar nueva contraseña
+    btn.addEventListener("click", async () => {
+      const p1 = passwordInput.value;
+      const p2 = confirmInput.value;
+
+      const isValid = p1.length >= 8 && /[A-Z]/.test(p1) && /[a-z]/.test(p1) && /[0-9]/.test(p1);
+
+      if (!isValid) {
+        alert("La contraseña no cumple con los requisitos mínimos.");
+        return;
+      }
+
+      if (p1 !== p2) {
+        alert("Las contraseñas no coinciden.");
+        return;
+      }
+
+      // verificar sesión actual (debe ser la de recuperación)
+      const { data: sessionData } = await supabase.auth.getSession();
+
+      if (!sessionData.session) {
+        alert("Sesión inválida o expirada.");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Guardando...";
+
+      // cambio de contraseña usando la sesión actual (recovery)
+      const { error } = await supabase.auth.updateUser({
+        password: p1
+      });
+
+      if (error) {
+        alert("Error: " + error.message);
+        btn.disabled = false;
+        btn.textContent = "Guardar Nueva Contraseña";
+      } else {
+        alert("¡Contraseña actualizada correctamente!");
+        window.location.href = "../../index.html";
+      }
+    });
+  </script>
+
+
+
+</body>
+
+</html>

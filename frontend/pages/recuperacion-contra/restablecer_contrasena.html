@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Restablecer Contraseña - Tattoo Studio</title>
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#7f13ec",
+            "background-light": "#f7f6f8",
+            "background-dark": "#191022",
+          },
+          fontFamily: {
+            "display": ["Space Grotesk", "sans-serif"]
+          },
+          borderRadius: {
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "2xl": "1rem",
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      scroll-behavior: smooth;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #7f13ec;
+    }
+  </style>
+  <link rel="stylesheet" href="../styles/global.css" />
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white">
+  <div class="relative flex min-h-screen w-full flex-col p-4 overflow-x-hidden">
+    <header class="absolute top-0 left-0 right-0 z-10 p-6">
+      <div class="flex items-center">
+        <button onclick="window.location.href = '../../index.html'" class="flex h-12 w-12 items-center justify-center rounded-full bg-slate-200/60 dark:bg-slate-800/60 hover:bg-primary/20 transition-colors">
+          <span class="material-symbols-outlined">arrow_back_ios_new</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="flex flex-1 flex-col justify-center items-center py-12">
+      <div class="w-full max-w-md px-4">
+        <div class="text-center mb-10">
+          <h1 class="text-4xl font-bold leading-tight tracking-tight mb-3">
+            Restablecer Contraseña
+          </h1>
+          <p class="text-lg text-slate-600 dark:text-slate-400">
+            Ingresa tu correo para recibir un enlace de recuperación.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="w-full">
+            <label for="email" class="block text-sm font-medium pb-2 text-slate-700 dark:text-white">
+              Correo Electrónico
+            </label>
+            <div class="relative group">
+              <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
+                mail
+              </span>
+              <input id="email"
+                class="form-input w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900/50 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 h-16 pl-12 pr-4 text-lg placeholder:text-slate-400"
+                placeholder="tu@email.com" type="email" />
+            </div>
+          </div>
+
+          <button id="sendBtn"
+            class="flex w-full items-center justify-center rounded-xl bg-primary h-16 px-6 text-lg font-bold text-white shadow-lg hover:bg-primary/90 active:scale-[0.98] transition-all duration-200">
+            Enviar Enlace de Recuperación
+          </button>
+
+          <div class="pt-4 border-t border-slate-300 dark:border-slate-700 text-center">
+             <p class="text-sm text-slate-500">¿Recordaste tu contraseña? <a href="../../index.html" class="text-primary font-bold hover:underline">Inicia sesión</a></p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const supabase = createClient(
+      'https://oafzgtsptoppukebcjfg.supabase.co/',
+      'sb_publishable_fbe2lQ0SfsFGmcm8i8PZgA_9MPPhNE-'
+    );
+
+    const emailInput = document.getElementById("email");
+    const sendBtn = document.getElementById("sendBtn");
+
+    sendBtn.addEventListener("click", async () => {
+      const email = emailInput.value.trim();
+
+      if (!email || !email.includes('@')) {
+        alert("Por favor, ingresa un correo electrónico válido.");
+        return;
+      }
+
+      sendBtn.disabled = true;
+      sendBtn.textContent = "Procesando...";
+      
+      // Redirección al puerto 4000 de tu servidor actual
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `http://127.0.0.1:4000/pages/recuperacion-contra/restablecer_contrasena_panel2.html`
+      });
+
+      if (error) {
+        alert("Error: " + error.message);
+        sendBtn.disabled = false;
+        sendBtn.textContent = "Enviar Enlace";
+      } else {
+        alert("¡Enviado! Si el correo existe, recibirás un enlace para restablecer tu contraseña.");
+        sendBtn.textContent = "Correo Enviado";
+        sendBtn.classList.replace('bg-primary', 'bg-green-600');
+      }
+    });
+  </script>
+</body>
+</html>
