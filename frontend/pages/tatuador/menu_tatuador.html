@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Dashboard Tatuador</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ffc107",
+                        "secondary-accent": "#8b5cf6",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#1a1a1a",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings:
+                'FILL' 0,
+                'wght' 400,
+                'GRAD' 0,
+                'opsz' 24
+        }
+
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display">
+    <div
+        class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden pb-24">
+        <div
+            class="flex items-center p-4 pb-2 justify-between sticky top-0 bg-background-light dark:bg-background-dark z-10">
+            <div class="flex size-12 shrink-0 items-center">
+                <div id="user-avatar" class="aspect-square size-10 rounded-full bg-[#ffc107]/20 flex items-center justify-center">
+                    <span id="user-initials" class="text-[#ffc107] font-bold text-sm leading-none">?</span>
+                </div>
+            </div>
+            <h2
+                class="text-zinc-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">
+                Mi Jornada</h2>
+            <div class="flex items-center justify-end gap-1">
+                <button id="notif-btn"
+                    class="flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 w-12 bg-transparent text-zinc-900 dark:text-white p-0">
+                    <span class="material-symbols-outlined text-[28px]">notifications</span>
+                </button>
+                <button id="logout-btn"
+                    class="flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 w-12 bg-transparent text-zinc-900 dark:text-white hover:text-red-500 dark:hover:text-red-400 transition-colors p-0"
+                    title="Cerrar sesión">
+                    <span class="material-symbols-outlined text-[28px]">logout</span>
+                </button>
+            </div>
+        </div>
+        <h1 id="user-greeting"
+            class="text-zinc-900 dark:text-white tracking-tight text-[32px] font-bold leading-tight px-4 text-left pb-1 pt-6">
+            Buenos días</h1>
+        <p id="subtitulo-jornada" class="text-zinc-600 dark:text-zinc-400 text-base font-normal leading-normal pb-4 px-4"></p>
+        <div class="px-4 pb-2">
+            <a href="horarios/editar_disponibilidad.html"
+                class="w-full flex items-center justify-center gap-2 rounded-xl border-2 border-secondary-accent py-3.5 px-6 text-white bg-transparent hover:bg-secondary-accent/10 transition-colors">
+                <span class="material-symbols-outlined text-secondary-accent">event_available</span>
+                <span class="text-base font-bold">Editar Disponibilidad</span>
+            </a>
+        </div>
+        <h3 class="text-zinc-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-6">
+            Agenda de Hoy</h3>
+        <div id="agenda-hoy" class="px-4">
+            <div class="flex items-center justify-center py-6 text-zinc-500">
+                <div class="inline-block animate-spin rounded-full h-5 w-5 border-2 border-primary border-t-transparent mr-2"></div>
+                <span class="text-sm">Cargando agenda...</span>
+            </div>
+        </div>
+        <div class="px-4 pt-8">
+            <h3 class="text-zinc-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] pb-3">Acciones
+                Rápidas</h3>
+            <div class="flex space-x-2 border-b border-zinc-200 dark:border-zinc-700 overflow-x-auto no-scrollbar">
+                <button id="tab-citas-btn"
+                    class="tab-btn px-3 py-2 text-sm font-medium border-b-2 border-primary text-primary whitespace-nowrap" data-tab="citas">Próximas
+                    Citas</button>
+                <button id="tab-cotizaciones-btn"
+                    class="tab-btn px-3 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 border-b-2 border-transparent whitespace-nowrap" data-tab="cotizaciones">Cotizaciones</button>
+                <button onclick="window.location.href='/pages/cliente/seguimiento/'"
+        class="tab-btn px-3 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 border-b-2 border-transparent whitespace-nowrap">
+    Seguimientos
+</button>
+            </div>
+            <!-- Tab: Próximas Citas -->
+            <div id="citas-tab-content" class="pt-4 space-y-3">
+                <div class="flex items-center justify-center py-6 text-zinc-500">
+                    <div class="inline-block animate-spin rounded-full h-5 w-5 border-2 border-primary border-t-transparent mr-2"></div>
+                    <span class="text-sm">Cargando citas...</span>
+                </div>
+            </div>
+            <!-- Tab: Cotizaciones (dynamic) -->
+            <div id="cotizaciones-tab-content" class="pt-4 space-y-3 hidden">
+                <p class="text-zinc-400 text-center py-4">Cargando cotizaciones...</p>
+            </div>
+            <!-- Tab: Seguimientos -->
+            <div id="seguimientos-tab-content" class="pt-4 space-y-3 hidden">
+                <p class="text-zinc-400 text-center py-4">Sin seguimientos pendientes</p>
+            </div>
+        </div>
+        <div
+            class="fixed bottom-0 left-0 right-0 z-20 flex justify-around border-t border-zinc-200 bg-background-light py-2 dark:border-zinc-800 dark:bg-zinc-900 px-2">
+            <a class="flex flex-1 cursor-pointer flex-col items-center justify-center gap-1 p-2 text-primary" href="#">
+                <span class="material-symbols-outlined fill">home</span>
+                <span class="text-[11px] font-medium">Inicio</span>
+            </a>
+            <a class="flex flex-1 cursor-pointer flex-col items-center justify-center gap-1 p-2 text-zinc-600 dark:text-zinc-400"
+                href="/pages/tatuador/horarios/editar_disponibilidad.html">
+                <span class="material-symbols-outlined">calendar_month</span>
+                <span class="text-[11px] font-medium">Agenda</span>
+            </a>
+            <a href="/pages/tatuador/cotizaciones/cotizacion.html"
+                class="flex flex-1 cursor-pointer flex-col items-center justify-center gap-1 p-2 text-zinc-600 dark:text-zinc-400">
+                <span class="material-symbols-outlined">chat_bubble</span>
+                <span class="text-[11px] font-medium">Seguimiento</span>
+            </a>
+            <a class="flex flex-1 cursor-pointer flex-col items-center justify-center gap-1 p-2 text-zinc-600 dark:text-zinc-400"
+                href="/pages/cliente/seguimiento/index.html">
+                <span class="material-symbols-outlined">chat_bubble</span>
+                <span class="text-[11px] font-medium">Seguimiento</span>
+            </a>
+        </div>
+    </div>
+
+<script>
+    function getIniciales(nombre = '') {
+        const p = nombre.trim().split(/\s+/).filter(Boolean);
+        if (p.length >= 2) return (p[0][0] + p[1][0]).toUpperCase();
+        return (p[0] || '?').substring(0, 2).toUpperCase();
+    }
+
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    if (!user) { window.location.href = '/'; }
+    else {
+        const el = document.getElementById('user-greeting');
+        const hora = new Date().getHours();
+        const saludo = hora < 12 ? 'Buenos días' : hora < 19 ? 'Buenas tardes' : 'Buenas noches';
+        if (el) el.textContent = `${saludo}, ${user.nombre}`;
+        const initEl = document.getElementById('user-initials');
+        if (initEl) initEl.textContent = getIniciales(user.nombre);
+    }
+    document.getElementById('logout-btn').addEventListener('click', () => {
+        localStorage.removeItem('user');
+        localStorage.removeItem('empresa');
+        window.location.href = '/';
+    });
+
+    function escapeHtml(s) {
+        if (!s) return '';
+        return s.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
+    }
+    function fmtFecha(f) {
+        if (!f) return '';
+        const [y, m, d] = f.split('-').map(Number);
+        const hoy = new Date(); hoy.setHours(0,0,0,0);
+        const diff = Math.round((new Date(y, m-1, d) - hoy) / 86400000);
+        if (diff === 0) return 'Hoy';
+        if (diff === 1) return 'Mañana';
+        const mes = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][m-1];
+        return `${d} ${mes}`;
+    }
+
+    function safeParse(str) {
+        try { return (str && str !== 'undefined' && str !== 'null') ? JSON.parse(str) : null; }
+        catch (_) { return null; }
+    }
+
+    // Cargar datos reales una vez que tengamos el idTatuador del JS de cotizaciones
+    async function cargarDatosTatuador() {
+        if (!user) return;
+        const idEmp = user.idempresa;
+
+        // Obtener idTatuador del empleado
+        let idTatuador = null;
+        try {
+            const r = await fetch(`/api/tatuador-id/${user.idempleado}`);
+            const j = await r.json();
+            if (j.status === 'ok') idTatuador = j.data.idTatuador;
+        } catch (_) {}
+
+        const hoy = new Date().toISOString().split('T')[0];
+        const agendaEl = document.getElementById('agenda-hoy');
+        const citasEl = document.getElementById('citas-tab-content');
+
+        // 1. Agenda del día
+        if (idTatuador && agendaEl) {
+            try {
+                const r = await fetch(`/api/stats/agenda-dia/${idTatuador}?fecha=${hoy}`);
+                const j = await r.json();
+                const citas = j.data || [];
+                if (citas.length === 0) {
+                    agendaEl.innerHTML = `<div class="flex flex-col items-center justify-center py-8 text-zinc-500"><span class="material-symbols-outlined text-4xl mb-2">event_busy</span><p class="text-sm">No hay citas para hoy</p></div>`;
+                } else {
+                    agendaEl.innerHTML = `<div class="grid grid-cols-[40px_1fr] gap-x-3">` +
+                        citas.map((c, i) => `
+                            <div class="flex flex-col items-center gap-1 ${i === 0 ? 'pt-3' : ''}">
+                                <span class="material-symbols-outlined text-primary text-xl">schedule</span>
+                                ${i < citas.length - 1 ? '<div class="w-px bg-zinc-300 dark:bg-zinc-700 h-full grow"></div>' : ''}
+                            </div>
+                            <div class="flex flex-1 flex-col py-3">
+                                <p class="text-zinc-900 dark:text-white text-base font-medium">${escapeHtml(c.cliente)}</p>
+                                <p class="text-zinc-600 dark:text-zinc-400 text-sm">${c.hora} · ${escapeHtml(c.zona)}${c.tecnica ? ' · ' + escapeHtml(c.tecnica) : ''}</p>
+                                <span class="mt-1 inline-block text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary w-fit">${escapeHtml(c.estado)}</span>
+                            </div>`).join('') + `</div>`;
+                }
+            } catch (_) {
+                agendaEl.innerHTML = `<p class="text-zinc-500 text-sm text-center py-6">Error al cargar agenda</p>`;
+            }
+
+            // Actualizar subtítulo
+            const sub = document.getElementById('subtitulo-jornada');
+            if (sub) {
+                try {
+                    const r2 = await fetch(`/api/cotizaciones/tatuador/${idTatuador}`);
+                    const j2 = await r2.json();
+                    const pendientes = (j2.data || []).filter(c => ['enviada','pendiente'].includes((c.estado||'').toLowerCase())).length;
+                    const total = (j2.data || []).length;
+                    sub.textContent = pendientes > 0
+                        ? `Tienes ${pendientes} solicitud${pendientes > 1 ? 'es' : ''} pendiente${pendientes > 1 ? 's' : ''} de cotización.`
+                        : `Todo al día. Sin solicitudes pendientes.`;
+                } catch (_) {}
+            }
+        }
+
+        // 2. Próximas citas (tab)
+        if (idTatuador && citasEl) {
+            const empresa = safeParse(localStorage.getItem('empresa'));
+            const empId = empresa?.idempresa || user.idempresa;
+            if (empId) {
+                try {
+                    const r = await fetch(`/api/proximas-citas?idempresa=${empId}`);
+                    const j = await r.json();
+                    const citas = (j.citas || []).filter(c => c.fecha > hoy).slice(0, 5);
+                    if (citas.length === 0) {
+                        citasEl.innerHTML = `<div class="flex flex-col items-center justify-center py-8 text-zinc-500"><span class="material-symbols-outlined text-4xl mb-2">calendar_month</span><p class="text-sm">Sin próximas citas</p></div>`;
+                    } else {
+                        citasEl.innerHTML = citas.map(c => `
+                            <div class="bg-zinc-100 dark:bg-zinc-800/50 p-4 rounded-lg">
+                                <p class="text-zinc-900 dark:text-white font-medium">${fmtFecha(c.fecha)} · ${escapeHtml(c.cliente)}</p>
+                                <p class="text-sm text-zinc-600 dark:text-zinc-400">${c.hora} · ${escapeHtml(c.zona)}</p>
+                            </div>`).join('');
+                    }
+                } catch (_) {
+                    citasEl.innerHTML = `<p class="text-zinc-500 text-sm text-center py-4">Error al cargar</p>`;
+                }
+            }
+        }
+    }
+
+    cargarDatosTatuador();
+
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('border-primary', 'text-primary');
+                b.classList.add('border-transparent', 'text-zinc-600', 'dark:text-zinc-400');
+            });
+            btn.classList.remove('border-transparent', 'text-zinc-600', 'dark:text-zinc-400');
+            btn.classList.add('border-primary', 'text-primary');
+
+            const tab = btn.dataset.tab;
+            document.getElementById('citas-tab-content').classList.toggle('hidden', tab !== 'citas');
+            document.getElementById('cotizaciones-tab-content').classList.toggle('hidden', tab !== 'cotizaciones');
+            document.getElementById('seguimientos-tab-content').classList.toggle('hidden', tab !== 'seguimientos');
+        });
+    });
+</script>
+<script src="/js/cotizaciones_tatuador.js"></script>
+<script type="module">
+    import { initPush } from '/js/push.js';
+    import { initNotificacionesPanel } from '/js/notificaciones-panel.js';
+    initPush();
+    initNotificacionesPanel();
+</script>
+</body>
+
+</html>

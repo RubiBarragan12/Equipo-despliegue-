@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Ajustes - Tattoo Studio</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#D93B3B", // Red-Intense as per the plan
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#191022",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings:
+                'FILL' 0,
+                'wght' 400,
+                'GRAD' 0,
+                'opsz' 24
+        }
+    </style>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display text-white/90">
+    <div class="relative flex h-auto min-h-screen w-full flex-col">
+        <main class="flex-grow pb-24">
+            <div class="flex h-14 items-center px-4">
+                <a class="flex items-center justify-center size-10 text-white/90 transition-colors hover:text-primary"
+                    href="/pages/administrador/menu_admin.html">
+                    <span class="material-symbols-outlined">arrow_back_ios_new</span>
+                </a>
+                <div class="flex-1 text-center">
+                    <h1 class="text-white/90 text-lg font-bold leading-tight tracking-[-0.015em]">Ajustes</h1>
+                </div>
+                <div class="size-10"></div>
+            </div>
+            <div class="flex items-center gap-4 p-4">
+                <div id="user-avatar" class="aspect-square size-16 rounded-full bg-[#D93B3B]/20 flex items-center justify-center shrink-0">
+                    <span id="user-initials" class="text-[#D93B3B] font-bold text-xl leading-none">?</span>
+                </div>
+                <div class="flex-grow">
+                    <p id="user-fullname" class="text-white/90 text-xl font-bold"></p>
+                    <p class="text-white/70 text-sm">Dueño del Estudio</p>
+                </div>
+                <button class="flex items-center justify-center size-10 text-white/70">
+                    <span class="material-symbols-outlined">edit</span>
+                </button>
+            </div>
+            <div class="flex flex-col gap-2 px-4 pt-4">
+                <div>
+                    <h3 class="text-white/50 text-sm font-bold uppercase tracking-wider px-4 pb-2 pt-4">Gestión del
+                        Negocio</h3>
+                    <div class="flex flex-col overflow-hidden rounded-xl border border-white/10 bg-white/5">
+                        <a class="flex items-center gap-4 p-4 transition-colors duration-200 hover:bg-white/5" href="/pages/administrador/ajustes/administrar_empleados.html">
+                            <span class="material-symbols-outlined text-primary text-2xl">manage_accounts</span>
+                            <span class="flex-grow text-white/90">Administrar Personal</span>
+                            <span class="material-symbols-outlined text-white/50">chevron_right</span>
+                        </a>
+                        <div class="h-px bg-white/10 mx-4"></div>
+                        <a href="/pages/administrador/editar_precios.html" class="flex items-center gap-4 p-4 hover:bg-white/5">
+                            <span class="material-symbols-outlined text-primary text-2xl">price_change</span>
+                            <span class="flex-grow">Tabla de Precios</span>
+                            <span class="material-symbols-outlined text-white/50">chevron_right</span>
+                        </a>         
+                        <div class="h-px bg-white/10 mx-4"></div>
+                        <a class="flex items-center gap-4 p-4 transition-colors duration-200 hover:bg-white/5" href="./menu_registro_configuracion.html">
+                            <span class="material-symbols-outlined text-primary text-2xl">store</span>
+                            <span class="flex-grow text-white/90">Registro y configuración del Negocio</span>
+                            <span class="material-symbols-outlined text-white/50">chevron_right</span>
+                        </a>
+                        <div class="h-px bg-white/10 mx-4"></div>
+                        <a class="flex items-center gap-4 p-4 transition-colors duration-200 hover:bg-white/5" href="./politicas/menu_politicas.html">
+                            <span class="material-symbols-outlined text-primary text-2xl">policy</span>
+                            <span class="flex-grow text-white/90">Administrar Políticas</span>
+                            <span class="material-symbols-outlined text-white/50">chevron_right</span>
+                        </a>
+                        <div class="h-px bg-white/10 mx-4"></div>
+                        <a class="flex items-center gap-4 p-4 transition-colors duration-200 hover:bg-white/5" href="./reporte/PantallaReportes.html">
+                            <span class="material-symbols-outlined text-primary text-2xl">bar_chart</span>
+                            <span class="flex-grow text-white/90">Reportes</span>
+                            <span class="material-symbols-outlined text-white/50">chevron_right</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="pt-8" id="logout-btn">
+                    <button
+                        class="flex w-full items-center justify-center gap-2 rounded-lg bg-primary/10 py-3 text-primary transition-colors duration-200 hover:bg-primary/20">
+                        <span class="material-symbols-outlined">logout</span>
+                        <span class="font-bold">Cerrar Sesión</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+        <nav class="fixed bottom-0 left-0 right-0 h-20 bg-background-dark border-t border-white/10 px-4">
+            <div class="flex justify-around items-center h-full">
+                <a class="flex flex-col items-center gap-1 text-white/50 hover:text-primary transition-colors" href="/pages/administrador/menu_admin.html">
+                    <span class="material-symbols-outlined text-2xl">dashboard</span>
+                    <span class="text-xs font-medium">Inicio</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 text-white/50 hover:text-primary transition-colors" href="/pages/cliente/seguimiento/index.html">
+                    <span class="material-symbols-outlined text-2xl">event_available</span>
+                    <span class="text-xs font-medium">Seguimiento</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 text-white/50 hover:text-primary transition-colors" href="/pages/administrador/editar_precios.html">
+                    <span class="material-symbols-outlined text-2xl">price_change</span>
+                    <span class="text-xs font-medium">Precios</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 text-primary" href="/pages/administrador/ajustes/menu_ajustes.html">
+                    <span class="material-symbols-outlined text-2xl">settings</span>
+                    <span class="text-xs font-medium">Ajustes</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+<script>
+    function getIniciales(nombre = '') {
+        const p = nombre.trim().split(/\s+/).filter(Boolean);
+        if (p.length >= 2) return (p[0][0] + p[1][0]).toUpperCase();
+        return (p[0] || '?').substring(0, 2).toUpperCase();
+    }
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    if (!user) { window.location.href = '/'; }
+    else {
+        const el = document.getElementById('user-fullname');
+        if (el) el.textContent = user.nombre;
+        const initEl = document.getElementById('user-initials');
+        if (initEl) initEl.textContent = getIniciales(user.nombre);
+    }
+    
+    document.getElementById('logout-btn').addEventListener('click', () => {
+        localStorage.removeItem('user');
+        localStorage.removeItem('empresa');
+        window.location.href = '/';
+    });
+</script>
+<script src="/frontend/js/registro_empresa.js"></script>
+</body>
+
+</html>

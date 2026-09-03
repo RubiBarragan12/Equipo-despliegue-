@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Reporte de Productividad</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght=400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: { "primary": "#af25f4" },
+                    fontFamily: { "sans": ["Manrope", "sans-serif"] },
+                },
+            },
+        }
+    </script>
+    <style>
+        body { font-family: 'Manrope', sans-serif; background: #1c1022; min-height: 100dvh; }
+        select option { background: #1c1022; color: #f1f5f9; }
+        input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0; position: absolute; inset: 0; cursor: pointer; }
+    </style>
+</head>
+<body class="text-slate-100 flex flex-col min-h-screen">
+
+<header class="sticky top-0 z-50 bg-[#1c1022]/90 backdrop-blur-md border-b border-white/10 flex items-center px-4 h-14 gap-3">
+    <button onclick="window.history.back()" class="size-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors">
+        <span class="material-symbols-outlined text-primary">arrow_back</span>
+    </button>
+    <h1 class="text-base font-extrabold uppercase tracking-tight flex-1">Productividad</h1>
+</header>
+
+<main class="flex-1 max-w-lg mx-auto w-full px-4 py-6 space-y-5">
+
+    <section class="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
+        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Filtros</p>
+        <div class="grid grid-cols-2 gap-3">
+            <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold text-slate-400 uppercase">Desde</label>
+                <div class="relative">
+                    <input id="fechaDesde" type="date" class="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-sm font-medium focus:ring-2 focus:ring-primary/50 outline-none cursor-pointer" onclick="this.showPicker()"/>
+                    <span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-primary text-lg pointer-events-none">calendar_today</span>
+                </div>
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold text-slate-400 uppercase">Hasta</label>
+                <div class="relative">
+                    <input id="fechaHasta" type="date" class="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-sm font-medium focus:ring-2 focus:ring-primary/50 outline-none cursor-pointer" onclick="this.showPicker()"/>
+                    <span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-primary text-lg pointer-events-none">calendar_today</span>
+                </div>
+            </div>
+        </div>
+        <div class="flex gap-3">
+            <div class="flex-1 relative">
+                <select id="selectArtista" class="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-sm font-bold appearance-none focus:ring-2 focus:ring-primary/50 outline-none">
+                    <option value="todos">Todos los artistas</option>
+                </select>
+                <span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-primary text-lg pointer-events-none">expand_more</span>
+            </div>
+            <button id="btnAplicar" onclick="cargarProductividad()" class="h-10 px-5 bg-primary hover:bg-primary/80 text-white rounded-lg font-bold text-sm flex items-center gap-2 transition-all shadow-lg shadow-primary/20">
+                <span id="iconBtn" class="material-symbols-outlined text-lg">refresh</span>
+                <span id="textBtn">Aplicar</span>
+            </button>
+        </div>
+    </section>
+
+    <section class="grid grid-cols-2 gap-3">
+        <div class="bg-primary/10 border border-primary/20 rounded-xl p-4">
+            <p class="text-[9px] font-bold text-primary uppercase tracking-wider mb-1">Ticket Promedio</p>
+            <p id="val-ticket" class="text-2xl font-extrabold">—</p>
+        </div>
+        <div class="bg-white/5 border border-white/10 rounded-xl p-4">
+            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Total Artistas</p>
+            <p id="val-artistas" class="text-2xl font-extrabold">—</p>
+        </div>
+    </section>
+
+    <section class="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+        <div class="px-4 py-3 border-b border-white/10 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-sm">leaderboard</span>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Ranking de Artistas</p>
+        </div>
+        <div id="listaRanking" class="divide-y divide-white/10">
+            </div>
+    </section>
+
+    <section class="grid grid-cols-2 gap-3">
+        <button onclick="exportarPDF()" class="py-3 border border-primary/30 bg-primary/5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-primary/15 transition-colors text-primary">
+            <span class="material-symbols-outlined text-lg">picture_as_pdf</span> PDF
+        </button>
+        <button onclick="exportarExcel()" class="py-3 border border-emerald-500/30 bg-emerald-500/5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-emerald-500/15 transition-colors text-emerald-400">
+            <span class="material-symbols-outlined text-lg">table_chart</span> Excel
+        </button>
+    </section>
+</main>
+
+<div id="errorBanner" class="hidden fixed bottom-5 left-4 right-4 max-w-lg mx-auto bg-red-500/20 border border-red-500/40 text-red-300 rounded-xl px-4 py-3 text-sm font-medium flex items-center gap-2">
+    <span class="material-symbols-outlined text-base">error</span>
+    <span id="errorMsg">Error al cargar datos</span>
+</div>
+
+<script>
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    if (!user) window.location.href = '/';
+    const idEmpresa = user?.empresa?.idEmpresa || user?.idempresa;
+    if (!idEmpresa) { alert('No se encontró empresa asociada al usuario.'); history.back(); }
+
+    let datosActuales = null;
+    let ticketPromedioCalculado = 0; // Guardará el valor exacto para exportaciones
+
+    const hoy = new Date();
+    const todayStr = hoy.toISOString().split('T')[0];
+    const inicioAnio = new Date(hoy.getFullYear(), 0, 1);
+    const inputDesde = document.getElementById('fechaDesde');
+    const inputHasta = document.getElementById('fechaHasta');
+    inputDesde.max = todayStr;
+    inputHasta.max = todayStr;
+    inputDesde.value = inicioAnio.toISOString().split('T')[0];
+    inputHasta.value = todayStr;
+    inputDesde.addEventListener('change', () => { if (inputHasta.value < inputDesde.value) inputHasta.value = inputDesde.value; });
+    inputHasta.addEventListener('change', () => { if (inputDesde.value > inputHasta.value) inputDesde.value = inputHasta.value; });
+
+    // Corrección 1: Mostrar los centavos exactos en pesos mexicanos
+    function fmt(n) {
+        return '$' + n.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // Corrección 2: Recalcular métricas principales según el filtro activo
+    function filtrarRanking() {
+        const sel = document.getElementById('selectArtista').value;
+        if (!datosActuales) return;
+        
+        const filtrado = sel === 'todos'
+            ? datosActuales.ranking
+            : datosActuales.ranking.filter(r => r.nombre === sel);
+        
+        // Calcular de manera exacta basándonos en los elementos del ranking actual
+        const totalIngresos = filtrado.reduce((sum, r) => sum + parseFloat(r.ingresos || 0), 0);
+        const totalCitas = filtrado.reduce((sum, r) => sum + parseInt(r.citas || 0), 0);
+        
+        ticketPromedioCalculado = totalCitas > 0 ? (totalIngresos / totalCitas) : 0;
+        
+        document.getElementById('val-ticket').textContent = fmt(ticketPromedioCalculado);
+        document.getElementById('val-artistas').textContent = sel === 'todos' ? datosActuales.ranking.length : 1;
+
+        renderRanking(filtrado);
+    }
+
+    function renderRanking(ranking) {
+        const lista = document.getElementById('listaRanking');
+        if (!ranking.length) {
+            lista.innerHTML = `<div class="px-4 py-6 text-center text-slate-500 text-sm">Sin datos en el período</div>`;
+            return;
+        }
+
+        const maxCitas = Math.max(...ranking.map(r => r.citas), 1);
+
+        lista.innerHTML = ranking.map((r, i) => {
+            const medallas    = ['🥇','🥈','🥉'];
+            const medallaIcon = medallas[i];
+            const pct         = Math.max(Math.round((r.citas / maxCitas) * 100), 2);
+            return `
+            <div class="px-4 py-4 space-y-2">
+                <div class="flex items-center gap-3">
+                    ${medallaIcon
+                        ? `<span class="text-xl w-7 text-center">${medallaIcon}</span>`
+                        : `<span class="text-sm font-bold text-slate-500 w-7 text-center">${r.posicion || (i + 1)}</span>`}
+                    <p class="flex-1 font-bold text-sm">${r.nombre}</p>
+                    <div class="text-right">
+                        <p class="text-sm font-extrabold text-primary">${fmt(parseFloat(r.ingresos))}</p>
+                        <p class="text-[10px] text-slate-400">${r.citas} cita${r.citas !== 1 ? 's' : ''}</p>
+                    </div>
+                </div>
+                <div class="h-1 bg-white/10 rounded-full overflow-hidden ml-10">
+                    <div class="h-full bg-primary/60 rounded-full transition-all duration-700" style="width:${pct}%"></div>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    function poblarSelectArtista(artistas) {
+        const sel = document.getElementById('selectArtista');
+        const val = sel.value;
+        while (sel.options.length > 1) sel.remove(1);
+        artistas.forEach(a => {
+            const opt = document.createElement('option');
+            opt.value = a.nombre;
+            opt.textContent = a.nombre;
+            sel.appendChild(opt);
+        });
+        if ([...sel.options].some(o => o.value === val)) sel.value = val;
+    }
+
+    async function cargarProductividad() {
+        const btn   = document.getElementById('btnAplicar');
+        const icon  = document.getElementById('iconBtn');
+        const text  = document.getElementById('textBtn');
+        const desde = document.getElementById('fechaDesde').value;
+        const hasta = document.getElementById('fechaHasta').value;
+
+        icon.classList.add('animate-spin');
+        text.textContent = 'Cargando...';
+        btn.disabled = true;
+        document.getElementById('errorBanner').classList.add('hidden');
+
+        try {
+            const res  = await fetch(`/api/reportes/productividad/${idEmpresa}?desde=${desde}&hasta=${hasta}`);
+            const json = await res.json();
+            if (json.status !== 'ok') throw new Error(json.message);
+
+            datosActuales = json.data;
+            poblarSelectArtista(datosActuales.artistas || datosActuales.ranking);
+            filtrarRanking();
+        } catch (err) {
+            document.getElementById('errorMsg').textContent = 'Error al cargar datos: ' + err.message;
+            document.getElementById('errorBanner').classList.remove('hidden');
+        } finally {
+            icon.classList.remove('animate-spin');
+            text.textContent = 'Aplicar';
+            btn.disabled = false;
+        }
+    }
+
+    document.getElementById('selectArtista').addEventListener('change', filtrarRanking);
+
+    function exportarPDF() {
+        if (!datosActuales) return;
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const desde = document.getElementById('fechaDesde').value;
+        const hasta = document.getElementById('fechaHasta').value;
+        const sel = document.getElementById('selectArtista').value;
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(16);
+        doc.text('Reporte de Productividad', 14, 18);
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Período: ${desde} — ${hasta}  |  Ticket promedio: ${fmt(ticketPromedioCalculado)}`, 14, 26);
+        
+        const filtrado = sel === 'todos'
+            ? datosActuales.ranking
+            : datosActuales.ranking.filter(r => r.nombre === sel);
+
+        doc.autoTable({
+            startY: 32,
+            head: [['#', 'Artista', 'Citas', 'Ingresos']],
+            body: filtrado.map((r, i) => [r.posicion || (i + 1), r.nombre, r.citas, fmt(parseFloat(r.ingresos))]),
+            theme: 'grid',
+            headStyles: { fillColor: [175, 37, 244] },
+            columnStyles: {
+                2: { halign: 'right' },
+                3: { halign: 'right' }
+            }
+        });
+        doc.save(`Productividad_${desde}_${hasta}.pdf`);
+    }
+
+    function exportarExcel() {
+        if (!datosActuales) return;
+        const desde = document.getElementById('fechaDesde').value;
+        const hasta = document.getElementById('fechaHasta').value;
+        const sel = document.getElementById('selectArtista').value;
+
+        const filtrado = sel === 'todos'
+            ? datosActuales.ranking
+            : datosActuales.ranking.filter(r => r.nombre === sel);
+
+        const datos = [
+            ['REPORTE DE PRODUCTIVIDAD', `${desde} — ${hasta}`],
+            [`Ticket Promedio: ${fmt(ticketPromedioCalculado)}`],
+            [],
+            ['#', 'Artista', 'Citas', 'Ingresos'],
+            ...filtrado.map((r, i) => [r.posicion || (i + 1), r.nombre, r.citas, parseFloat(r.ingresos)]),
+        ];
+        const ws = XLSX.utils.aoa_to_sheet(datos);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Productividad');
+        XLSX.writeFile(wb, `Productividad_${desde}_${hasta}.xlsx`);
+    }
+
+    cargarProductividad();
+</script>
+</body>
+</html>

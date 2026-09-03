@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Reportes</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: { "primary": "#af25f4" },
+                    fontFamily: { "sans": ["Manrope", "sans-serif"] },
+                },
+            },
+        }
+    </script>
+    <style>
+        body { font-family: 'Manrope', sans-serif; background: #1c1022; min-height: 100dvh; }
+    </style>
+</head>
+<body class="text-slate-100 flex flex-col min-h-screen">
+
+<header class="sticky top-0 z-50 bg-[#1c1022]/90 backdrop-blur-md border-b border-white/10 flex items-center px-4 h-14 gap-3">
+    <button onclick="window.history.back()" class="size-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors">
+        <span class="material-symbols-outlined text-primary">arrow_back</span>
+    </button>
+    <h1 class="text-base font-extrabold uppercase tracking-tight">Reportes</h1>
+</header>
+
+<main class="flex-1 max-w-lg mx-auto w-full px-4 py-6 space-y-3">
+
+    <a href="./Reporte.html" class="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-primary/10 hover:border-primary/30 transition-all active:scale-[0.98] group">
+        <div class="size-12 rounded-xl bg-primary/15 flex items-center justify-center border border-primary/20 shrink-0">
+            <span class="material-symbols-outlined text-primary text-2xl">dashboard</span>
+        </div>
+        <div class="flex-1">
+            <p class="font-bold text-sm group-hover:text-primary transition-colors">Reporte General</p>
+            <p class="text-[11px] text-slate-500 mt-0.5">Ventas, citas y clientes nuevos por período</p>
+        </div>
+        <span class="material-symbols-outlined text-slate-600 group-hover:text-primary group-hover:translate-x-0.5 transition-all">chevron_right</span>
+    </a>
+
+    <a href="./ReporteVentas.html" class="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-primary/10 hover:border-primary/30 transition-all active:scale-[0.98] group">
+        <div class="size-12 rounded-xl bg-primary/15 flex items-center justify-center border border-primary/20 shrink-0">
+            <span class="material-symbols-outlined text-primary text-2xl">payments</span>
+        </div>
+        <div class="flex-1">
+            <p class="font-bold text-sm group-hover:text-primary transition-colors">Reporte de Ventas</p>
+            <p class="text-[11px] text-slate-500 mt-0.5">Ingresos mensuales y totales por año</p>
+        </div>
+        <span class="material-symbols-outlined text-slate-600 group-hover:text-primary group-hover:translate-x-0.5 transition-all">chevron_right</span>
+    </a>
+
+    <a href="./ReporteClientes.html" class="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-primary/10 hover:border-primary/30 transition-all active:scale-[0.98] group">
+        <div class="size-12 rounded-xl bg-primary/15 flex items-center justify-center border border-primary/20 shrink-0">
+            <span class="material-symbols-outlined text-primary text-2xl">groups</span>
+        </div>
+        <div class="flex-1">
+            <p class="font-bold text-sm group-hover:text-primary transition-colors">Reporte de Clientes</p>
+            <p class="text-[11px] text-slate-500 mt-0.5">Crecimiento, activos y top clientes</p>
+        </div>
+        <span class="material-symbols-outlined text-slate-600 group-hover:text-primary group-hover:translate-x-0.5 transition-all">chevron_right</span>
+    </a>
+
+    <a href="./ReporteProductividad.html" class="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-primary/10 hover:border-primary/30 transition-all active:scale-[0.98] group">
+        <div class="size-12 rounded-xl bg-primary/15 flex items-center justify-center border border-primary/20 shrink-0">
+            <span class="material-symbols-outlined text-primary text-2xl">leaderboard</span>
+        </div>
+        <div class="flex-1">
+            <p class="font-bold text-sm group-hover:text-primary transition-colors">Reporte de Productividad</p>
+            <p class="text-[11px] text-slate-500 mt-0.5">Ranking de artistas por citas e ingresos</p>
+        </div>
+        <span class="material-symbols-outlined text-slate-600 group-hover:text-primary group-hover:translate-x-0.5 transition-all">chevron_right</span>
+    </a>
+
+    <a href="./Reporteexpedientes.html" class="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-primary/10 hover:border-primary/30 transition-all active:scale-[0.98] group">
+        <div class="size-12 rounded-xl bg-primary/15 flex items-center justify-center border border-primary/20 shrink-0">
+            <span class="material-symbols-outlined text-primary text-2xl">folder_shared</span>
+        </div>
+        <div class="flex-1">
+            <p class="font-bold text-sm group-hover:text-primary transition-colors">Expedientes de Clientes</p>
+            <p class="text-[11px] text-slate-500 mt-0.5">Historial completo y exportación individual</p>
+        </div>
+        <span class="material-symbols-outlined text-slate-600 group-hover:text-primary group-hover:translate-x-0.5 transition-all">chevron_right</span>
+    </a>
+
+</main>
+</body>
+</html>

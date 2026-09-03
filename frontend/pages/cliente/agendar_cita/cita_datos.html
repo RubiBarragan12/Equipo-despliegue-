@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Detalles de tu Tatuaje</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        body { min-height: max(884px, 100dvh); }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: { "primary": "#7f13ec", "background-light": "#f7f6f8", "background-dark": "#191022" },
+                    fontFamily: { "display": ["Space Grotesk", "sans-serif"] },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <link rel="stylesheet" href="../../styles/global.css" />
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+    <div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
+        <div class="flex items-center bg-background-dark p-4 pb-2 justify-between sticky top-0 z-10">
+            <a href="/pages/cliente/menu_cliente.html" class="text-white flex size-12 shrink-0 items-center justify-start">
+                <span class="material-symbols-outlined text-white/90">arrow_back</span>
+            </a>
+            <h1 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-12">Detalles de tu Cita</h1>
+        </div>
+        <h2 class="text-white tracking-light text-[28px] font-bold leading-tight px-4 text-left pb-3 pt-5">Completa tus Datos</h2>
+        <form id="form-datos-cita" class="flex flex-col gap-6 pb-24">
+            <div>
+                <h3 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Tus Datos</h3>
+                <div class="flex flex-col gap-4 px-4 py-3">
+                    <label class="flex flex-col">
+                        <p class="text-white text-base font-medium leading-normal pb-2">Nombre</p>
+                        <input id="input-nombre"
+                            class="form-input w-full rounded-lg text-white/90 focus:outline-0 focus:ring-0 border border-white/20 bg-white/5 focus:border-primary placeholder:text-white/40 p-4 text-base font-normal"
+                            placeholder="Tu nombre" type="text" readonly />
+                    </label>
+                    <label class="flex flex-col">
+                        <p class="text-white text-base font-medium leading-normal pb-2">Apellidos</p>
+                        <input id="input-apellido"
+                            class="form-input w-full rounded-lg text-white/90 focus:outline-0 focus:ring-0 border border-white/20 bg-white/5 focus:border-primary placeholder:text-white/40 p-4 text-base font-normal"
+                            placeholder="Tus apellidos" type="text" />
+                    </label>
+                </div>
+            </div>
+            <div>
+                <h3 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Tu Idea de Tatuaje</h3>
+                <div class="flex flex-wrap items-end gap-4 px-4 py-3">
+                    <label class="flex flex-col min-w-40 flex-1">
+                        <p class="text-white text-base font-medium leading-normal pb-2">Descripción detallada</p>
+                        <textarea id="input-descripcion"
+                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white/90 focus:outline-0 focus:ring-0 border border-white/20 bg-white/5 focus:border-primary placeholder:text-white/40 p-4 text-base font-normal min-h-36"
+                            placeholder="Describe con detalle lo que tienes en mente..." required></textarea>
+                    </label>
+                </div>
+            </div>
+            <div>
+                <h3 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Detalles</h3>
+                <div class="grid grid-cols-2 gap-4 px-4 py-3">
+                    <label class="flex flex-col">
+                        <p class="text-white text-base font-medium leading-normal pb-2">Ancho (cm)</p>
+                        <input id="input-ancho"
+                            class="form-input w-full rounded-lg text-white/90 focus:outline-0 focus:ring-0 border border-white/20 bg-white/5 focus:border-primary placeholder:text-white/40 p-4 text-base font-normal"
+                            placeholder="10" type="number" min="1" />
+                    </label>
+                    <label class="flex flex-col">
+                        <p class="text-white text-base font-medium leading-normal pb-2">Alto (cm)</p>
+                        <input id="input-alto"
+                            class="form-input w-full rounded-lg text-white/90 focus:outline-0 focus:ring-0 border border-white/20 bg-white/5 focus:border-primary placeholder:text-white/40 p-4 text-base font-normal"
+                            placeholder="15" type="number" min="1" />
+                    </label>
+                </div>
+                <div class="px-4 py-3">
+                    <p class="text-white text-base font-medium leading-normal pb-3">Ubicación en el cuerpo</p>
+                    <div class="flex flex-wrap gap-3">
+                        <button type="button" class="zona-btn px-4 py-2 text-sm font-medium rounded-full bg-white/5 border border-white/20 text-white/80" data-zona="Brazo">Brazo</button>
+                        <button type="button" class="zona-btn px-4 py-2 text-sm font-medium rounded-full bg-white/5 border border-white/20 text-white/80" data-zona="Antebrazo">Antebrazo</button>
+                        <button type="button" class="zona-btn px-4 py-2 text-sm font-medium rounded-full bg-white/5 border border-white/20 text-white/80" data-zona="Espalda">Espalda</button>
+                        <button type="button" class="zona-btn px-4 py-2 text-sm font-medium rounded-full bg-white/5 border border-white/20 text-white/80" data-zona="Pecho">Pecho</button>
+                        <button type="button" class="zona-btn px-4 py-2 text-sm font-medium rounded-full bg-white/5 border border-white/20 text-white/80" data-zona="Pierna">Pierna</button>
+                        <button type="button" class="zona-btn px-4 py-2 text-sm font-medium rounded-full bg-white/5 border border-white/20 text-white/80" data-zona="Tobillo">Tobillo</button>
+                        <button type="button" class="zona-btn px-4 py-2 text-sm font-medium rounded-full bg-white/5 border border-white/20 text-white/80" data-zona="Muñeca">Muñeca</button>
+                        <button type="button" class="zona-btn px-4 py-2 text-sm font-medium rounded-full bg-white/5 border border-white/20 text-white/80" data-zona="Cuello">Cuello</button>
+                        <button type="button" class="zona-btn px-4 py-2 text-sm font-medium rounded-full bg-white/5 border border-white/20 text-white/80" data-zona="Costillas">Costillas</button>
+                        <button type="button" class="zona-btn px-4 py-2 text-sm font-medium rounded-full bg-white/5 border border-white/20 text-white/80" data-zona="+">+</button>
+                    </div>
+                    <div id="zona-cuerpo-input-container" class="mt-4 hidden">
+                        <label for="zona-cuerpo-input" class="text-white">Otra Zona
+                            <input type="text" id="zona-cuerpo-input"
+                                class="form-input w-full rounded-lg text-white/90 focus:outline-0 focus:ring-0 border border-white/20 bg-white/5 focus:border-primary placeholder:text-white/40 p-4 text-base font-normal mt-2"
+                                placeholder="Especifica otra zona del cuerpo" />
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h3 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Técnica / Estilo</h3>
+                <div id="tecnicas-container" class="flex flex-wrap gap-3 px-4 py-3">
+                    <p class="text-gray-400 text-sm">Cargando técnicas...</p>
+                </div>
+            </div>
+            <div>
+                <h3 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Imagen de referencia</h3>
+                <div class="px-4 py-3">
+                    <label class="flex flex-col items-center justify-center gap-2 aspect-video rounded-lg border-2 border-dashed border-white/20 text-white/60 hover:bg-white/5 hover:border-white/40 transition-colors cursor-pointer overflow-hidden">
+                        <img id="preview-foto" class="hidden w-full h-full object-cover rounded-lg" alt="Preview" />
+                        <span class="material-symbols-outlined text-3xl" id="upload-icon">add_photo_alternate</span>
+                        <span class="text-sm" id="upload-text">Subir imagen de referencia</span>
+                        <input id="input-foto" type="file" accept="image/*" class="hidden" />
+                    </label>
+                </div>
+            </div>
+            <div class="px-4 pb-8">
+                <button type="button" id="btn-siguiente"
+                    class="flex h-12 min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-primary px-5 text-base font-bold tracking-wide text-white shadow-lg shadow-primary/40">
+                    <span class="truncate">Siguiente: Elegir Hora</span>
+                </button>
+            </div>
+        </form>
+    </div>
+    <script src="/js/agendar_cita.js"></script>
+</body>
+</html>

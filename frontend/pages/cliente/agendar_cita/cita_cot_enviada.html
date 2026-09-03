@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#7f13ec",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#191022",
+                        "surface-dark": "#261933",
+                        "border-dark": "#362348",
+                        "accent-dark": "#ad92c9",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+    </style>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+    <link rel="stylesheet" href="../styles/global.css" />
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-display">
+    <!-- Header / Status Bar Area -->
+    <div class="flex items-center justify-between px-6 pt-6 pb-2">
+        <h2 class="text-lg font-bold tracking-tight">Confirmación</h2>
+        <div class="w-6"></div> <!-- Spacer for centering -->
+    </div>
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col px-6 py-8 items-center text-center">
+        <!-- Success Icon -->
+        <div class="mb-8 relative">
+            <div class="absolute inset-0 bg-primary/20 blur-3xl rounded-full"></div>
+            <div
+                class="relative bg-primary/10 border-2 border-primary/30 w-24 h-24 rounded-full flex items-center justify-center">
+                <span class="material-symbols-outlined text-primary text-5xl">check_circle</span>
+            </div>
+        </div>
+        <!-- Title & Description -->
+        <div class="space-y-3 mb-10 max-w-xs">
+            <h1 class="text-3xl font-bold tracking-tighter text-slate-100">¡Solicitud Enviada!</h1>
+            <p class="text-accent-dark text-sm leading-relaxed">
+                Tu solicitud de cotización ha sido enviada con éxito. Por favor, espera a que el tatuador elegido
+                responda con el precio final.
+            </p>
+        </div>
+        <!-- Summary Card -->
+        <div
+            class="w-full max-w-sm bg-surface-dark border border-border-dark rounded-xl p-5 text-left mb-8 shadow-xl shadow-black/20">
+            <h3 class="text-xs font-semibold uppercase tracking-widest text-primary mb-4">Resumen de la Solicitud</h3>
+            <div class="flex flex-col justify-center gap-1">
+                <p id="enviada-artista" class="text-slate-100 font-bold text-lg leading-none">...</p>
+                <div class="flex items-center gap-2 text-accent-dark text-sm">
+                    <span class="material-symbols-outlined text-base">palette</span>
+                    <span id="enviada-estilo">...</span>
+                </div>
+                <div class="flex items-center gap-2 text-accent-dark text-sm">
+                    <span class="material-symbols-outlined text-base">calendar_today</span>
+                    <span id="enviada-fecha">...</span>
+                </div>
+            </div>
+            <div class="mt-4 pt-4 border-t border-border-dark flex justify-between items-center">
+                <span class="text-xs text-accent-dark">Estado</span>
+                <span class="text-xs font-bold py-1 px-3 bg-primary/20 text-primary rounded-full">Pendiente</span>
+            </div>
+        </div>
+        <!-- Action Button -->
+        <button id="btn-inicio"
+            class="w-full max-w-sm bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98]">
+            Regresar a Inicio
+        </button>
+    </main>
+    <!-- Bottom Navigation Bar -->
+    <nav class="fixed bottom-0 z-10 w-full border-t border-gray-200 bg-background-light/90 backdrop-blur-sm dark:border-gray-700 dark:bg-background-dark/90">
+        <div class="grid h-16 grid-cols-4 items-center justify-items-center px-2">
+            <a class="flex flex-col items-center justify-center gap-1 text-primary" href="/pages/cliente/menu_cliente.html">
+                <span class="material-symbols-outlined">home</span>
+                <span class="text-xs font-bold">Inicio</span>
+            </a>
+            <a class="flex flex-col items-center justify-center gap-1 text-gray-500 dark:text-gray-400" href="/pages/cliente/calendario_cliente.html">
+                <span class="material-symbols-outlined">calendar_month</span>
+                <span class="text-xs font-medium">Mis Citas</span>
+            </a>
+            <a class="flex flex-col items-center justify-center gap-1 text-gray-500 dark:text-gray-400" href="/pages/cliente/cotizacion/mis_cotizaciones.html">
+                <span class="material-symbols-outlined">sell</span>
+                <span class="text-xs font-medium">Cotizaciones</span>
+            </a>
+            <a class="flex flex-col items-center justify-center gap-1 text-gray-500 dark:text-gray-400" href="/pages/cliente/historial_cliente.html">
+                <span class="material-symbols-outlined">photo_library</span>
+                <span class="text-xs font-medium">Historial</span>
+            </a>
+        </div>
+    </nav>
+    <script src="/js/agendar_cita.js"></script>
+</body>
+</html>
+        </a>
+    </nav>
+</body>
+
+</html>

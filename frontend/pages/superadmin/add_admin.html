@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Register New Admin | AdminConsole</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&amp;family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {},
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        "headline": ["Public Sans"],
+                        "display": ["Public Sans"],
+                        "body": ["Public Sans"],
+                        "label": ["Public Sans"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        body {
+            background-color: #0f0a14;
+            color: #ffffff;
+            font-family: 'Public Sans', sans-serif;
+        }
+
+        .glass-panel {
+            background: rgba(25, 16, 34, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen pb-24">
+    <!-- TopAppBar -->
+    <header
+        class="bg-[#191022]/90 backdrop-blur-md font-['Space_Grotesk'] tracking-tight font-bold uppercase border-b border-[#261933] fixed top-0 w-full left-1/2 -translate-x-1/2 px-4 h-16 flex items-center z-50">
+        <button
+            onclick="window.location.href='./menu_superadmin.html'"
+            class="flex align-center justify-center  text-[#7f13ec] hover:bg-[#2c1d3b] transition-colors duration-150 p-2 rounded-lg active:scale-95 transition-transform">
+            <span class="material-symbols-outlined">arrow_back</span>
+        </button>
+        <div class="flex items-center gap-3">
+            <div
+                class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center overflow-hidden border border-white/10">
+                <img alt="Super Admin Profile" class="w-full h-full object-cover"
+                    data-alt="close-up portrait of a professional technology executive in a dark minimalist studio environment with purple ambient lighting"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIQwuzI0PkV9e-D7h4Vgfv-HAqoYdZEcK-Kz4E62GjysC-MP1GxeiBUmuKTqj7od32qXr5QsWnVKKTp0nO52P-KGpv71VGIKa8zS7CWoGG_oHe3WGZRS1-JMqISPqYDCbxltDgIRuZa6mzCBeickdu5Ln9uH3K473PEwmV2JS0d__lu528sqzJyL_-Ip2jIdZwvvr032zlX97XOBozzGK9ew_6IAQYqyaIk55UvWB-3v3g9ZvnAP0fw7lfk4ax-VVq53HrbUrIn2Q" />
+            </div>
+            <h1 class="text-lg font-black text-white tracking-widest font-['Space_Grotesk'] uppercase">Consola De Super Administrador</h1>
+        </div>
+    </header>
+    <!-- Main Canvas -->
+    <main class="pt-24 px-6 mx-auto">
+        <!-- Header Section -->
+        <div class="mb-8">
+            <h1 class="text-2xl font-bold font-display text-white mb-2">Nuevo Administrator</h1>
+            <p class="text-gray-400 text-sm">Llena los datos para crear un nuevo administrator.
+            </p>
+        </div>
+        <!-- Form Section -->
+        <form class="space-y-6">
+            <!-- Grid Inputs -->
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Nombre y Apellido</label>
+                    <div class="relative">
+                        <span
+                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">person</span>
+                        <input
+                            class="w-full bg-[#1e1429] border border-white/5 text-white text-sm rounded-lg focus:ring-2 focus:ring-[#7f13ec] placeholder:text-gray-600 pl-10 pr-4 py-3"
+                            placeholder="Alex Sterling" type="text" />
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Correo Electrónico</label>
+                    <div class="relative">
+                        <span
+                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">mail</span>
+                        <input
+                            class="w-full bg-[#1e1429] border border-white/5 text-white text-sm rounded-lg focus:ring-2 focus:ring-[#7f13ec] placeholder:text-gray-600 pl-10 pr-4 py-3"
+                            placeholder="admin@studio.com" type="email" />
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label
+                            class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Contraseña</label>
+                        <div class="relative">
+                            <input
+                                class="w-full bg-[#1e1429] border border-white/5 text-white text-sm rounded-lg focus:ring-2 focus:ring-[#7f13ec] placeholder:text-gray-600 px-4 py-3"
+                                placeholder="••••••••" type="password" />
+                            <span
+                                class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm cursor-pointer hover:text-[#7f13ec]">visibility</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label
+                            class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Fecha de Nacimiento</label>
+                        <div class="relative">
+                            <input
+                                id="fecha_nacimiento"
+                                class="w-full bg-[#1e1429] border border-white/5 text-white text-sm rounded-lg focus:ring-2 focus:ring-[#7f13ec] px-4 py-3 [color-scheme:dark]"
+                                type="date" />
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Numero de Teléfono</label>
+                    <div class="relative">
+                        <span
+                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">call</span>
+                        <input
+                            class="w-full bg-[#1e1429] border border-white/5 text-white text-sm rounded-lg focus:ring-2 focus:ring-[#7f13ec] placeholder:text-gray-600 pl-10 pr-4 py-3"
+                            placeholder="+1 (555) 000-0000" type="tel" />
+                    </div>
+                </div>
+            </div>
+            <!-- Submit Action -->
+            <div class="pt-4">
+                <button
+                    class="w-full bg-[#7f13ec] hover:bg-[#9029f5] text-white font-bold py-4 rounded-xl shadow-lg shadow-[#7f13ec]/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                    type="submit">
+                    Registrar Administrator
+                    <span class="material-symbols-outlined">chevron_right</span>
+                </button>
+            </div>
+        </form>
+        <!-- Informational Bento Card -->
+        <!-- <div class="mt-10 grid grid-cols-1 gap-4">
+            <div class="glass-panel p-4 rounded-xl">
+                <span class="material-symbols-outlined text-[#7f13ec] mb-2">notifications_active</span>
+                <p class="text-[10px] font-bold text-gray-400 uppercase">Notification</p>
+                <p class="text-xs text-gray-300 mt-1">An invitation email will be sent immediately.</p>
+            </div>
+        </div> -->
+    </main>
+</body>
+<script>
+    const form = document.querySelector('form');
+    const submitBtn = form.querySelector('button[type="submit"]');
+    
+    // Referencias a inputs específicos
+    const phoneInput = form.querySelector('input[type="tel"]');
+    const emailInput = form.querySelector('input[type="email"]');
+    const dateInput = form.querySelector('input[type="date"]');
+    const passInput = form.querySelector('input[type="password"]');
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const dateInput = document.getElementById('fecha_nacimiento');
+        
+        // Obtener la fecha de hoy
+        const hoy = new Date();
+        
+        // Restar 18 años
+        const hace18Anios = new Date(hoy.getFullYear() - 18, hoy.getMonth(), hoy.getDate());
+        
+        // Formatear a YYYY-MM-DD (formato que entiende el atributo max de HTML5)
+        const anio = hace18Anios.getFullYear();
+        const mes = String(hace18Anios.getMonth() + 1).padStart(2, '0');
+        const dia = String(hace18Anios.getDate()).padStart(2, '0');
+        
+        const fechaLimite = `${anio}-${mes}-${dia}`;
+        
+        // Aplicar la restricción al calendario
+        dateInput.max = fechaLimite;
+        
+        // Opcional: Establecer esa fecha como valor inicial por defecto
+        dateInput.value = fechaLimite;
+    });
+
+    // 1. VALIDACIÓN: Solo números en el teléfono (bloqueo de teclas)
+    phoneInput.addEventListener('keypress', (e) => {
+        // Permitir números, +, -, (, ) y espacio
+        const allowedChars = /[0-9\+\-\(\)\s]/;
+        if (!allowedChars.test(e.key)) {
+            e.preventDefault();
+        }
+    });
+
+    // 2. FUNCIÓN: Validar Formato de Email
+    function validateEmail(email) {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regex.test(email);
+    }
+
+    // 3. FUNCIÓN: Validar Mayoría de Edad (18+)
+    function isOver18(dateString) {
+        if (!dateString) return false;
+        const birthday = new Date(dateString);
+        const today = new Date();
+        let age = today.getFullYear() - birthday.getFullYear();
+        const monthDiff = today.getMonth() - birthday.getMonth();
+        
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthday.getDate())) {
+            age--;
+        }
+        return age >= 18;
+    }
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Extraer valores
+        const nombre = form.querySelector('input[placeholder="Alex Sterling"]').value.trim();
+        const correo = emailInput.value.trim();
+        const contrasenia = passInput.value;
+        const fechaNacimiento = dateInput.value;
+        const telefono = phoneInput.value.trim();
+
+        // --- VALIDACIONES FRONT-END ---
+        
+        if (!nombre || !correo || !contrasenia) {
+            alert('Por favor, completa todos los campos obligatorios.');
+            return;
+        }
+
+        if (!validateEmail(correo)) {
+            alert('Por favor, ingresa un correo electrónico válido.');
+            emailInput.focus();
+            return;
+        }
+
+        if (contrasenia.length < 6) {
+            alert('La contraseña debe tener al menos 6 caracteres.');
+            passInput.focus();
+            return;
+        }
+
+        if (!isOver18(fechaNacimiento)) {
+            alert('El administrador debe ser mayor de 18 años.');
+            dateInput.focus();
+            return;
+        }
+
+        // Si pasa las validaciones, procedemos al envío
+        const formData = { nombre, correo, contrasenia, fechaNacimiento, telefono };
+
+        // Feedback visual
+        const originalBtnText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = 'Validando y Registrando... <span class="material-symbols-outlined animate-spin">sync</span>';
+
+        try {
+            const response = await fetch('/api/superadmin/administradores', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                form.reset();
+                alert('¡Administrador creado correctamente!');
+                window.location.href = './menu_superadmin.html';
+            } else {
+                alert('Error al registrar: ' + result.message);
+                resetBtn(originalBtnText);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error crítico de conexión.');
+            resetBtn(originalBtnText);
+        }
+    });
+
+    function resetBtn(text) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = text;
+    }
+
+    // Toggle visibilidad de contraseña
+    const togglePass = form.querySelector('.material-symbols-outlined.cursor-pointer');
+    togglePass.addEventListener('click', () => {
+        const type = passInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passInput.setAttribute('type', type);
+        togglePass.textContent = type === 'password' ? 'visibility' : 'visibility_off';
+    });
+</script>
+</html>

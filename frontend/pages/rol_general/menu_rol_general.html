@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Panel General - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-dark': '#120e16',
+                        'brand-card': '#1e1724',
+                        'brand-accent': '#e54e5a',
+                        'brand-muted': '#a199a8',
+                        'brand-border': '#2d2535',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #120e16;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            min-height: max(884px, 100dvh);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .badge-pendiente {
+            background-color: rgba(251, 191, 36, 0.12);
+            color: #fbbf24;
+        }
+
+        .badge-confirmada {
+            background-color: rgba(34, 197, 94, 0.12);
+            color: #22c55e;
+        }
+
+        .badge-finalizada {
+            background-color: rgba(99, 102, 241, 0.12);
+            color: #818cf8;
+        }
+
+        .badge-cancelada {
+            background-color: rgba(239, 68, 68, 0.12);
+            color: #ef4444;
+        }
+
+        .badge-default {
+            background-color: rgba(229, 78, 90, 0.10);
+            color: #e54e5a;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+</head>
+
+<body class="pb-24">
+
+    <!-- Header -->
+    <header class="px-6 pt-8 pb-4 flex items-center justify-between">
+        <div
+            class="w-12 h-12 rounded-full border border-[#3b2e47] bg-[#ecc0a1] flex items-center justify-center overflow-hidden">
+        </div>
+        <div>
+            <span class="material-symbols-outlined text-white text-[28px]">notifications</span>
+        </div>
+    </header>
+
+    <!-- Título -->
+    <section class="px-6 mb-5">
+        <h1 class="text-3xl font-extrabold tracking-tight">Panel General</h1>
+        <p class="text-brand-muted mt-1 text-lg">Resumen del día</p>
+    </section>
+
+    <!-- Botón Consultar Clientes -->
+    <div class="px-6 mb-8">
+        <a href="lista_rol_general.html"
+            class="w-full bg-brand-accent hover:opacity-90 text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-2 transition-all duration-200 shadow-lg shadow-brand-accent/20">
+            <span class="material-symbols-outlined">person_search</span>
+            <span class="text-lg">Consultar Clientes</span>
+        </a>
+    </div>
+
+    <!-- Próximas Citas -->
+    <main class="px-6">
+        <h2 class="text-xl font-extrabold mb-5">Próximas Citas</h2>
+
+        <!-- Cargando -->
+        <div id="estado-cargando" class="flex flex-col items-center justify-center gap-3 py-12 text-white/40">
+            <span class="material-symbols-outlined animate-spin text-4xl">progress_activity</span>
+            <p class="text-sm">Cargando citas...</p>
+        </div>
+
+        <!-- Sin sesión -->
+        <div id="estado-sin-sesion" class="hidden flex-col items-center justify-center gap-3 py-12 text-white/40">
+            <span class="material-symbols-outlined text-4xl text-yellow-400">warning</span>
+            <p class="text-sm text-yellow-400">No se encontró sesión activa</p>
+        </div>
+
+        <!-- Error -->
+        <div id="estado-error" class="hidden flex-col items-center justify-center gap-3 py-12 text-white/40">
+            <span class="material-symbols-outlined text-4xl text-red-400">wifi_off</span>
+            <p class="text-sm text-red-400">No se pudieron cargar las citas</p>
+            <button id="btn-reintentar"
+                class="mt-2 rounded-lg border border-white/10 px-4 py-2 text-sm text-white/60 hover:bg-white/5">
+                Reintentar
+            </button>
+        </div>
+
+        <!-- Sin citas -->
+        <div id="estado-vacio" class="hidden flex-col items-center justify-center gap-3 py-12 text-white/40">
+            <span class="material-symbols-outlined text-4xl">event_busy</span>
+            <p class="text-sm">No hay citas próximas</p>
+        </div>
+
+        <!-- Lista -->
+        <div id="lista-citas" class="hidden space-y-4"></div>
+    </main>
+
+    <!-- Nav inferior -->
+    <footer
+        class="fixed bottom-0 left-0 right-0 bg-[#120e16]/95 backdrop-blur-md border-t border-[#2d2535] px-8 py-4 flex justify-around items-center pb-8">
+        <a href="menu_rol_general.html" class="flex flex-col items-center gap-1">
+            <span class="material-symbols-outlined text-3xl text-brand-accent">grid_view</span>
+            <span class="text-brand-accent text-sm font-medium">Inicio</span>
+        </a>
+        <a href="lista_rol_general.html"
+            class="flex flex-col items-center gap-1 text-brand-muted hover:text-white transition-colors">
+            <span class="material-symbols-outlined text-3xl">group</span>
+            <span class="text-sm font-medium">Clientes</span>
+        </a>
+        <button id="btn-logout"
+            class="flex flex-col items-center gap-1 text-brand-muted hover:text-red-400 transition-colors">
+            <span class="material-symbols-outlined text-3xl">logout</span>
+            <span class="text-sm font-medium">Salir</span>
+        </button>
+    </footer>
+
+    <script>
+        // ─── Leer idempresa desde localStorage ───────────────────────────────
+        const user = JSON.parse(localStorage.getItem('user') || 'null');
+        const idempresa = user?.idempresa ?? null;
+
+        // ─── Referencias DOM ──────────────────────────────────────────────────
+        const estadoCargando = document.getElementById('estado-cargando');
+        const estadoSinSesion = document.getElementById('estado-sin-sesion');
+        const estadoError = document.getElementById('estado-error');
+        const estadoVacio = document.getElementById('estado-vacio');
+        const listaCitas = document.getElementById('lista-citas');
+        const btnReintentar = document.getElementById('btn-reintentar');
+
+        // ─── Mostrar / ocultar estados ────────────────────────────────────────
+        function mostrarEstado(estado) {
+            const todos = [estadoCargando, estadoSinSesion, estadoError, estadoVacio, listaCitas];
+            todos.forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('flex');
+            });
+
+            const mapa = {
+                cargando: estadoCargando,
+                sinSesion: estadoSinSesion,
+                error: estadoError,
+                vacio: estadoVacio,
+                lista: listaCitas,
+            };
+
+            const el = mapa[estado];
+            if (el) {
+                if (estado === 'lista') {
+                    el.classList.remove('hidden');
+                } else {
+                    el.classList.replace('hidden', 'flex');
+                }
+            }
+        }
+
+        // ─── Badge por estado ─────────────────────────────────────────────────
+        function badgeClass(estado) {
+            const mapa = {
+                'Pendiente': 'badge-pendiente',
+                'Confirmada': 'badge-confirmada',
+                'Finalizada': 'badge-finalizada',
+                'Cancelada': 'badge-cancelada',
+            };
+            return mapa[estado] ?? 'badge-default';
+        }
+
+        // ─── Formatear fecha ──────────────────────────────────────────────────
+        function formatearFecha(fechaStr) {
+            if (!fechaStr) return '—';
+
+            // Parsear manualmente para evitar problemas de timezone
+            const [anio, mes, dia] = fechaStr.split('-').map(Number);
+            const fecha = new Date(anio, mes - 1, dia); // mes es 0-indexed
+
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
+
+            const diffDias = Math.round((fecha - hoy) / 86400000);
+
+            if (diffDias === 0) return 'Hoy';
+            if (diffDias === 1) return 'Mañana';
+
+            return fecha.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
+        }
+
+        // ─── Renderizar citas ─────────────────────────────────────────────────
+        function renderizarCitas(citas) {
+            if (citas.length === 0) {
+                mostrarEstado('vacio');
+                return;
+            }
+
+            listaCitas.innerHTML = citas.map(c => `
+                <div class="bg-[#1e1724] border border-[#2d2535] rounded-3xl p-5 flex items-center justify-between gap-3">
+                    <div class="flex items-start gap-5 min-w-0">
+                        <div class="text-left shrink-0">
+                            <p class="font-bold text-lg leading-tight">${c.hora}</p>
+                            <p class="text-[#a199a8] text-xs mt-0.5">${formatearFecha(c.fecha)}</p>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="font-bold text-lg leading-tight truncate">${c.cliente}</p>
+                            <p class="text-[#a199a8] text-sm mt-0.5 truncate">${c.zona}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-semibold shrink-0 ${badgeClass(c.estado)}">
+                        <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+                        <span>${c.estado}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            mostrarEstado('lista');
+        }
+
+        // ─── Cargar citas ─────────────────────────────────────────────────────
+        async function cargarCitas() {
+            if (!idempresa) {
+                mostrarEstado('sinSesion');
+                return;
+            }
+
+            mostrarEstado('cargando');
+
+            try {
+                const res = await fetch(`/api/proximas-citas?idempresa=${idempresa}`);
+                if (!res.ok) throw new Error('Error al obtener citas');
+
+                const data = await res.json();
+                renderizarCitas(data.citas ?? []);
+
+            } catch (err) {
+                console.error('Error al cargar citas:', err);
+                mostrarEstado('error');
+            }
+        }
+
+        // ─── Eventos ──────────────────────────────────────────────────────────
+        btnReintentar.addEventListener('click', cargarCitas);
+
+        // ─── Logout ───────────────────────────────────────────────────────────
+        document.getElementById('btn-logout').addEventListener('click', () => {
+            localStorage.removeItem('user');
+            localStorage.removeItem('empresa');
+            window.location.href = '/';
+        });
+
+        // ─── Iniciar ──────────────────────────────────────────────────────────
+        cargarCitas();
+    </script>
+</body>
+
+</html>

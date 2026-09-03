@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Reporte de Ventas</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght=400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: { "primary": "#af25f4" },
+                    fontFamily: { "sans": ["Manrope", "sans-serif"] },
+                },
+            },
+        }
+    </script>
+    <style>
+        body { font-family: 'Manrope', sans-serif; background: #1c1022; min-height: 100dvh; }
+        .bar { transition: height 0.6s cubic-bezier(0.4,0,0.2,1); }
+        select option { background: #1c1022; color: #f1f5f9; }
+        input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0; position: absolute; inset: 0; cursor: pointer; }
+    </style>
+</head>
+<body class="text-slate-100 flex flex-col min-h-screen">
+
+<header class="sticky top-0 z-50 bg-[#1c1022]/90 backdrop-blur-md border-b border-white/10 flex items-center px-4 h-14 gap-3">
+    <button onclick="window.history.back()" class="size-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors">
+        <span class="material-symbols-outlined text-primary">arrow_back</span>
+    </button>
+    <h1 class="text-base font-extrabold uppercase tracking-tight flex-1">Reporte de Ventas</h1>
+</header>
+
+<main class="flex-1 max-w-lg mx-auto w-full px-4 py-6 space-y-5">
+
+    <section class="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
+        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Configuración</p>
+        <div class="flex gap-3">
+            <div class="flex-1">
+                <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Fecha de Consulta</label>
+                <div class="relative">
+                    <input id="fechaFiltro" type="date" class="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-sm font-bold focus:ring-2 focus:ring-primary/50 outline-none cursor-pointer" onclick="this.showPicker()"/>
+                    <span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-primary text-lg pointer-events-none">calendar_today</span>
+                </div>
+            </div>
+            <div class="flex items-end">
+                <button id="btnAplicar" onclick="cargarVentas()" class="h-10 px-5 bg-primary hover:bg-primary/80 text-white rounded-lg font-bold text-sm flex items-center gap-2 transition-all shadow-lg shadow-primary/20">
+                    <span id="iconBtn" class="material-symbols-outlined text-lg">refresh</span>
+                    <span id="textBtn">Aplicar</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-primary/10 border border-primary/20 rounded-2xl p-5 space-y-6">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Ventas Totales del Año</p>
+                <p id="totalAnio" class="text-4xl font-black text-primary mt-1">—</p>
+                <p id="subTotal" class="text-xs text-slate-400 mt-1">Cargando...</p>
+            </div>
+            <div class="text-right">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Fecha Emitida</p>
+                <p id="fechaActualLabel" class="text-xs font-bold text-slate-200 mt-1">—</p>
+            </div>
+        </div>
+
+        <div>
+            <div id="chartContainer" class="flex items-end gap-1.5 h-44"></div>
+            <div id="chartLabels" class="flex gap-1.5 mt-2"></div>
+        </div>
+    </section>
+
+    <section class="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+        <div class="px-4 py-3 border-b border-white/10">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Desglose Mensual</p>
+        </div>
+        <div id="tablaMensual" class="divide-y divide-white/10"></div>
+    </section>
+
+    <section class="grid grid-cols-2 gap-3">
+        <button onclick="exportarPDF()" class="py-3 border border-primary/30 bg-primary/5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-primary/15 transition-colors text-primary">
+            <span class="material-symbols-outlined text-lg">picture_as_pdf</span> PDF
+        </button>
+        <button onclick="exportarExcel()" class="py-3 border border-emerald-500/30 bg-emerald-500/5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-emerald-500/15 transition-colors text-emerald-400">
+            <span class="material-symbols-outlined text-lg">table_chart</span> Excel
+        </button>
+    </section>
+</main>
+
+<div id="errorBanner" class="hidden fixed bottom-5 left-4 right-4 max-w-lg mx-auto bg-red-500/20 border border-red-500/40 text-red-300 rounded-xl px-4 py-3 text-sm font-medium flex items-center gap-2">
+    <span class="material-symbols-outlined text-base">error</span>
+    <span id="errorMsg">Error al cargar datos</span>
+</div>
+
+<script>
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    if (!user) window.location.href = '/';
+    const idEmpresa = user?.empresa?.idEmpresa || user?.idempresa;
+    if (!idEmpresa) { alert('No se encontró empresa asociada al usuario.'); history.back(); }
+
+    const MESES_ABREV = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
+    const MESES_FULL  = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    let datosActuales = null;
+    const mesActual   = new Date().getMonth();
+
+    const hoy = new Date();
+    const todayStr = hoy.toISOString().split('T')[0];
+    const inputFecha = document.getElementById('fechaFiltro');
+    inputFecha.value = todayStr;
+    inputFecha.max = todayStr;
+
+    const fechaFormateada = hoy.toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
+    document.getElementById('fechaActualLabel').textContent = fechaFormateada;
+
+    function fmt(n) {
+        return '$' + n.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function renderChart(mensual, anioSeleccionado) {
+        const maxVal = Math.max(...mensual.map(m => parseFloat(m.total) || 0), 1);
+        const cont   = document.getElementById('chartContainer');
+        const labels = document.getElementById('chartLabels');
+        const isCurrentYear = anioSeleccionado === hoy.getFullYear();
+
+        cont.innerHTML = mensual.map((m, i) => {
+            const valNum = parseFloat(m.total) || 0;
+            const pct   = Math.max((valNum / maxVal) * 100, 2);
+            const isNow = isCurrentYear && i === mesActual;
+            const color = isNow ? 'bg-primary' : valNum > 0 ? 'bg-primary/50' : 'bg-white/10';
+            return `<div class="bar flex-1 ${color} rounded-t" style="height:${pct}%" title="${MESES_FULL[i]}: ${fmt(valNum)}"></div>`;
+        }).join('');
+
+        labels.innerHTML = mensual.map((_, i) => {
+            const isNow = isCurrentYear && i === mesActual;
+            return `<span class="flex-1 text-[8px] text-center font-bold ${isNow ? 'text-primary' : 'text-slate-500'}">${MESES_ABREV[i]}</span>`;
+        }).join('');
+    }
+
+    function renderTabla(mensual) {
+        const maxTotal = Math.max(...mensual.map(m => parseFloat(m.total) || 0), 1);
+        document.getElementById('tablaMensual').innerHTML = mensual.map((m, i) => {
+            const valNum = parseFloat(m.total) || 0;
+            const pct = Math.round((valNum / maxTotal) * 100);
+            const citasNum = parseInt(m.citas || m.pagos || 0); 
+            return `
+            <div class="px-4 py-3 flex items-center gap-3">
+                <span class="text-[10px] font-bold text-slate-500 w-7">${MESES_ABREV[i]}</span>
+                <div class="flex-1">
+                    <div class="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                        <div class="h-full bg-primary/60 rounded-full transition-all duration-700" style="width:${pct}%"></div>
+                    </div>
+                </div>
+                <span class="text-xs font-bold ${valNum > 0 ? 'text-slate-200' : 'text-slate-600'} w-24 text-right">${fmt(valNum)}</span>
+                <span class="text-[9px] text-slate-500 w-12 text-right">${citasNum} cita${citasNum !== 1 ? 's' : ''}</span>
+            </div>`;
+        }).join('');
+    }
+
+    async function cargarVentas() {
+        const btn  = document.getElementById('btnAplicar');
+        const icon = document.getElementById('iconBtn');
+        const text = document.getElementById('textBtn');
+        
+        const fechaSeleccionada = inputFecha.value; 
+        const anio = fechaSeleccionada.split('-')[0];
+
+        const fechaObj = new Date(fechaSeleccionada + 'T00:00:00');
+        document.getElementById('fechaActualLabel').textContent = fechaObj.toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
+
+        icon.classList.add('animate-spin');
+        text.textContent = 'Cargando...';
+        btn.disabled = true;
+        document.getElementById('errorBanner').classList.add('hidden');
+
+        try {
+            const res  = await fetch(`/api/reportes/ventas/${idEmpresa}?anio=${anio}`);
+            const json = await res.json();
+            if (json.status !== 'ok') throw new Error(json.message);
+
+            datosActuales = json.data;
+
+            // Recalculamos la suma total directamente desde el desglose mensual usando parseFloat 
+            // por si el backend mandó un total genérico o redondeado incorrectamente.
+            const sumaTotalCalculada = datosActuales.mensual.reduce((acc, curr) => acc + (parseFloat(curr.total) || 0), 0);
+            
+            // Totalizamos citas totales del año de forma consistente
+            const totalCitasCalculadas = datosActuales.mensual.reduce((acc, curr) => acc + (parseInt(curr.citas || curr.pagos) || 0), 0);
+
+            document.getElementById('totalAnio').textContent = fmt(sumaTotalCalculada);
+
+            const mesesConVentas = datosActuales.mensual.filter(m => parseFloat(m.total) > 0).length;
+            document.getElementById('subTotal').textContent =
+                mesesConVentas > 0
+                    ? `${totalCitasCalculadas} cita${totalCitasCalculadas !== 1 ? 's' : ''} en ${mesesConVentas} meses con ingresos`
+                    : 'Sin ingresos registrados en este año';
+
+            renderChart(datosActuales.mensual || [], parseInt(anio));
+            renderTabla(datosActuales.mensual || []);
+        } catch (err) {
+            document.getElementById('errorMsg').textContent = 'Error al cargar datos: ' + err.message;
+            document.getElementById('errorBanner').classList.remove('hidden');
+        } finally {
+            icon.classList.remove('animate-spin');
+            text.textContent = 'Aplicar';
+            btn.disabled = false;
+        }
+    }
+
+    function exportarPDF() {
+        if (!datosActuales) return;
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const fechaLabel = document.getElementById('fechaActualLabel').textContent;
+        const sumaTotalCalculada = datosActuales.mensual.reduce((acc, curr) => acc + (parseFloat(curr.total) || 0), 0);
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(16);
+        doc.text(`Reporte de Ventas ${datosActuales.anio}`, 14, 18);
+        
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Fecha de consulta: ${fechaLabel}`, 14, 24);
+        
+        doc.setFontSize(11);
+        doc.setTextColor(0, 0, 0);
+        doc.text(`Total del año: ${fmt(sumaTotalCalculada)}`, 14, 32);
+        
+        doc.autoTable({
+            startY: 38,
+            head: [['Mes', 'Ventas', 'Citas Totales']],
+            body: datosActuales.mensual.map((m, i) => [MESES_FULL[i], fmt(parseFloat(m.total || 0)), parseInt(m.citas || m.pagos || 0)]),
+            theme: 'grid',
+            headStyles: { fillColor: [175, 37, 244] },
+            columnStyles: {
+                1: { halign: 'right' },
+                2: { halign: 'right' }
+            }
+        });
+        doc.save(`Ventas_${datosActuales.anio}.pdf`);
+    }
+
+    function exportarExcel() {
+        if (!datosActuales) return;
+        const fechaLabel = document.getElementById('fechaActualLabel').textContent;
+        const sumaTotalCalculada = datosActuales.mensual.reduce((acc, curr) => acc + (parseFloat(curr.total) || 0), 0);
+        const datos = [
+            [`REPORTE DE VENTAS ${datosActuales.anio}`],
+            [`Fecha de consulta: ${fechaLabel}`],
+            [`Total calculado: ${fmt(sumaTotalCalculada)}`],
+            [],
+            ['Mes', 'Ventas', 'Citas Totales'],
+            ...datosActuales.mensual.map((m, i) => [MESES_FULL[i], parseFloat(m.total || 0), parseInt(m.citas || m.pagos || 0)]),
+        ];
+        const ws = XLSX.utils.aoa_to_sheet(datos);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Ventas');
+        XLSX.writeFile(wb, `Ventas_${datosActuales.anio}.xlsx`);
+    }
+
+    cargarVentas();
+</script>
+</body>
+</html>

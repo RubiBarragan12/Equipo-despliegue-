@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Mis Cotizaciones</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        body {
+            min-height: max(884px, 100dvh);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #10b981;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            z-index: 1000;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        .toast-error {
+            background-color: #ef4444;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: { "primary": "#7f13ec", "background-light": "#f7f6f8", "background-dark": "#191022" },
+                    fontFamily: { "display": ["Space Grotesk", "sans-serif"] },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display w-full">
+    <div class="relative flex h-auto min-h-screen w-full flex-col max-w-md mx-auto">
+        <header
+            class="flex items-center bg-background-dark p-4 pb-2 justify-between sticky top-0 z-10 border-b border-white/10">
+            <button id="btn-back" class="text-white flex size-12 shrink-0 items-center justify-start"
+                onclick="window.location.href='/pages/cliente/menu_cliente.html'">
+                <span class="material-symbols-outlined text-2xl">arrow_back</span>
+            </button>
+            <h1 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Mis
+                Cotizaciones</h1>
+            <div class="flex size-12 shrink-0 items-center"></div>
+        </header>
+        <!-- Barra de filtros -->
+        <div class="sticky top-[64px] z-10 bg-background-dark border-b border-white/10">
+            <!-- Filtro por estado -->
+            <div class="flex gap-2 px-4 pt-3 pb-1 overflow-x-auto" style="scrollbar-width:none">
+                <button class="filter-estado whitespace-nowrap text-xs font-bold py-1.5 px-3 rounded-full transition-colors bg-primary text-white" data-estado="activas">Activas</button>
+                <button class="filter-estado whitespace-nowrap text-xs font-bold py-1.5 px-3 rounded-full transition-colors bg-white/10 text-gray-400" data-estado="pendiente">Pendiente</button>
+                <button class="filter-estado whitespace-nowrap text-xs font-bold py-1.5 px-3 rounded-full transition-colors bg-white/10 text-gray-400" data-estado="aceptada">Por pagar</button>
+                <button class="filter-estado whitespace-nowrap text-xs font-bold py-1.5 px-3 rounded-full transition-colors bg-white/10 text-gray-400" data-estado="anticipo">Anticipo pagado</button>
+                <button class="filter-estado whitespace-nowrap text-xs font-bold py-1.5 px-3 rounded-full transition-colors bg-white/10 text-gray-400" data-estado="pagada">Pagadas</button>
+                <button class="filter-estado whitespace-nowrap text-xs font-bold py-1.5 px-3 rounded-full transition-colors bg-white/10 text-gray-400" data-estado="todas">Todas</button>
+            </div>
+            <!-- Filtro por fecha -->
+            <div class="flex gap-2 px-4 pt-1 pb-3">
+                <button class="filter-fecha text-xs font-medium py-1 px-3 rounded-full transition-colors border border-primary text-primary" data-fecha="proximas">Próximas</button>
+                <button class="filter-fecha text-xs font-medium py-1 px-3 rounded-full transition-colors border border-white/20 text-gray-500" data-fecha="pasadas">Pasadas</button>
+                <button class="filter-fecha text-xs font-medium py-1 px-3 rounded-full transition-colors border border-white/20 text-gray-500" data-fecha="todas">Todas las fechas</button>
+            </div>
+        </div>
+
+        <main class="flex-1 p-4">
+            <div id="cotizaciones-list" class="flex flex-col gap-3">
+                <div class="text-center py-10 text-gray-400">Cargando cotizaciones...</div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../../../js/mis_cotizaciones_cliente.js"></script>
+</body>
+
+</html>

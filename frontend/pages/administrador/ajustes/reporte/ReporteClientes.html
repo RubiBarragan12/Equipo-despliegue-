@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Reporte de Clientes</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: { "primary": "#af25f4" },
+                    fontFamily: { "sans": ["Manrope", "sans-serif"] },
+                },
+            },
+        }
+    </script>
+    <style>
+        body { font-family: 'Manrope', sans-serif; background: #1c1022; min-height: 100dvh; }
+        .bar { transition: height 0.6s cubic-bezier(0.4,0,0.2,1); }
+        select option { background: #1c1022; color: #f1f5f9; }
+        #tablaExportar { display: none; }
+    </style>
+</head>
+<body class="text-slate-100 flex flex-col min-h-screen">
+
+<table id="tablaExportar">
+    <thead><tr><th>Cliente</th><th>Citas</th></tr></thead>
+    <tbody id="tbodyExportar"></tbody>
+</table>
+
+<header class="sticky top-0 z-50 bg-[#1c1022]/90 backdrop-blur-md border-b border-white/10 flex items-center px-4 h-14 gap-3">
+    <button onclick="window.history.back()" class="size-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors">
+        <span class="material-symbols-outlined text-primary">arrow_back</span>
+    </button>
+    <h1 class="text-base font-extrabold uppercase tracking-tight flex-1">Reporte de Clientes</h1>
+</header>
+
+<main class="flex-1 max-w-lg mx-auto w-full px-4 py-6 space-y-5">
+
+    <section class="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
+        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Año de análisis</p>
+        <div class="flex gap-3">
+            <div class="flex-1 relative">
+                <select id="selectAnio" class="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-3 text-sm font-bold appearance-none focus:ring-2 focus:ring-primary/50 outline-none"></select>
+                <span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-primary text-lg pointer-events-none">expand_more</span>
+            </div>
+            <button id="btnAplicar" onclick="cargarClientes()" class="h-10 px-5 bg-primary hover:bg-primary/80 text-white rounded-lg font-bold text-sm flex items-center gap-2 transition-all shadow-lg shadow-primary/20">
+                <span id="iconBtn" class="material-symbols-outlined text-lg">refresh</span>
+                <span id="textBtn">Aplicar</span>
+            </button>
+        </div>
+    </section>
+
+    <section class="grid grid-cols-3 gap-3">
+        <div class="bg-primary/10 border border-primary/20 rounded-xl p-3 flex flex-col gap-1">
+            <p class="text-[9px] font-bold text-primary uppercase tracking-wider">Total</p>
+            <p id="val-total" class="text-xl font-extrabold">—</p>
+            <p class="text-[9px] text-slate-400">Historial</p>
+        </div>
+        <div class="bg-white/5 border border-white/10 rounded-xl p-3 flex flex-col gap-1">
+            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Nuevos</p>
+            <p id="val-nuevos" class="text-xl font-extrabold">—</p>
+            <p class="text-[9px] text-slate-400">Este año</p>
+        </div>
+        <div class="bg-white/5 border border-white/10 rounded-xl p-3 flex flex-col gap-1">
+            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Activos</p>
+            <p id="val-activos" class="text-xl font-extrabold">—</p>
+            <p class="text-[9px] text-slate-400">Últ. 90 días</p>
+        </div>
+    </section>
+
+    <section class="bg-white/5 border border-white/10 rounded-2xl p-5">
+        <h3 class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-4">Clientes Nuevos por Mes</h3>
+        <div id="chartContainer" class="flex items-end gap-1.5 h-32"></div>
+        <div id="chartLabels" class="flex gap-1.5 mt-2"></div>
+    </section>
+
+    <section class="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+        <div class="px-4 py-3 border-b border-white/10 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-sm">leaderboard</span>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Top Clientes</p>
+        </div>
+        <div id="listaTopClientes" class="divide-y divide-white/10">
+            </div>
+    </section>
+
+    <section class="grid grid-cols-2 gap-3">
+        <button onclick="exportarPDF()" class="py-3 border border-primary/30 bg-primary/5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-primary/15 transition-colors text-primary">
+            <span class="material-symbols-outlined text-lg">picture_as_pdf</span> PDF
+        </button>
+        <button onclick="exportarExcel()" class="py-3 border border-emerald-500/30 bg-emerald-500/5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-emerald-500/15 transition-colors text-emerald-400">
+            <span class="material-symbols-outlined text-lg">table_chart</span> Excel
+        </button>
+    </section>
+</main>
+
+<div id="errorBanner" class="hidden fixed bottom-5 left-4 right-4 max-w-lg mx-auto bg-red-500/20 border border-red-500/40 text-red-300 rounded-xl px-4 py-3 text-sm font-medium flex items-center gap-2">
+    <span class="material-symbols-outlined text-base">error</span>
+    <span id="errorMsg">Error al cargar datos</span>
+</div>
+
+<script>
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    if (!user) window.location.href = '/';
+    const idEmpresa = user?.empresa?.idEmpresa || user?.idempresa;
+    if (!idEmpresa) { alert('No se encontró empresa asociada al usuario.'); history.back(); }
+
+    let datosActuales = null;
+    const mesActual   = new Date().getMonth();
+    const anioActual  = new Date().getFullYear();
+
+    // Poblar selector de años
+    const selectAnio = document.getElementById('selectAnio');
+    for (let i = 0; i <= 4; i++) {
+        const opt = document.createElement('option');
+        opt.value = anioActual - i;
+        opt.textContent = anioActual - i;
+        selectAnio.appendChild(opt);
+    }
+
+    function getIniciales(nombre) {
+        if (!nombre) return '?';
+        const p = nombre.trim().split(/\s+/);
+        if (p.length >= 2) return (p[0][0] + p[1][0]).toUpperCase();
+        return (p[0] || '?').substring(0, 2).toUpperCase();
+    }
+
+    function renderChart(clientesPorMes) {
+        const listaMeses = clientesPorMes || [];
+        const maxVal = Math.max(...listaMeses.map(m => parseInt(m.total) || 0), 1);
+        const cont   = document.getElementById('chartContainer');
+        const labels = document.getElementById('chartLabels');
+        const anio   = parseInt(selectAnio.value);
+        const isCurrentYear = anio === anioActual;
+
+        cont.innerHTML = listaMeses.map((m, i) => {
+            const totalNum = parseInt(m.total) || 0;
+            const pct   = Math.max((totalNum / maxVal) * 100, 2);
+            const isNow = isCurrentYear && i === mesActual;
+            const color = isNow ? 'bg-primary' : totalNum > 0 ? 'bg-primary/50' : 'bg-white/10';
+            return `<div class="bar flex-1 ${color} rounded-t" style="height:${pct}%" title="${m.mes}: ${totalNum} nuevos"></div>`;
+        }).join('');
+
+        labels.innerHTML = listaMeses.map((m, i) => {
+            const isNow = isCurrentYear && i === mesActual;
+            return `<span class="flex-1 text-[8px] text-center font-bold ${isNow ? 'text-primary' : 'text-slate-500'}">${m.mes}</span>`;
+        }).join('');
+    }
+
+    function renderTopClientes(top) {
+        const listaTop = top || [];
+        const tbody = document.getElementById('tbodyExportar');
+        tbody.innerHTML = listaTop.map(c => `<tr><td>${c.nombre || 'Sin nombre'}</td><td>${parseInt(c.citas) || 0}</td></tr>`).join('');
+
+        if (!listaTop.length) {
+            document.getElementById('listaTopClientes').innerHTML =
+                `<div class="px-4 py-6 text-center text-slate-500 text-sm">Sin datos de clientes</div>`;
+            return;
+        }
+
+        document.getElementById('listaTopClientes').innerHTML = listaTop.map((c, i) => {
+            const medallas = ['🥇','🥈','🥉'];
+            const medalla  = medallas[i] || `${i+1}.`;
+            const citasNum = parseInt(c.citas) || 0;
+            return `
+            <div class="flex items-center gap-3 px-4 py-3">
+                <span class="text-lg w-7 text-center">${medalla}</span>
+                <div class="size-9 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs font-bold shrink-0">${getIniciales(c.nombre)}</div>
+                <p class="flex-1 font-semibold text-sm truncate">${c.nombre || 'Sin nombre'}</p>
+                <div class="text-right">
+                    <p class="text-sm font-bold text-primary">${citasNum} cita${citasNum !== 1 ? 's' : ''}</p>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    async function cargarClientes() {
+        const btn  = document.getElementById('btnAplicar');
+        const icon = document.getElementById('iconBtn');
+        const text = document.getElementById('textBtn');
+        const anio = selectAnio.value;
+
+        icon.classList.add('animate-spin');
+        text.textContent = 'Cargando...';
+        btn.disabled = true;
+        document.getElementById('errorBanner').classList.add('hidden');
+
+        try {
+            const res  = await fetch(`/api/reportes/clientes/${idEmpresa}?anio=${anio}`);
+            const json = await res.json();
+            if (json.status !== 'ok') throw new Error(json.message);
+
+            datosActuales = json.data;
+            
+            // Garantizamos números limpios mapeados desde base de datos
+            const totalCli = parseInt(datosActuales.totalClientes) || 0;
+            const nuevosCli = parseInt(datosActuales.clientesNuevos) || 0;
+            const activosCli = parseInt(datosActuales.clientesActivos) || 0;
+
+            document.getElementById('val-total').textContent   = totalCli.toLocaleString('es-MX');
+            document.getElementById('val-nuevos').textContent  = nuevosCli.toLocaleString('es-MX');
+            document.getElementById('val-activos').textContent = activosCli.toLocaleString('es-MX');
+
+            renderChart(datosActuales.clientesPorMes || []);
+            renderTopClientes(datosActuales.topClientes || []);
+        } catch (err) {
+            document.getElementById('errorMsg').textContent = 'Error al cargar datos: ' + err.message;
+            document.getElementById('errorBanner').classList.remove('hidden');
+        } finally {
+            icon.classList.remove('animate-spin');
+            text.textContent = 'Aplicar';
+            btn.disabled = false;
+        }
+    }
+
+    function exportarPDF() {
+        if (!datosActuales) return;
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const topCli = datosActuales.topClientes || [];
+        
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(16);
+        doc.text(`Reporte de Clientes ${datosActuales.anio || anioActual}`, 14, 18);
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Total: ${datosActuales.totalClientes || 0}  Nuevos: ${datosActuales.clientesNuevos || 0}  Activos: ${datosActuales.clientesActivos || 0}`, 14, 26);
+        
+        doc.autoTable({
+            startY: 32,
+            head: [['#', 'Cliente', 'Citas']],
+            body: topCli.map((c, i) => [i + 1, c.nombre || 'Sin nombre', parseInt(c.citas) || 0]),
+            theme: 'grid',
+            headStyles: { fillColor: [175, 37, 244] },
+            columnStyles: {
+                2: { halign: 'right' }
+            }
+        });
+        doc.save(`Clientes_${datosActuales.anio || anioActual}.pdf`);
+    }
+
+    function exportarExcel() {
+        if (!datosActuales) return;
+        const topCli = datosActuales.topClientes || [];
+        const datos = [
+            [`REPORTE DE CLIENTES ${datosActuales.anio || anioActual}`],
+            [],
+            ['Total Clientes', parseInt(datosActuales.totalClientes) || 0],
+            ['Clientes Nuevos', parseInt(datosActuales.clientesNuevos) || 0],
+            ['Clientes Activos', parseInt(datosActuales.clientesActivos) || 0],
+            [],
+            ['TOP CLIENTES'],
+            ['#', 'Nombre', 'Citas'],
+            ...topCli.map((c, i) => [i + 1, c.nombre || 'Sin nombre', parseInt(c.citas) || 0]),
+        ];
+        const ws = XLSX.utils.aoa_to_sheet(datos);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Clientes');
+        XLSX.writeFile(wb, `Clientes_${datosActuales.anio || anioActual}.xlsx`);
+    }
+
+    cargarClientes();
+</script>
+</body>
+</html>

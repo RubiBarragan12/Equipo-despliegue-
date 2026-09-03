@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Dashboard Cajera - Tattoo Studio</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#D93B3B", // Red-Intense as per the plan
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#191022",
+                        "success": "#4CAF50",
+                        "warning": "#FFC107",
+                        "info": "#2196F3",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings:
+                'FILL' 0,
+                'wght' 400,
+                'GRAD' 0,
+                'opsz' 24
+        }
+    </style>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display text-white/90">
+    <div class="relative flex h-auto min-h-screen w-full flex-col">
+        <main class="flex-grow pb-24">
+            <div class="flex flex-col gap-2 p-4 pb-2">
+                <div class="flex items-center h-12 justify-between">
+                    <div class="flex size-12 shrink-0 items-center">
+                        <div id="user-avatar" class="aspect-square size-10 rounded-full bg-[#D93B3B]/20 flex items-center justify-center">
+                            <span id="user-initials" class="text-[#D93B3B] font-bold text-sm leading-none">?</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-end gap-1">
+                        <button
+                            class="flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 w-12 bg-transparent text-white/90 p-0">
+                            <span class="material-symbols-outlined text-2xl">notifications</span>
+                        </button>
+                        <button id="logout-btn"
+                            class="flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 w-12 bg-transparent text-white/90 hover:text-red-400 transition-colors p-0"
+                            title="Cerrar sesión">
+                            <span class="material-symbols-outlined text-2xl">logout</span>
+                        </button>
+                    </div>
+                </div>
+                <p id="user-greeting" class="text-white/90 tracking-light text-[28px] font-bold leading-tight">Hola</p>
+            </div>
+            <p class="text-white/70 text-base font-normal leading-normal pb-3 pt-1 px-4">Bienvenida al panel de caja</p>
+            <div class="grid grid-cols-1 gap-4 px-4 pt-4">
+                <a class="flex items-center justify-start gap-4 rounded-xl border border-white/10 bg-white/5 p-6"
+                    href="/pages/cajero/registrar_cliente_cajero.html">
+                    <span class="material-symbols-outlined text-4xl text-primary">person_add</span>
+                    <span class="text-base font-bold text-left text-white/90">Registrar Nuevo Cliente</span>
+                </a>
+            </div>
+            <div class="px-4 pt-6">
+                <div class="flex justify-between items-center pb-3">
+                    <h3 class="text-white/90 text-lg font-bold leading-tight tracking-[-0.015em]">Próximas Citas</h3>
+                    <a class="text-sm font-medium text-primary" href="calendario_cajero.html">Ver calendario</a>
+                </div>
+                <div id="citas-container" class="flex flex-col gap-3">
+                    <div class="flex items-center justify-center py-8 text-white/40">
+                        <div class="inline-block animate-spin rounded-full h-6 w-6 border-2 border-primary border-t-transparent mr-3"></div>
+                        <span class="text-sm">Cargando citas...</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <nav class="fixed bottom-0 left-0 right-0 h-20 bg-background-dark border-t border-white/10 px-4">
+            <div class="flex justify-around items-center h-full">
+                <a class="flex flex-col items-center gap-1 text-primary" href="/pages/cajero/menu_cajero.html">
+                    <span class="material-symbols-outlined text-2xl">grid_view</span>
+                    <span class="text-xs font-medium">Inicio</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 text-white/50" href="/pages/cajero/calendario_cajero.html">
+                    <span class="material-symbols-outlined text-2xl">calendar_today</span>
+                    <span class="text-xs font-medium">Calendario</span>
+                </a>
+                <a class="flex flex-col items-center gap-1 text-white/50" href="/pages/cajero/consultar_cliente_cajero.html">
+                    <span class="material-symbols-outlined text-2xl">group</span>
+                    <span class="text-xs font-medium">Clientes</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+
+<script>
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    function getIniciales(nombre = '') {
+        const p = nombre.trim().split(/\s+/).filter(Boolean);
+        if (p.length >= 2) return (p[0][0] + p[1][0]).toUpperCase();
+        return (p[0] || '?').substring(0, 2).toUpperCase();
+    }
+    if (!user) { window.location.href = '/'; }
+    else {
+        const el = document.getElementById('user-greeting');
+        if (el) el.textContent = `Hola, ${user.nombre}`;
+        const initEl = document.getElementById('user-initials');
+        if (initEl) initEl.textContent = getIniciales(user.nombre);
+    }
+    document.getElementById('logout-btn').addEventListener('click', () => {
+        localStorage.removeItem('user');
+        localStorage.removeItem('empresa');
+        window.location.href = '/';
+    });
+
+    // ===== Cargar citas reales =====
+    async function cargarCitas() {
+        const container = document.getElementById('citas-container');
+        if (!container || !user?.idempresa) {
+            if (container) container.innerHTML = `<p class="text-white/40 text-sm text-center py-6">Sin empresa asociada</p>`;
+            return;
+        }
+        try {
+            const res = await fetch(`/api/proximas-citas?idempresa=${user.idempresa}`);
+            const json = await res.json();
+            const citas = json.citas || [];
+
+            if (citas.length === 0) {
+                container.innerHTML = `
+                    <div class="flex flex-col items-center justify-center py-8 text-white/40">
+                        <span class="material-symbols-outlined text-4xl mb-2">event_busy</span>
+                        <p class="text-sm">Sin citas próximas</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = citas.slice(0, 5).map(c => {
+                const esHoy = c.fecha === new Date().toISOString().split('T')[0];
+                const label = esHoy ? 'Hoy' : formatFecha(c.fecha);
+                return `
+                <div class="flex items-center gap-4 rounded-xl border border-white/10 bg-white/5 p-4">
+                    <div class="flex flex-col items-center justify-center w-16 shrink-0">
+                        <span class="text-base font-bold text-white/90">${c.hora}</span>
+                        <span class="text-xs font-medium text-white/50">${label}</span>
+                    </div>
+                    <div class="flex-grow min-w-0">
+                        <p class="font-bold text-white/90 truncate">${escapeHtml(c.cliente)}</p>
+                        <p class="text-sm text-white/50 truncate">${escapeHtml(c.zona)}</p>
+                    </div>
+                    <div class="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white/70 shrink-0">
+                        <div class="h-2 w-2 rounded-full bg-white/70"></div>
+                        <span>${escapeHtml(c.estado)}</span>
+                    </div>
+                </div>`;
+            }).join('');
+        } catch (err) {
+            console.error('Error citas cajero:', err);
+            container.innerHTML = `<p class="text-red-400 text-sm text-center py-6">Error al cargar citas</p>`;
+        }
+    }
+
+    function formatFecha(f) {
+        if (!f) return '';
+        const [y, m, d] = f.split('-').map(Number);
+        const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+        return `${d} ${meses[m-1]}`;
+    }
+    function escapeHtml(s) {
+        if (!s) return '';
+        return s.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
+    }
+
+    if (user) cargarCitas();
+</script>
+</body>
+
+</html>

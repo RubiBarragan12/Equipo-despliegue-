@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Detalle de Cotización</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        body { min-height: max(884px, 100dvh); }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: { "primary": "#7f13ec", "background-light": "#f7f6f8", "background-dark": "#191022" },
+                    fontFamily: { "display": ["Space Grotesk", "sans-serif"] },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+    <div class="relative flex h-auto min-h-screen w-full flex-col">
+        <header class="flex items-center bg-background-dark p-4 pb-2 justify-between sticky top-0 z-10 border-b border-white/10">
+            <button id="btn-back" class="text-white flex size-12 shrink-0 items-center justify-start">
+                <span class="material-symbols-outlined text-2xl">arrow_back</span>
+            </button>
+            <h1 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] flex text-center">Detalle de Cotización</h1>
+            <div class="flex size-12 shrink-0 items-center justify-end">
+                <span id="ac-estado"></span>
+            </div>
+        </header>
+        <main class="flex-1 pb-40">
+            <!-- Tattoo Details -->
+            <section class="p-4">
+                <h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] pb-3">Detalles del Tatuaje</h2>
+                <!-- Imagen de referencia -->
+                <div id="ac-imagen-wrap" class="mb-4 hidden">
+                    <div class="rounded-xl overflow-hidden bg-[#261933] border border-[#362348]">
+                        <img id="ac-imagen" alt="Referencia" class="w-full max-h-64 object-contain" />
+                    </div>
+                </div>
+                <div class="rounded-xl bg-black/20 ring-1 ring-inset ring-white/10 p-4">
+                    <p id="ac-descripcion" class="text-white text-base font-bold leading-tight">...</p>
+                    <p id="ac-detalles" class="text-[#ad92c9] text-sm font-normal leading-normal mt-1">...</p>
+                </div>
+            </section>
+            <div class="px-4"><hr class="border-white/10" /></div>
+            <!-- Artist and Schedule -->
+            <section class="p-4">
+                <div class="flex flex-col gap-0.5">
+                    <div class="flex items-center gap-4 py-2 justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="text-white flex items-center justify-center rounded-lg bg-[#362348] shrink-0 size-10">
+                                <span class="material-symbols-outlined text-xl">person</span>
+                            </div>
+                            <p class="text-[#ad92c9] text-base font-normal leading-normal">Artista</p>
+                        </div>
+                        <p id="ac-artista" class="text-white text-base font-medium leading-normal">...</p>
+                    </div>
+                    <div class="flex items-center gap-4 py-2 justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="text-white flex items-center justify-center rounded-lg bg-[#362348] shrink-0 size-10">
+                                <span class="material-symbols-outlined text-xl">calendar_month</span>
+                            </div>
+                            <p class="text-[#ad92c9] text-base font-normal leading-normal">Fecha</p>
+                        </div>
+                        <p id="ac-fecha" class="text-white text-base font-medium leading-normal">...</p>
+                    </div>
+                    <div class="flex items-center gap-4 py-2 justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="text-white flex items-center justify-center rounded-lg bg-[#362348] shrink-0 size-10">
+                                <span class="material-symbols-outlined text-xl">schedule</span>
+                            </div>
+                            <p class="text-[#ad92c9] text-base font-normal leading-normal">Hora</p>
+                        </div>
+                        <p id="ac-hora" class="text-white text-base font-medium leading-normal">...</p>
+                    </div>
+                </div>
+            </section>
+            <div class="px-4"><hr class="border-white/10" /></div>
+            <!-- Pricing -->
+            <section class="p-4">
+                <h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] mb-4">Cotización</h2>
+                <div class="flex flex-col gap-3">
+                    <div class="flex items-center justify-between text-base">
+                        <p class="text-[#ad92c9]">Estimado inicial</p>
+                        <p id="ac-estimado" class="font-medium text-white">...</p>
+                    </div>
+                    <div class="flex items-center justify-between text-base">
+                        <p class="text-[#ad92c9]">Precio final del artista</p>
+                        <p id="ac-precio-final" class="font-bold text-white text-lg">...</p>
+                    </div>
+                </div>
+                <!-- Justification -->
+                <div id="ac-justificacion-wrap" class="hidden mt-4 p-3 bg-[#261933] rounded-lg border border-[#362348]">
+                    <p class="text-xs text-[#ad92c9] font-bold uppercase tracking-wider mb-1">Nota del artista</p>
+                    <p id="ac-justificacion" class="text-white text-sm">...</p>
+                </div>
+                <hr class="border-white/20 my-4" />
+                <div class="flex items-center justify-between">
+                    <p class="text-lg font-bold text-white">Total a pagar</p>
+                    <p id="ac-total" class="text-2xl font-bold text-white">...</p>
+                </div>
+            </section>
+        </main>
+        <!-- Bottom Actions -->
+        <footer class="fixed bottom-0 left-0 right-0 p-4 bg-background-dark/80 backdrop-blur-sm border-t border-white/10">
+            <div class="flex flex-col gap-3 max-w-md mx-auto">
+                <button id="btn-aceptar-cot"
+                    class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-4 bg-primary text-white text-base font-bold leading-normal shadow-lg shadow-primary/40">
+                    <span class="truncate">Aceptar y Pagar</span>
+                </button>
+                <button id="btn-cancelar-cot"
+                    class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-4 bg-transparent text-red-400 text-base font-medium leading-normal ring-1 ring-inset ring-red-400/30 hover:bg-red-500/10 transition-colors">
+                    <span class="truncate">Cancelar Cotización</span>
+                </button>
+            </div>
+        </footer>
+    </div>
+    <script src="/js/mis_cotizaciones_cliente.js"></script>
+</body>
+</html>

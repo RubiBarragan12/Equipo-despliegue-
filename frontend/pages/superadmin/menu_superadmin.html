@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-container": "#ffcdb1",
+                        "tertiary-fixed-dim": "#ffb68b",
+                        "on-secondary-fixed-variant": "#50415d",
+                        "primary-fixed": "#eddcff",
+                        "background": "#16111c",
+                        "primary-fixed-dim": "#d8b9ff",
+                        "on-surface-variant": "#cec2d8",
+                        "tertiary-fixed": "#ffdbc8",
+                        "on-primary-fixed": "#290055",
+                        "on-tertiary-fixed-variant": "#753400",
+                        "error": "#ffb4ab",
+                        "surface-variant": "#38323e",
+                        "inverse-primary": "#8016ed",
+                        "surface-dim": "#16111c",
+                        "on-secondary-container": "#c4b1d3",
+                        "on-tertiary-fixed": "#321200",
+                        "surface-container-low": "#1e1924",
+                        "inverse-on-surface": "#342e3a",
+                        "on-primary": "#450087",
+                        "on-tertiary": "#522300",
+                        "surface-container-lowest": "#110c17",
+                        "primary": "#d8b9ff",
+                        "outline-variant": "#4c4355",
+                        "surface-container-highest": "#38323e",
+                        "secondary-container": "#524360",
+                        "primary-container": "#7f13ec",
+                        "on-error": "#690005",
+                        "secondary-fixed": "#f0dbff",
+                        "surface-tint": "#d8b9ff",
+                        "secondary-fixed-dim": "#d3bfe2",
+                        "on-primary-container": "#e5ceff",
+                        "on-error-container": "#ffdad6",
+                        "surface-container": "#231d29",
+                        "surface": "#16111c",
+                        "surface-bright": "#3d3743",
+                        "outline": "#978da1",
+                        "inverse-surface": "#e9dfef",
+                        "surface-container-high": "#2d2833",
+                        "on-background": "#e9dfef",
+                        "secondary": "#d3bfe2",
+                        "tertiary-container": "#984600",
+                        "on-secondary-fixed": "#231630",
+                        "on-secondary": "#382b46",
+                        "tertiary": "#ffb68b",
+                        "on-surface": "#e9dfef",
+                        "error-container": "#93000a",
+                        "on-primary-fixed-variant": "#6200bc"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "card-gap": "0.5rem",
+                        "nav-height": "4rem",
+                        "avatar-size": "3.5rem",
+                        "container-padding": "1rem",
+                        "item-padding": "0.75rem",
+                        "header-height": "4rem"
+                    },
+                    "fontFamily": {
+                        "body-main": ["Space Grotesk"],
+                        "card-title": ["Space Grotesk"],
+                        "metadata": ["Space Grotesk"],
+                        "label-bold": ["Space Grotesk"],
+                        "nav-title": ["Space Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-main": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "card-title": ["16px", { "lineHeight": "24px", "fontWeight": "700" }],
+                        "metadata": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "label-bold": ["12px", { "lineHeight": "16px", "fontWeight": "700" }],
+                        "nav-title": ["20px", { "lineHeight": "28px", "fontWeight": "700" }]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            background-color: #16111c;
+            color: #e9dfef;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body class="flex flex-col min-h-screen items-center overflow-x-hidden">
+    <!-- TopAppBar -->
+    <header
+        class="fixed top-0 w-full mx-auto px-4 h-16 flex items-center justify-between z-50 bg-[#191022]/90 backdrop-blur-md border-b border-white/5">
+        <div class="flex items-center gap-3">
+            <div
+                class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center overflow-hidden border border-white/10">
+                <img alt="Super Admin Profile" class="w-full h-full object-cover"
+                    data-alt="close-up portrait of a professional technology executive in a dark minimalist studio environment with purple ambient lighting"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIQwuzI0PkV9e-D7h4Vgfv-HAqoYdZEcK-Kz4E62GjysC-MP1GxeiBUmuKTqj7od32qXr5QsWnVKKTp0nO52P-KGpv71VGIKa8zS7CWoGG_oHe3WGZRS1-JMqISPqYDCbxltDgIRuZa6mzCBeickdu5Ln9uH3K473PEwmV2JS0d__lu528sqzJyL_-Ip2jIdZwvvr032zlX97XOBozzGK9ew_6IAQYqyaIk55UvWB-3v3g9ZvnAP0fw7lfk4ax-VVq53HrbUrIn2Q" />
+            </div>
+            <h1 class="text-lg font-black text-white tracking-widest font-['Space_Grotesk'] uppercase">AdminConsole</h1>
+        </div>
+        <button onclick="logout()"
+            class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-[#2c1d3b] transition-colors duration-150 active:scale-95 text-gray-400">
+            <span class="material-symbols-outlined" data-icon="search">logout</span>
+        </button>
+    </header>
+    <!-- Main Content Canvas -->
+    <main class="relative flex-1 w-full pt-20 pb-20 px-4 flex flex-col gap-4">
+        <!-- Stats / Bento Insight -->
+        <section class="grid grid-cols-1 gap-3 mb-2">
+            <div class="p-4 rounded-xl bg-[#261933] flex flex-col gap-1 border border-white/5">
+                <span class="text-metadata font-metadata text-primary uppercase tracking-wider">Total Admins</span>
+                <span class="text-nav-title font-nav-title text-white">0</span>
+            </div>
+        </section>
+        <!-- Admin List Section -->
+        <div class="flex items-center justify-between px-1 mb-1">
+            <h2 class="text-label-bold font-label-bold text-on-surface-variant uppercase tracking-widest">Administrator
+                Directory</h2>
+        </div>
+        <!-- Admin Cards -->
+        <div id="admin-list-container" class="flex flex-col gap-2">
+            <div class="p-8 text-center text-gray-500 text-sm">Cargando administradores...</div>
+        </div>
+        <!-- Add Admin Btn -->
+        <button
+            class="fixed bottom-4 right-4 bg-primary hover:bg-primary-fixed h-12 w-12 text-on-primary rounded-full shadow-lg transition-colors duration-150 flex items-center justify-center text-2xl"
+            onclick="window.location.href='/pages/superadmin/add_admin.html'">
+            <span class="material-symbols-outlined">add</span>
+        </button>
+    </main>
+    
+    <!-- Modal para detalles del admin -->
+    <div id="admin-detail-modal"
+        class="fixed inset-0 bg-[#110c17]/80 backdrop-blur-sm flex items-center justify-center p-4 z-[100] hidden">
+        <div class="bg-[#1e1924] border border-white/10 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+            <div class="p-6 border-b border-white/5 flex justify-between items-center bg-[#231d29]">
+                <div>
+                    <h3 class="text-white font-bold text-lg tracking-tight">Ficha de Administrador</h3>
+                    <p class="text-primary text-[10px] uppercase tracking-[0.2em] font-bold">Data Intelligence</p>
+                </div>
+                <button onclick="document.getElementById('admin-detail-modal').classList.add('hidden')"
+                    class="text-gray-500 hover:text-white transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <div class="p-6 flex flex-col gap-4">
+                <div class="flex items-center gap-4 bg-[#2d2833] p-4 rounded-xl border border-white/5">
+                    <div id="modal-avatar"
+                        class="w-16 h-16 rounded-full border-2 border-primary/30 flex items-center justify-center bg-surface-container-highest overflow-hidden">
+                    </div>
+                    <div class="min-w-0">
+                        <h4 id="modal-name" class="text-white font-bold truncate">---</h4>
+                        <p id="modal-company" class="text-primary-fixed-dim text-xs truncate">---</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-[#261933] p-3 rounded-xl border border-white/5">
+                        <span class="text-[10px] text-on-surface-variant uppercase font-bold block mb-1">Staff
+                            Total</span>
+                        <span id="modal-staff" class="text-xl text-white font-bold">0</span>
+                    </div>
+                    <div class="bg-[#261933] p-3 rounded-xl border border-white/5">
+                        <span
+                            class="text-[10px] text-on-surface-variant uppercase font-bold block mb-1">Tatuadores</span>
+                        <span id="modal-tatuadores" class="text-xl text-white font-bold">0</span>
+                    </div>
+                </div>
+
+                <div class="space-y-3 bg-[#16111c] p-4 rounded-xl border border-white/5">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary text-sm">mail</span>
+                        <span id="modal-email" class="text-sm text-gray-300 truncate">---</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary text-sm">call</span>
+                        <span id="modal-phone" class="text-sm text-gray-300">---</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary text-sm">cake</span>
+                        <span id="modal-birth" class="text-sm text-gray-300">---</span>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-primary-container/10 border border-primary/20 p-3 rounded-xl flex items-center justify-between">
+                    <span class="text-[11px] text-primary-fixed-dim font-bold uppercase tracking-wider">Citas
+                        Totales</span>
+                    <span id="modal-citas" class="text-primary font-black">0</span>
+                </div>
+            </div>
+
+            <div class="p-4 bg-[#110c17] flex justify-end">
+                <button onclick="document.getElementById('admin-detail-modal').classList.add('hidden')"
+                    class="text-[11px] font-bold text-white uppercase tracking-widest px-6 py-3 rounded-lg hover:bg-white/5 transition-all">
+                    Cerrar Panel
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    // Logout function to clear session and redirect to login page
+    function logout() {
+        // Clear any stored session data (e.g., tokens)
+        localStorage.clear();
+        sessionStorage.clear();
+        // Redirect to login page
+        window.location.href = '/index.html';
+    }
+
+    // Configuración: URL base de tu API
+    const API_URL = '/api/superadmin/administradores';
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadAdministrators();
+    });
+
+    async function loadAdministrators() {
+        try {
+            const response = await fetch(API_URL);
+            const result = await response.json();
+
+            if (result.status === 'ok') {
+                renderStats(result.total);
+                renderAdminList(result.data);
+            }
+        } catch (error) {
+            console.error('Error cargando administradores:', error);
+        }
+    }
+
+    function renderStats(total) {
+        // Actualiza el número de "Total Admins" en el bento superior
+        const statsContainer = document.querySelector('.text-nav-title');
+        if (statsContainer) statsContainer.textContent = total;
+    }
+
+    function renderAdminList(admins) {
+        const listContainer = document.querySelector('main .flex.flex-col.gap-2');
+        // Limpiamos los ejemplos estáticos del HTML
+        listContainer.innerHTML = '';
+
+        admins.forEach(admin => {
+            // Si no tiene foto, generamos iniciales
+            const initials = admin.nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+
+            const card = document.createElement('div');
+            card.className = "flex items-center p-3 bg-[#261933] rounded-xl hover:bg-[#2c1d3b] transition-colors duration-150 cursor-pointer group";
+
+            // Evento para ver detalles (puedes abrir un modal o redirigir)
+            card.onclick = () => showAdminDetails(admin.idempleado);
+
+            card.innerHTML = `
+                <div class="w-[56px] h-[56px] rounded-full bg-surface-container-highest flex items-center justify-center mr-4 shrink-0 border border-white/10 overflow-hidden">
+                    ${admin.foto_url
+                    ? `<img src="${admin.foto_url}" class="w-full h-full object-cover" alt="${admin.nombre}">`
+                    : `<span class="text-white font-bold text-xl">${initials}</span>`
+                }
+                </div>
+                <div class="flex flex-col flex-grow min-w-0">
+                    <h3 class="text-card-title font-card-title text-white truncate">${admin.nombre}</h3>
+                    <p class="text-metadata font-metadata text-on-surface-variant truncate">${admin.nombre_empresa}</p>
+                </div>
+                <div class="flex flex-col items-end gap-2 ml-2">
+                    <span class="text-[10px] font-bold text-primary-fixed-dim bg-[#191022] px-2 py-1 rounded-md border border-white/5 uppercase">Details</span>
+                </div>
+            `;
+            listContainer.appendChild(card);
+        });
+    }
+
+    async function showAdminDetails(id) {
+        try {
+            const response = await fetch(`${API_URL}/${id}`);
+            const { data } = await response.json();
+
+            // 1. Nombre y Empresa
+            document.getElementById('modal-name').textContent = data.nombre;
+            document.getElementById('modal-company').textContent = data.empresa_nombre;
+
+            // 2. Avatar (Foto o Iniciales)
+            const avatarContainer = document.getElementById('modal-avatar');
+            if (data.foto_url) {
+                avatarContainer.innerHTML = `<img src="${data.foto_url}" class="w-full h-full object-cover">`;
+            } else {
+                const initials = data.nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                avatarContainer.innerHTML = `<span class="text-white font-bold text-xl">${initials}</span>`;
+            }
+
+            // 3. Stats (Bento Grid)
+            document.getElementById('modal-staff').textContent = data.total_staff || 0;
+            document.getElementById('modal-tatuadores').textContent = data.total_tatuadores || 0;
+            document.getElementById('modal-citas').textContent = data.total_citas || 0;
+
+            // 4. Contacto
+            document.getElementById('modal-email').textContent = data.correo;
+            document.getElementById('modal-phone').textContent = data.telefono || 'No registrado';
+
+            // Formatear fecha
+            if (data.fechanacimiento) {
+                const date = new Date(data.fechanacimiento);
+                document.getElementById('modal-birth').textContent = date.toLocaleDateString('es-ES', {
+                    day: '2-digit', month: 'long', year: 'numeric'
+                });
+            } else {
+                document.getElementById('modal-birth').textContent = '---';
+            }
+
+            // Mostrar el modal con animación (opcional si usas clases de transition)
+            document.getElementById('admin-detail-modal').classList.remove('hidden');
+
+        } catch (error) {
+            console.error('Error al obtener detalles:', error);
+            alert('No se pudo cargar la información del administrador.');
+        }
+    }
+</script>
+
+</html>

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Editar Precios | Administrador</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        body { background-color: #120c16; color: #eddeee; font-family: 'Space Grotesk', sans-serif; }
+        .glass-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); }
+        .modal { transition: opacity 0.3s ease; }
+    </style>
+</head>
+<body>
+    <header class="fixed top-0 w-full z-50 bg-[#120c16]/80 backdrop-blur-md border-b border-white/5 px-6 py-4">
+        <div class="flex items-center gap-4">
+            <a href="/pages/administrador/menu_admin.html" class="active:scale-95 transition-transform">
+                <span class="material-symbols-outlined text-slate-400">arrow_back</span>
+            </a>
+            <h1 class="text-2xl font-bold uppercase text-red-500">Editar Precios</h1>
+        </div>
+    </header>
+
+    <main class="pt-24 pb-32 max-w-4xl mx-auto px-6">
+        <!-- Pestañas -->
+        <nav class="flex border-b border-white/10 mb-8">
+            <button data-tipo="tamanio" class="tab-btn px-6 py-3 text-sm font-bold border-b-2 border-red-500 text-red-500">Precios por Tamaño</button>
+            <button data-tipo="tecnica" class="tab-btn px-6 py-3 text-sm font-medium text-slate-400">Dificultad × Técnica</button>
+        </nav>
+
+        <!-- Sección de Tamaños -->
+        <div id="section-tamanio" class="tab-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold">Precios base por tamaño</h2>
+                <button id="btnAgregarTamanio" class="bg-red-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm">
+                    <span class="material-symbols-outlined text-sm">add</span> Agregar Tamaño
+                </button>
+            </div>
+            <div id="listaTamanios" class="space-y-4"></div>
+        </div>
+
+        <!-- Sección de Técnicas -->
+        <div id="section-tecnica" class="tab-content hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold">Multiplicadores por técnica</h2>
+                <button id="btnAgregarTecnica" class="bg-red-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm">
+                    <span class="material-symbols-outlined text-sm">add</span> Agregar Técnica
+                </button>
+            </div>
+            <div id="listaTecnicas" class="space-y-4"></div>
+        </div>
+    </main>
+
+    <!-- Modal Agregar Tamaño -->
+    <div id="modalTamanio" class="modal fixed inset-0 bg-black/70 flex items-center justify-center z-50 hidden">
+        <div class="bg-[#251d28] rounded-2xl w-full max-w-md mx-4 p-6">
+            <h3 class="text-xl font-bold mb-4">Agregar Tamaño</h3>
+            <form id="formTamanio">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">Nombre del tamaño</label>
+                    <input type="text" id="tamanioNombre" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" required>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <div>
+                        <label class="block text-xs font-medium mb-1">Ancho min (cm)</label>
+                        <input type="number" id="anchomin" step="0.1" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium mb-1">Ancho max (cm)</label>
+                        <input type="number" id="anchomax" step="0.1" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium mb-1">Alto min (cm)</label>
+                        <input type="number" id="altomin" step="0.1" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium mb-1">Alto max (cm)</label>
+                        <input type="number" id="altomax" step="0.1" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3">
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">Precio base ($)</label>
+                    <input type="number" id="tamanioPrecio" step="0.01" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" required>
+                </div>
+                <div class="flex gap-3">
+                    <button type="button" onclick="cerrarModal('modalTamanio')" class="flex-1 bg-white/10 py-3 rounded-lg">Cancelar</button>
+                    <button type="submit" class="flex-1 bg-red-500 py-3 rounded-lg">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Agregar Técnica -->
+    <div id="modalTecnica" class="modal fixed inset-0 bg-black/70 flex items-center justify-center z-50 hidden">
+        <div class="bg-[#251d28] rounded-2xl w-full max-w-md mx-4 p-6">
+            <h3 class="text-xl font-bold mb-4">Agregar Técnica</h3>
+            <form id="formTecnica">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">Nombre de la técnica</label>
+                    <input type="text" id="tecnicaNombre" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">Multiplicador (dificultad)</label>
+                    <input type="number" id="tecnicaDificultad" step="0.1" min="0.5" max="5" value="1.0" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3">
+                    <p class="text-xs text-slate-400 mt-1">Ej: 1.5 = 50% más caro, 0.8 = 20% más barato</p>
+                </div>
+                <div class="flex gap-3">
+                    <button type="button" onclick="cerrarModal('modalTecnica')" class="flex-1 bg-white/10 py-3 rounded-lg">Cancelar</button>
+                    <button type="submit" class="flex-1 bg-red-500 py-3 rounded-lg">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+        let currentTipo = 'tamanio';
+        
+        let user = null;
+        let idEmpresa = 1;
+        
+        try {
+            const userData = localStorage.getItem('user');
+            if (userData) user = JSON.parse(userData);
+            const empresaData = localStorage.getItem('empresa');
+            if (empresaData && empresaData !== 'undefined') {
+                const empresa = JSON.parse(empresaData);
+                idEmpresa = empresa?.idEmpresa || user?.idempresa || 1;
+            } else {
+                idEmpresa = user?.idempresa || 1;
+            }
+        } catch (e) {
+            console.error('Error:', e);
+            idEmpresa = 1;
+        }
+
+       const rolNormalizado = user?.rol ? user.rol.toLowerCase() : '';
+console.log('Rol normalizado:', rolNormalizado);
+
+if (!user || (rolNormalizado !== 'admin' && rolNormalizado !== 'dueño')) {
+    console.log('Acceso denegado - Redirigiendo a login');
+    window.location.href = '/';
+} else {
+    console.log('Acceso concedido');
+}
+
+        // ============================================
+        // CARGAR TAMAÑOS
+        // ============================================
+        async function cargarTamanios() {
+            try {
+                const response = await fetch(`${API_BASE}/precios/tamanio?idempresa=${idEmpresa}`);
+                const result = await response.json();
+                if (result.status === 'ok') renderizarTamanios(result.data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function renderizarTamanios(data) {
+            const container = document.getElementById('listaTamanios');
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div class="text-center py-10 text-slate-500">No hay tamaños configurados</div>';
+                return;
+            }
+            
+            container.innerHTML = data.map(item => `
+                <div class="glass-card rounded-xl p-4">
+                    <div class="flex justify-between items-center flex-wrap gap-4">
+                        <div>
+                            <h3 class="font-bold text-lg">${escapeHtml(item.tamanio)}</h3>
+                            <p class="text-sm text-slate-400">Rango: ${item.anchomin}-${item.anchomax}cm × ${item.altomin}-${item.altomax}cm</p>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-red-500">$</span>
+                                <input type="number" id="precio_${item.idtamano}" value="${item.precio}" step="0.01" 
+                                       class="precio-input bg-white/5 border border-white/10 rounded-lg pl-8 pr-3 py-2 w-36 text-right"
+                                       data-id="${item.idtamano}" data-tipo="tamanio">
+                            </div>
+                            <button onclick="guardarPrecio(${item.idtamano}, 'tamanio')" class="guardar-btn bg-green-600/20 text-green-400 px-3 py-1 rounded-lg text-sm">Guardar</button>
+                            <button onclick="eliminarItem(${item.idtamano}, 'tamanio')" class="bg-red-600/20 text-red-400 px-3 py-1 rounded-lg text-sm">Eliminar</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ============================================
+        // CARGAR TÉCNICAS
+        // ============================================
+        async function cargarTecnicas() {
+            try {
+                const response = await fetch(`${API_BASE}/precios/tecnicas?idempresa=${idEmpresa}`);
+                const result = await response.json();
+                if (result.status === 'ok') renderizarTecnicas(result.data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function renderizarTecnicas(data) {
+            const container = document.getElementById('listaTecnicas');
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div class="text-center py-10 text-slate-500">No hay técnicas configuradas</div>';
+                return;
+            }
+            
+            container.innerHTML = data.map(item => `
+                <div class="glass-card rounded-xl p-4">
+                    <div class="flex justify-between items-center flex-wrap gap-4">
+                        <div>
+                            <h3 class="font-bold text-lg">${escapeHtml(item.nombretecnica)}</h3>
+                            <p class="text-sm text-slate-400">Multiplicador que afecta el precio base</p>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-red-500">×</span>
+                                <input type="number" id="dificultad_${item.idtecnica}" value="${item.dificultad}" step="0.1" min="0.5" max="5.0"
+                                       class="dificultad-input bg-white/5 border border-white/10 rounded-lg pl-8 pr-3 py-2 w-28 text-right"
+                                       data-id="${item.idtecnica}" data-tipo="tecnica">
+                            </div>
+                            <button onclick="guardarPrecio(${item.idtecnica}, 'tecnica')" class="guardar-btn bg-green-600/20 text-green-400 px-3 py-1 rounded-lg text-sm">Guardar</button>
+                            <button onclick="eliminarItem(${item.idtecnica}, 'tecnica')" class="bg-red-600/20 text-red-400 px-3 py-1 rounded-lg text-sm">Eliminar</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ============================================
+        // GUARDAR PRECIO/DIFICULTAD
+        // ============================================
+        async function guardarPrecio(id, tipo) {
+            let precio, dificultad;
+            let url = '';
+            let body = {};
+            
+            if (tipo === 'tamanio') {
+                const input = document.getElementById(`precio_${id}`);
+                precio = parseFloat(input.value);
+                if (isNaN(precio)) return;
+                url = `${API_BASE}/precios/tamanio/${id}`;
+                body = { precio };
+            } else {
+                const input = document.getElementById(`dificultad_${id}`);
+                dificultad = parseFloat(input.value);
+                if (isNaN(dificultad)) return;
+                url = `${API_BASE}/precios/tecnica/${id}`;
+                body = { dificultad };
+            }
+            
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = 'Guardando...';
+            btn.disabled = true;
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                
+                if (response.ok) {
+                    btn.textContent = '✅ Guardado';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.disabled = false;
+                    }, 1500);
+                } else {
+                    btn.textContent = '❌ Error';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.disabled = false;
+                    }, 1500);
+                }
+            } catch (error) {
+                btn.textContent = '❌ Error';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                }, 1500);
+            }
+        }
+
+        // ============================================
+        // ELIMINAR ITEM
+        // ============================================
+        async function eliminarItem(id, tipo) {
+            if (!confirm('¿Eliminar este elemento?')) return;
+            
+            const url = tipo === 'tamanio' 
+                ? `${API_BASE}/precios/tamanio/${id}`
+                : `${API_BASE}/precios/tecnica/${id}`;
+            
+            try {
+                await fetch(url, { method: 'DELETE' });
+                if (tipo === 'tamanio') cargarTamanios();
+                else cargarTecnicas();
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // ============================================
+        // AGREGAR TAMAÑO
+        // ============================================
+        document.getElementById('btnAgregarTamanio').addEventListener('click', () => {
+            document.getElementById('modalTamanio').classList.remove('hidden');
+        });
+
+        document.getElementById('formTamanio').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const body = {
+                idempresa: idEmpresa,
+                tamanio: document.getElementById('tamanioNombre').value,
+                precio: parseFloat(document.getElementById('tamanioPrecio').value),
+                anchomin: parseFloat(document.getElementById('anchomin').value) || 0,
+                anchomax: parseFloat(document.getElementById('anchomax').value) || 0,
+                altomin: parseFloat(document.getElementById('altomin').value) || 0,
+                altomax: parseFloat(document.getElementById('altomax').value) || 0
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/precios/tamanio`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                
+                if (response.ok) {
+                    cerrarModal('modalTamanio');
+                    cargarTamanios();
+                    document.getElementById('formTamanio').reset();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        // ============================================
+        // AGREGAR TÉCNICA
+        // ============================================
+        document.getElementById('btnAgregarTecnica').addEventListener('click', () => {
+            document.getElementById('modalTecnica').classList.remove('hidden');
+        });
+
+        document.getElementById('formTecnica').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const body = {
+                idempresa: idEmpresa,
+                nombretecnica: document.getElementById('tecnicaNombre').value,
+                dificultad: parseFloat(document.getElementById('tecnicaDificultad').value) || 1.0
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/precios/tecnica`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                
+                if (response.ok) {
+                    cerrarModal('modalTecnica');
+                    cargarTecnicas();
+                    document.getElementById('formTecnica').reset();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        // ============================================
+        // UTILIDADES
+        // ============================================
+        function cerrarModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])) || '';
+        }
+
+        // Tabs
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                currentTipo = btn.getAttribute('data-tipo');
+                document.querySelectorAll('.tab-btn').forEach(b => {
+                    b.classList.remove('border-red-500', 'text-red-500', 'font-bold');
+                    b.classList.add('text-slate-400', 'font-medium');
+                });
+                btn.classList.add('border-red-500', 'text-red-500', 'font-bold');
+                btn.classList.remove('text-slate-400', 'font-medium');
+                
+                document.getElementById('section-tamanio').classList.toggle('hidden', currentTipo !== 'tamanio');
+                document.getElementById('section-tecnica').classList.toggle('hidden', currentTipo !== 'tecnica');
+                
+                if (currentTipo === 'tamanio') cargarTamanios();
+                else cargarTecnicas();
+            });
+        });
+
+        // Inicializar
+        cargarTamanios();
+    </script>
+</body>
+</html>
