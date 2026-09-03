@@ -6,5 +6,11 @@ un mejor seguimiento de anticipos, pagos finales y tambien un seguimiento post-s
 recomendaciones despues de su cita.
 
 ¿Como se instala?
+Para instalarlo debemos contar con Node.js, Git, npm
+Clonamos e instalamos localmente
+https://github.com/RubiBarragan12/Equipo-despliegue-.git
+Accedemos a la carpeta del proyecto: cd Equipo-despliegue-, e instalamos: npm intall
 
 ¿Como se ejecuta?
+despues de la instalación ejecutamos con el comando npm run dev, abrimos el navegadoe
+e ingresamos a http://localhost:4000
