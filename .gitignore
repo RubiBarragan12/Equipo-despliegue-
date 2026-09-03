@@ -1,24 +1,21 @@
-# Environment variables
+# Dependencias de Node.js
+node_modules/
+.pnpm-store/
+
+# Variables de entorno y credenciales (privado)
 .env
 .env.local
-.env.*.local
+.env.development
+.env.production
 
-# Dependencies
-node_modules/
-package-lock.json
-yarn.lock
-
-# Build outputs
+# Carpetas de compilación
 dist/
 build/
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS
+# Archivos del sistema y logs
+*.log
+npm-debug.log*
 .DS_Store
 Thumbs.db
-.env
+.vscode/
+coverage/
