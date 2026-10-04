@@ -32,11 +32,16 @@
 <body class="bg-background-light dark:bg-background-dark font-display">
     <div class="relative flex h-auto min-h-screen w-full flex-col">
         
+        <!-- Banner Informativo (Se activa solo en Variante B) -->
+        <div id="banner-ab" class="hidden bg-emerald-600 text-white text-center py-2 px-4 text-sm font-semibold shadow-md">
+             ¡Respuesta garantizada en menos de 24 horas! Solicita tu presupuesto sin compromiso.
+        </div>
+
         <header class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between sticky top-0 z-10 border-b border-white/10">
             <button id="btn-back" class="text-slate-800 dark:text-white flex size-12 shrink-0 items-center justify-start cursor-pointer">
                 <span class="material-symbols-outlined text-2xl">arrow_back</span>
             </button>
-            <h1 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Resumen de tu Cita</h1>
+            <h1 id="titulo-pagina" class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Resumen de tu Cita</h1>
             <div class="flex size-12 shrink-0 items-center"></div>
         </header>
 
@@ -104,9 +109,9 @@
 
         <footer class="fixed bottom-0 left-0 right-0 p-4 bg-background-light dark:bg-background-dark/80 backdrop-blur-sm border-t border-slate-200 dark:border-white/10">
             <div class="flex flex-col gap-3">
-                <button id="btn-resumen-seguimiento" class="flex w-full min-w-[84px] max-w-[480px] mx-auto cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-4 bg-green-600 hover:bg-green-500 text-white text-base font-bold leading-normal transition-colors gap-2">
+                <button id="btn-resumen-seguimiento" class="flex w-full min-w-[84px] max-w-[480px] mx-auto cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-4 bg-primary text-white text-base font-bold leading-normal transition-all gap-2">
                     <span class="material-symbols-outlined">chat</span>
-                    <span class="truncate">Ir al Chat de Seguimiento</span>
+                    <span id="texto-btn-principal" class="truncate">Ir al Chat de Seguimiento</span>
                 </button>
                 <button id="btn-resumen-volver" class="flex w-full min-w-[84px] max-w-[480px] mx-auto cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-4 bg-transparent text-primary dark:text-primary text-base font-bold leading-normal hover:bg-primary/5 transition-colors">
                     <span class="truncate">Volver a Mis Cotizaciones</span>
@@ -115,6 +120,45 @@
         </footer>
     </div>
     
-    <script src="/js/mis_cotizaciones_cliente.js"></script>
+    <!-- Script embebido de Prueba A/B y Monitoreo -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Determinar o leer la variante actual desde localStorage
+            let variante = localStorage.getItem('ab_test_cotizacion');
+            if (!variante) {
+                variante = Math.random() < 0.5 ? 'A' : 'B';
+                localStorage.setItem('ab_test_cotizacion', variante);
+            }
+
+            // Registrar vista de página
+            console.log(`[MONITOREO A/B] Vista cargada | Variante activa: ${variante}`);
+
+            // 2. Elementos a modificar
+            const btnPrincipal = document.querySelector('#btn-resumen-seguimiento');
+            const textoBtn = document.querySelector('#texto-btn-principal');
+            const banner = document.querySelector('#banner-ab');
+            const titulo = document.querySelector('#titulo-pagina');
+
+            // 3. Aplicar cambios según la variante
+            if (variante === 'B') {
+                if (banner) banner.classList.remove('hidden');
+                if (titulo) titulo.innerText = "Solicita tu Cotización Personalizada";
+                if (btnPrincipal) {
+                    btnPrincipal.classList.remove('bg-primary');
+                    btnPrincipal.classList.add('bg-emerald-500', 'hover:bg-emerald-400');
+                }
+                if (textoBtn) textoBtn.innerText = "Ir a chat";
+            }
+
+            // 4. Capturar el evento clic para la métrica
+            if (btnPrincipal) {
+                btnPrincipal.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    console.log(`[MONITOREO A/B] Evento registrado: Clic en Botón Principal | Variante: ${variante} | Fecha: ${new Date().toISOString()}`);
+                    alert(`[Prueba A/B - Variante ${variante}] ¡Acción registrada en consola con éxito!`);
+                });
+            }
+        });
+    </script>
 </body>
 </html>

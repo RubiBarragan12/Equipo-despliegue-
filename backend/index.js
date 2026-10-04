@@ -83,21 +83,20 @@ app.get('/pages/recuperacion-contra/restablecer_contrasena_panel2.html', (req, r
 });
 
 // =====================================================
-// 5. FALLBACK: CUALQUIER OTRA RUTA -> index.html (SOLO PARA SPA)
+// 5. FALLBACK: CUALQUIER OTRA RUTA HTML
 // =====================================================
-// MODIFICACIÓN DEL BLOQUE 5
 app.get('*', (req, res) => {
     if (req.path.startsWith('/api')) {
         return res.status(404).json({ status: 'error', message: 'Endpoint no encontrado' });
     }
     
-    // Si el navegador pide un archivo .js o .css que no existe, NO mandes el HTML
-    if (req.path.endsWith('.js') || req.path.endsWith('.css')) {
+    // Si piden archivos estáticos (.js, .css, imágenes) que no existen, mandar 404 real
+    if (req.path.endsWith('.js') || req.path.endsWith('.css') || req.path.endsWith('.png') || req.path.endsWith('.jpg')) {
         return res.status(404).send('Archivo no encontrado');
     }
 
-    // Para el resto, puedes dejar el index.html o mejor aún, un error 404 real
-    res.status(404).send('La página que buscas no existe en el servidor');
+    // Para cualquier otra ruta/página HTML, sirve el index.html principal
+    res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
 // =====================================================

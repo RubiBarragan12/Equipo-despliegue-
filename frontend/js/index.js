@@ -5,8 +5,8 @@ import { showAlert } from './utils/modalAlerts.js';
 
 // Inicializar Supabase
 const supabase = createClient(
-    'https://oafzgtsptoppukebcjfg.supabase.co/',
-    'sb_publishable_fbe2lQ0SfsFGmcm8i8PZgA_9MPPhNE-'
+    'https://nvvxklchamfhepnprrmb.supabase.co',
+    'sb_publishable_AcK80uXIyMFa4EDOhg7nkQ_mCULQ6zt'
 );
 
 document.addEventListener('DOMContentLoaded', () => {
