@@ -1,5 +1,5 @@
 const { holaMundo } = require('../src/index');
 
-test('Verificar que tattora retorne el mensaje de Hola Mundo correctamente', () => {
+test('Hola Mundo esta es una prueba unutaria', () => {
   expect(holaMundo()).toBe("Hola Mundo - Tattoora API");
 });
